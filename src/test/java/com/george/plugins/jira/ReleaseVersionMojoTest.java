@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.RemoteAuthenticationException;
 import com.atlassian.jira.rpc.soap.client.RemoteVersion;
@@ -31,14 +32,14 @@ import com.atlassian.jira.rpc.soap.client.RemoteVersion;
 public class ReleaseVersionMojoTest {
 
 	private static final String LOGIN_TOKEN = "TEST_TOKEN";
-	private static final RemoteVersion[] VERSIONS = new RemoteVersion[]{
-			new RemoteVersion("1", "1.0", false, null, false, null),
-			new RemoteVersion("2", "2.0", false, null, false, null),
-			new RemoteVersion("3", "3.0", false, null, false, null),
-			new RemoteVersion("3", "3.1", false, null, false, null)};
+	private static final Version[] VERSIONS = new Version[]{
+			new Version("1", "1.0", false, null, false, null),
+			new Version("2", "2.0", false, null, false, null),
+			new Version("3", "3.0", false, null, false, null),
+			new Version("3", "3.1", false, null, false, null)};
 
 	private Calendar cal = Calendar.getInstance();
-	private RemoteVersion RELEASED_VERSION = new RemoteVersion("3", "3.0",
+	private Version RELEASED_VERSION = new Version("3", "3.0",
 			false, cal, true, null);
 	private ReleaseVersionMojo jiraVersionMojo;
 	private JiraSoapService jiraStub;
@@ -99,7 +100,7 @@ public class ReleaseVersionMojoTest {
 
 	@Test
 	public void testLatestVersionInfo() throws Exception {
-		jiraVersionMojo.remoteVersionComparator = new RemoteVersionComparator();
+		jiraVersionMojo.versionComparator = new VersionComparator();
 		String expected = "3.1";
 		String actual = jiraVersionMojo.calculateLatestReleaseVersion(VERSIONS);
 		assertEquals(expected, actual);
@@ -186,9 +187,9 @@ public class ReleaseVersionMojoTest {
 
 		@Override
 		public boolean matches(Object actual) {
-			if (actual instanceof RemoteVersion) {
-				return (RemoteVersionComparator.doComparison(
-						(RemoteVersion) getExpected(), (RemoteVersion) actual) == 0);
+			if (actual instanceof Version) {
+				return (VersionComparator.doComparison(
+						(Version) getExpected(), (Version) actual) == 0);
 			}
 			return super.matches(actual);
 		}

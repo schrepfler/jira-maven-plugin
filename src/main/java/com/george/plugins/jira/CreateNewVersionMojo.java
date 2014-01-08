@@ -46,7 +46,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
 	 * @parameter 
 	 *            implementation="com.george.plugins.jira.RemoteVersionComparator"
 	 */
-	Comparator<RemoteVersion> remoteVersionComparator = new RemoteVersionComparator();
+	Comparator<RemoteVersion> remoteVersionComparator = new VersionComparator();
 
 	@Override
 	public void doExecute(JiraSoapService jiraService, String loginToken)

@@ -26,11 +26,11 @@ import com.atlassian.jira.rpc.soap.client.RemoteVersion;
 public class CreateNewVersionMojoTest {
 
 	private static final String LOGIN_TOKEN = "TEST_TOKEN";
-	private static final RemoteVersion[] VERSIONS = new RemoteVersion[]{
-			new RemoteVersion("1", "1.0", false, null, false, null),
-			new RemoteVersion("2", "2.0", false, null, false, null),
-			new RemoteVersion("3", "3.0", false, null, false, null),
-			new RemoteVersion("3", "3.1", false, null, false, null)};
+	private static final Version[] VERSIONS = new Version[]{
+			new Version("1", "1.0", false, null, false, null),
+			new Version("2", "2.0", false, null, false, null),
+			new Version("3", "3.0", false, null, false, null),
+			new Version("3", "3.1", false, null, false, null)};
 
 	private CreateNewVersionMojo jiraVersionMojo;
 	private JiraSoapService jiraStub;
@@ -67,7 +67,7 @@ public class CreateNewVersionMojoTest {
 		// Adiciona a nova versao
 		expect(
 				jiraStub.addVersion(LOGIN_TOKEN,
-						jiraVersionMojo.jiraProjectKey, new RemoteVersion(null,
+						jiraVersionMojo.jiraProjectKey, new Version(null,
 								jiraVersionMojo.developmentVersion, false,
 								null, false, null))).andReturn(VERSIONS[0]);
 		doLogoutBehavior();
@@ -91,7 +91,7 @@ public class CreateNewVersionMojoTest {
 		// Adiciona a nova versao
 		expect(
 				jiraStub.addVersion(LOGIN_TOKEN,
-						jiraVersionMojo.jiraProjectKey, new RemoteVersion(null,
+						jiraVersionMojo.jiraProjectKey, new Version(null,
 								"5.0 Beta 2", false, null, false, null)))
 				.andReturn(VERSIONS[0]);
 		doLogoutBehavior();
