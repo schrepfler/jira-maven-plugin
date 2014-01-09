@@ -8,6 +8,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 
@@ -18,7 +19,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.domain.Version;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.jira.rpc.soap.client.JiraSoapService;
+import com.atlassian.jira.rpc.soap.client.RemoteAuthenticationException;
+import com.atlassian.jira.rpc.soap.client.RemoteVersion;
 
 /**
  * JUnit test case for Jira version MOJO
@@ -26,7 +32,7 @@ import com.atlassian.jira.rest.client.domain.Version;
  * @author george
  * 
  */
-public class ReleaseVersionMojoTest {
+public class ReleaseVersionRestMojoTest {
 
 	private static final String LOGIN_TOKEN = "TEST_TOKEN";
 	private static final Version[] VERSIONS = new Version[]{
@@ -39,7 +45,10 @@ public class ReleaseVersionMojoTest {
 	private Version RELEASED_VERSION = new Version("3", "3.0",
 			false, cal, true, null);
 	private ReleaseVersionMojo jiraVersionMojo;
-	private JiraSoapService jiraStub;
+	
+	final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
+	private static URI jiraServerUri = URI.create("http://williamhill.jira.com");
+	final JiraRestClient restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, "srdan.srepfler@williamhill.com", "jikor567");
 
 	/**
 	 * @throws java.lang.Exception

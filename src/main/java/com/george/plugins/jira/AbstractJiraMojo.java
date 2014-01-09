@@ -1,6 +1,7 @@
 package com.george.plugins.jira;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.xml.rpc.ServiceException;
@@ -12,6 +13,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 
+import com.atlassian.jira.rest.client.JiraRestClient;
+import com.atlassian.jira.rest.client.JiraRestClientFactory;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 
@@ -71,7 +76,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	 */
 	protected String jiraProjectKey;
 
-	transient JiraSoapService jiraService;
+	transient JiraRestClient jiraRestClient;
 
 	/**
 	 * Returns if this plugin is enabled for this context
@@ -89,16 +94,16 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	 */
 	protected JiraSoapService getJiraSoapService()
 			throws MalformedURLException, ServiceException {
-		if (jiraService == null) {
+		if (jiraRestClient == null) {
 			JiraSoapServiceServiceLocator locator = new JiraSoapServiceServiceLocator();
 			String url = discoverJiraWSURL();
 			if (url == null)
 				throw new MalformedURLException(
 						"JIRA URL cound not be found. Check your pom.xml configuration.");
 			URL u = new URL(url);
-			jiraService = locator.getJirasoapserviceV2(u);
+			jiraRestClient = locator.getJirasoapserviceV2(u);
 		}
-		return jiraService;
+		return jiraRestClient;
 	}
 
 	/**
@@ -161,16 +166,21 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 			return;
 		}
 		try {
-			JiraSoapService jiraService = getJiraSoapService();
+			
 			loadUserInfoFromSettings();
+			
+			JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
+			JiraRestClient jiraRestClient = jiraRestClientFactory.create(URI.create(jiraURL), new BasicHttpAuthenticationHandler(jiraUser, jiraPassword));
+
 			log.debug("Logging in JIRA");
-			String loginToken = jiraService.login(jiraUser, jiraPassword);
+			jiraRestClient.getUserClient().getUser(jiraUser).claim();
 			log.debug("Logged in JIRA");
+			
 			try {
-				doExecute(jiraService, loginToken);
+				doExecute(jiraRestClient, loginToken);
 			} finally {
 				log.debug("Logging out from JIRA");
-				jiraService.logout(loginToken);
+				jiraRestClient.logout(loginToken);
 				log.debug("Logged out from JIRA");
 			}
 		} catch (Exception e) {
@@ -179,8 +189,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 		}
 	}
 
-	public abstract void doExecute(JiraSoapService jiraService,
-			String loginToken) throws Exception;
+	public abstract void doExecute(JiraRestClient jiraRestClient) throws Exception;
 
 	public boolean isSkip() {
 		return skip;

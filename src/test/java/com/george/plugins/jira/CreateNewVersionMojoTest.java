@@ -46,7 +46,7 @@ public class CreateNewVersionMojoTest {
 
 		// This removes the locator coupling
 		jiraStub = EasyMock.createStrictMock(JiraSoapService.class);
-		this.jiraVersionMojo.jiraService = jiraStub;
+		this.jiraVersionMojo.jiraRestClient = jiraStub;
 	}
 
 	/**

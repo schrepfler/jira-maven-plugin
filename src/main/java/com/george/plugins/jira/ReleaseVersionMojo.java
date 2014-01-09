@@ -8,10 +8,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
+import org.joda.time.DateTime;
 
+import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.ProjectRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
+import com.atlassian.jira.rest.client.domain.input.VersionInput;
 import com.google.common.collect.Lists;
 
 /**
@@ -49,18 +52,17 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 	Comparator<Version> versionComparator = new VersionComparator();
 
 	@Override
-	public void doExecute(ProjectRestClient projectRestClient, String loginToken)
-			throws Exception {
+	public void doExecute(JiraRestClient jiraRestClient) throws Exception {
 		Log log = getLog();
-		log.debug("Login Token returned: " + loginToken);
-		Project project = projectRestClient.getProject(jiraProjectKey).claim();
+		log.debug("Login for: " + jiraRestClient.getSessionClient().getCurrentSession().claim().getUsername());
+		Project project = jiraRestClient.getProjectClient().getProject(jiraProjectKey).claim();
 		Iterable<Version> versions = project.getVersions();
 		String thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions)
 				: releaseVersion;
 		if (thisReleaseVersion != null) {
 			log.info("Releasing Version " + this.releaseVersion);
-			markVersionAsReleased(projectRestClient, loginToken, versions,
-					thisReleaseVersion);
+			//markVersionAsReleased(projectRestClient, loginToken, versions,
+				//	thisReleaseVersion);
 		}
 	}
 
@@ -78,7 +80,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 			if (!remoteVersion.isReleased())
 				return remoteVersion.getName();
 		}
-		
+
 		return null;
 	}
 
@@ -108,18 +110,14 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 	 * Release Version
 	 * 
 	 * @param log
-	 * @param jiraService
+	 * @param jiraRestClient
 	 * @param loginToken
 	 * @throws RemoteException
 	 * @throws RemotePermissionException
 	 * @throws RemoteAuthenticationException
 	 * @throws com.atlassian.jira.rpc.soap.client.RemoteException
 	 */
-	Version markVersionAsReleased(JiraSoapService jiraService,
-			String loginToken, RemoteVersion[] versions, String releaseVersion)
-			throws RemoteException, RemotePermissionException,
-			RemoteAuthenticationException,
-			com.atlassian.jira.rpc.soap.client.RemoteException {
+	Version markVersionAsReleased(JiraRestClient jiraRestClient, Version[] versions, String releaseVersion) {
 		Version ret = null;
 		if (versions != null) {
 			for (Version remoteReleasedVersion : versions) {
@@ -127,9 +125,11 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 						.getName()) && !remoteReleasedVersion.isReleased()) {
 					// Mark as released
 					remoteReleasedVersion.setReleased(true);
-					remoteReleasedVersion
-							.setReleaseDate(Calendar.getInstance());
-					jiraService.releaseVersion(loginToken, jiraProjectKey,
+					remoteReleasedVersion.setReleaseDate(Calendar.getInstance());
+					jiraRestClient.getVersionRestClient().createVersion(new VersionInput(..., remoteReleasedVersion.getName(), remoteReleasedVersion.getDescription(), new DateTime(), remoteReleasedVersion.isArchived(), true));
+					
+					
+					releaseVersion(loginToken, jiraProjectKey,
 							remoteReleasedVersion);
 					getLog().info(
 							"Version " + remoteReleasedVersion.getName()
