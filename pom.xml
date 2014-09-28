@@ -45,6 +45,12 @@
 			<email>gastaldi@apache.org</email>
 			<url>http://gastaldi.wordpress.com</url>
 		</developer>
+        <developer>
+            <id>schrepfler</id>
+            <name>Srdan Srepfler</name>
+            <email>schrepfler@gmail.com</email>
+            <url>http://schrepfler@gmail.com</url>
+        </developer>
 	</developers>
 	<licenses>
 		<license>
