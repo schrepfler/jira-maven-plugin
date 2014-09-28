@@ -117,7 +117,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 	 * @throws RemoteAuthenticationException
 	 * @throws com.atlassian.jira.rpc.soap.client.RemoteException
 	 */
-	Version markVersionAsReleased(JiraRestClient jiraRestClient, Version[] versions, String releaseVersion) {
+	Version markVersionAsReleased(JiraRestClient jiraRestClient, Iterable<Version> versions, String releaseVersion) {
 		Version ret = null;
 		if (versions != null) {
 			for (Version remoteReleasedVersion : versions) {
