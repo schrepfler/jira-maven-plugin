@@ -18,25 +18,33 @@
 	</properties>
 
     <repositories>
-		<repository>
-			<id>atlassian-public</id>
-			<url>https://m2proxy.atlassian.com/repository/public</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-		</repository>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </repository>
+        <!--<repository>-->
+            <!--<id>atlassian-public-snapshot</id>-->
+            <!--<url>https://maven.atlassian.com/content/repositories/atlassian-public-snapshot/</url>-->
+            <!--<snapshots>-->
+                <!--<enabled>true</enabled>-->
+                <!--<updatePolicy>daily</updatePolicy>-->
+                <!--<checksumPolicy>warn</checksumPolicy>-->
+            <!--</snapshots>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+                <!--<checksumPolicy>warn</checksumPolicy>-->
+            <!--</releases>-->
+        <!--</repository>-->
 	</repositories>
 
     <pluginRepositories>
 		<pluginRepository>
 			<id>atlassian-public</id>
-			<url>https://m2proxy.atlassian.com/repository/public</url>
+			<url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>warn</checksumPolicy>
