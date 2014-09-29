@@ -122,3 +122,8 @@ Setup your ~/.m2/settings.xml to contain the credentials for deployment to Sonat
     pray
     mvn jgitflow:release-finish
     pray some more
+
+TODO
+===================
+
+Generate release reports mojo
