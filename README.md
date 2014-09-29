@@ -126,4 +126,5 @@ Setup your ~/.m2/settings.xml to contain the credentials for deployment to Sonat
 TODO
 ===================
 
-Generate release reports mojo
+* Block release if all issues with fixVersion of the release version are not Closed/Resolved.
+* Generate release reports mojo
