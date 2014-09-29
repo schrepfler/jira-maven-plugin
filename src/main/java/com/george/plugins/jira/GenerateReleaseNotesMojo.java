@@ -7,17 +7,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.atlassian.jira.rest.client.domain.BasicIssue;
+import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.domain.SearchResult;
 import org.apache.maven.plugin.logging.Log;
-
-import com.atlassian.jira.rpc.soap.client.JiraSoapService;
-import com.atlassian.jira.rpc.soap.client.RemoteIssue;
 
 /**
  * Goal that generates release notes based on a version in a JIRA project.
  * 
- * NOTE: SOAP access must be enabled in your JIRA installation. Check JIRA docs
+ * NOTE: REST API access must be enabled in your JIRA installation. Check JIRA docs
  * for more info.
  * 
  * @goal generate-release-notes
@@ -86,35 +87,38 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	String afterText;
 
 	@Override
-	public void doExecute(JiraSoapService jiraService, String loginToken)
-			throws Exception {
-		RemoteIssue[] issues = getIssues(jiraService, loginToken);
+	public void doExecute() throws Exception {
+        Iterable<Issue> issues = getIssues();
 		output(issues);
 	}
 
 	/**
 	 * Recover issues from JIRA based on JQL Filter
-	 * 
-	 * @param jiraService
-	 * @param loginToken
-	 * @return
-	 * @throws RemoteException
-	 * @throws com.atlassian.jira.rpc.soap.client.RemoteException
-	 */
-	RemoteIssue[] getIssues(JiraSoapService jiraService, String loginToken)
-			throws RemoteException,
-			com.atlassian.jira.rpc.soap.client.RemoteException {
+     */
+
+	Iterable<Issue> getIssues() {
+
+
 		Log log = getLog();
 		String jql = format(jqlTemplate, jiraProjectKey, releaseVersion);
 		if (log.isInfoEnabled()) {
 			log.info("JQL: " + jql);
 		}
-		RemoteIssue[] issues = jiraService.getIssuesFromJqlSearch(loginToken,
-				jql, maxIssues);
-		if (log.isInfoEnabled()) {
-			log.info("Issues: " + issues.length);
+
+        SearchResult searchResult = jiraRestClient.getSearchClient().searchJql(jql).claim();
+        List<Issue> issues = new ArrayList<>(searchResult.getTotal());
+
+        if (log.isInfoEnabled()) {
+			log.info("Issues: " + searchResult.getTotal());
 		}
-		return issues;
+
+
+        for (BasicIssue basicIssue : searchResult.getIssues()) {
+            issues.add(jiraRestClient.getIssueClient().getIssue(basicIssue.getKey()).claim());
+        }
+
+
+        return issues;
 	}
 
 	/**
@@ -122,7 +126,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	 * 
 	 * @param issues
 	 */
-	void output(RemoteIssue[] issues) throws IOException {
+	void output(Iterable<Issue> issues) throws IOException {
 		Log log = getLog();
 		if (targetFile == null) {
 			log.warn("No targetFile specified. Ignoring");
@@ -133,15 +137,14 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 			return;
 		}
 		OutputStreamWriter writer = new OutputStreamWriter(
-				new FileOutputStream(targetFile, true), "Cp1252");
+				new FileOutputStream(targetFile, true), "UTF8");
 		PrintWriter ps = new PrintWriter(writer);
 		try {
 			if (beforeText != null) {
 				ps.println(beforeText);
 			}
-			for (RemoteIssue issue : issues) {
-				String issueDesc = format(issueTemplate, issue.getKey(),
-						issue.getSummary());
+			for (Issue issue : issues) {
+				String issueDesc = format(issueTemplate, issue.getKey(), issue.getDescription());
 				ps.println(issueDesc);
 			}
 			if (afterText != null) {
