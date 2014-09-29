@@ -15,6 +15,15 @@ To build and install locally:
 
     mvn clean install
     
+Release to Sonatype OSS maven repository
+===================
+
+Setup your ~/.m2/settings.xml to contain the credentials for deployment to Sonatype OSS
+
+    mvn jgitflow:release-start
+    pray
+    mvn jgitflow:release-finish
+    pray some more
 
 Before you start using this plugin, you must have two configurations already set on your pom.xml:
 
