@@ -32,7 +32,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	 * JQL Template to generate release notes. Parameter 0 = Project Key
 	 * Parameter 1 = Fix version
 	 * 
-	 * @parameter expression="${jqlTemplate}"
+	 * @parameter property="jqlTemplate"
 	 * @required
 	 */
 	String jqlTemplate = "project = ''{0}'' AND status in (Resolved, Closed) AND fixVersion = ''{1}''";
@@ -41,7 +41,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	 * Template used on each issue found by JQL Template. Parameter 0 = Issue
 	 * Key Parameter 1 = Issue Summary
 	 * 
-	 * @parameter expression="${issueTemplate}"
+	 * @parameter property="issueTemplate"
 	 * @required
 	 */
 	String issueTemplate = "[{0}] {1}";
@@ -49,7 +49,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	/**
 	 * Max number of issues to return
 	 * 
-	 * @parameter expression="${maxIssues}" default-value="100"
+	 * @parameter property="maxIssues" default-value="100"
 	 * @required
 	 */
 	int maxIssues = 100;
@@ -57,7 +57,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	/**
 	 * Released Version
 	 * 
-	 * @parameter expression="${releaseVersion}"
+	 * @parameter property="releaseVersion"
 	 *            default-value="${project.version}"
 	 * @required
 	 */
@@ -66,7 +66,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	/**
 	 * Target file
 	 * 
-	 * @parameter expression="${targetFile}"
+	 * @parameter property="targetFile"
 	 *            default-value="${outputDirectory}/releaseNotes.txt"
 	 * @required
 	 */
@@ -75,14 +75,14 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	/**
 	 * Text to be appended BEFORE all issues details.
 	 * 
-	 * @parameter expression="${beforeText}"
+	 * @parameter property="beforeText"
 	 */
 	String beforeText;
 
 	/**
 	 * Text to be appended AFTER all issues details.
 	 * 
-	 * @parameter expression="${afterText}"
+	 * @parameter property="afterText"
 	 */
 	String afterText;
 

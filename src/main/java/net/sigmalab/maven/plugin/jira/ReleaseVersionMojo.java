@@ -26,7 +26,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 	/**
 	 * Released Version
 	 * 
-	 * @parameter expression="${releaseVersion}"
+	 * @parameter property="releaseVersion"
 	 *            default-value="${project.version}"
 	 */
 	String releaseVersion;
@@ -34,7 +34,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 	/**
 	 * Auto Discover latest release and release it.
 	 * 
-	 * @parameter expression="${autoDiscoverLatestRelease}" default-value="true"
+	 * @parameter property="autoDiscoverLatestRelease" default-value="true"
 	 */
 	boolean autoDiscoverLatestRelease;
 
