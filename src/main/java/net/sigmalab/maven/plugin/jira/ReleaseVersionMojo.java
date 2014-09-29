@@ -1,8 +1,5 @@
-package com.george.plugins.jira;
+package net.sigmalab.maven.plugin.jira;
 
-import java.rmi.RemoteException;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -10,8 +7,6 @@ import java.util.List;
 import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.ProjectRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.input.VersionInput;

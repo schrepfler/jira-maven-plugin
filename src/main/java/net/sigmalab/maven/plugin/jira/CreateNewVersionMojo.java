@@ -1,4 +1,4 @@
-package com.george.plugins.jira;
+package net.sigmalab.maven.plugin.jira;
 
 import java.util.Comparator;
 
