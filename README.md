@@ -58,9 +58,9 @@ Add the following profile to be executed when released:
 	    <build>
 		    <plugins>
 			    <plugin>
-				    <groupId>com.george.app</groupId>
+				    <groupId>net.sigmalab.maven.plugins</groupId>
 				    <artifactId>jira-maven-plugin</artifactId>
-				    <version>1.2</version>
+				    <version>0.3</version>
 				    <inherited>false</inherited>
 				    <configuration>
 					    <!- <server> entry in settings.xml -->
@@ -87,9 +87,9 @@ Creates a new JIRA version of this project (without the -SNAPSHOT suffix)
 Place it on your pom.xml:
 
     <plugin>
-	    <groupId>com.george.app</groupId>
+	    <groupId>net.sigmalab.maven.plugins</groupId>
 	    <artifactId>jira-maven-plugin</artifactId>
-	    <version>1.2</version>
+	    <version>0.3</version>
 	    <inherited>false</inherited>
 	    <configuration>
 		    <!- <server> entry in settings.xml -->
