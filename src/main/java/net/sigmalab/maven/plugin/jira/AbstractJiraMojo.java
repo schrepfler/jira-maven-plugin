@@ -77,53 +77,6 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	protected boolean skip;
     protected User userClient;
 
-//    /**
-//	 * Returns the stub needed to invoke the WebService
-//	 *
-//	 * @return
-//	 * @throws MalformedURLException
-//	 * @throws ServiceException
-//	 */
-//	protected JiraSoapService getJiraSoapService() throws MalformedURLException, ServiceException {
-//		if (jiraRestClient == null) {
-//			JiraSoapServiceServiceLocator locator = new JiraSoapServiceServiceLocator();
-//			String url = discoverJiraWSURL();
-//			if (url == null)
-//				throw new MalformedURLException(
-//						"JIRA URL cound not be found. Check your pom.xml configuration.");
-//			URL u = new URL(url);
-//			jiraRestClient = locator.getJirasoapserviceV2(u);
-//		}
-//		return jiraRestClient;
-//	}
-
-//	/**
-//	 * Returns the formatted JIRA WebService URL
-//	 *
-//	 * @return JIRA Web Service URL
-//	 */
-//	String discoverJiraWSURL() {
-//		String url;
-//		if (jiraURL == null) {
-//			return null;
-//		}
-//		if (jiraURL.endsWith(JIRA_SOAP_SUFFIX)) {
-//			url = jiraURL;
-//		} else {
-//			int projectIdx = jiraURL.indexOf("/browse");
-//			if (projectIdx > -1) {
-//				int lastPath = jiraURL.indexOf("/", projectIdx + 8);
-//				if (lastPath == -1) {
-//					lastPath = jiraURL.length();
-//				}
-//				jiraProjectKey = jiraURL.substring(projectIdx + 8, lastPath);
-//				url = jiraURL.substring(0, projectIdx) + JIRA_SOAP_SUFFIX;
-//			} else {
-//				url = jiraURL + JIRA_SOAP_SUFFIX;
-//			}
-//		}
-//		return url;
-//	}
 
 	/**
 	 * Load username password from settings if user has not set them in JVM
@@ -170,7 +123,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 				doExecute();
 			} finally {
 				log.debug("Logging out from JIRA");
-				// TODO How to logout?
+				// TODO How to logout? Is it needed?
 				log.debug("Logged out from JIRA");
 			}
 		} catch (Exception e) {
