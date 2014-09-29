@@ -18,7 +18,7 @@ import com.atlassian.jira.rest.client.domain.input.VersionInput;
 import com.google.common.collect.Lists;
 
 /**
- * Goal that creates a version in a JIRA project . NOTE: SOAP access must be
+ * Goal that creates a version in a JIRA project . NOTE: API access must be
  * enabled in your JIRA installation. Check JIRA docs for more info.
  * 
  * @goal release-jira-version
@@ -52,17 +52,15 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 	Comparator<Version> versionComparator = new VersionComparator();
 
 	@Override
-	public void doExecute(JiraRestClient jiraRestClient) throws Exception {
+	public void doExecute() throws Exception {
 		Log log = getLog();
 		log.debug("Login for: " + jiraRestClient.getSessionClient().getCurrentSession().claim().getUsername());
 		Project project = jiraRestClient.getProjectClient().getProject(jiraProjectKey).claim();
 		Iterable<Version> versions = project.getVersions();
-		String thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions)
-				: releaseVersion;
+		String thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions):releaseVersion;
 		if (thisReleaseVersion != null) {
 			log.info("Releasing Version " + this.releaseVersion);
-			//markVersionAsReleased(projectRestClient, loginToken, versions,
-				//	thisReleaseVersion);
+			markVersionAsReleased(versions, thisReleaseVersion);
 		}
 	}
 
@@ -106,35 +104,24 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 		return versionExists;
 	}
 
-	/**
-	 * Release Version
-	 * 
-	 * @param log
-	 * @param jiraRestClient
-	 * @param loginToken
-	 * @throws RemoteException
-	 * @throws RemotePermissionException
-	 * @throws RemoteAuthenticationException
-	 * @throws com.atlassian.jira.rpc.soap.client.RemoteException
-	 */
-	Version markVersionAsReleased(JiraRestClient jiraRestClient, Iterable<Version> versions, String releaseVersion) {
+    /**
+     * Release version
+     * @param versions
+     * @param releaseVersion
+     * @return
+     */
+	private Version markVersionAsReleased(Iterable<Version> versions, String releaseVersion) {
 		Version ret = null;
 		if (versions != null) {
 			for (Version remoteReleasedVersion : versions) {
-				if (releaseVersion.equalsIgnoreCase(remoteReleasedVersion
-						.getName()) && !remoteReleasedVersion.isReleased()) {
-					// Mark as released
-					remoteReleasedVersion.setReleased(true);
-					remoteReleasedVersion.setReleaseDate(Calendar.getInstance());
-					jiraRestClient.getVersionRestClient().createVersion(new VersionInput(..., remoteReleasedVersion.getName(), remoteReleasedVersion.getDescription(), new DateTime(), remoteReleasedVersion.isArchived(), true));
-					
-					
-					releaseVersion(loginToken, jiraProjectKey,
-							remoteReleasedVersion);
-					getLog().info(
-							"Version " + remoteReleasedVersion.getName()
-									+ " was released in JIRA.");
-					ret = remoteReleasedVersion;
+				if (releaseVersion.equalsIgnoreCase(remoteReleasedVersion.getName()) && !remoteReleasedVersion.isReleased()) {
+
+                    VersionInput updateVersionInput = VersionInput.create(jiraProjectKey, remoteReleasedVersion.getName(), remoteReleasedVersion.getDescription(), new DateTime(), false, true);
+
+					Version updatedVersion = jiraRestClient.getVersionRestClient().updateVersion(remoteReleasedVersion.getSelf(), updateVersionInput).claim();
+
+					getLog().info("Version " + remoteReleasedVersion.getName() + " was released in JIRA.");
+					ret = updatedVersion;
 					break;
 				}
 			}
