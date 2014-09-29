@@ -25,14 +25,14 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 public abstract class AbstractJiraMojo extends AbstractMojo {
 
 	/**
-	 * @parameter expression="${settings}"
+	 * @parameter property="settings"
 	 */
 	Settings settings;
 
 	/**
 	 * Server's id in settings.xml to look up username and password.
 	 * 
-	 * @parameter expression="${settingsKey}"
+	 * @parameter property="settingsKey"
 	 */
 	private String settingsKey;
 
@@ -40,7 +40,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	 * JIRA Installation URL. If not informed, it will use the
 	 * project.issueManagement.url info.
 	 * 
-	 * @parameter expression="${jiraURL}"
+	 * @parameter property="jiraURL"
 	 *            default-value="${project.issueManagement.url}"
 	 * @required
 	 */
@@ -49,21 +49,21 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	/**
 	 * JIRA Authentication User.
 	 * 
-	 * @parameter expression="${jiraUser}" default-value="${scmUsername}"
+	 * @parameter property="jiraUser" default-value="${scmUsername}"
 	 */
 	protected String jiraUser;
 
 	/**
 	 * JIRA Authentication Password.
 	 * 
-	 * @parameter expression="${jiraPassword}" default-value="${scmPassword}"
+	 * @parameter property="jiraPassword" default-value="${scmPassword}"
 	 */
 	protected String jiraPassword;
 
 	/**
 	 * JIRA Project Key.
 	 * 
-	 * @parameter expression="${jiraProjectKey}"
+	 * @parameter property="jiraProjectKey"
 	 */
 	protected String jiraProjectKey;
 
@@ -72,7 +72,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	/**
 	 * Returns if this plugin is enabled for this context
 	 * 
-	 * @parameter expression="${skip}"
+	 * @parameter property="skip"
 	 */
 	protected boolean skip;
     protected User userClient;

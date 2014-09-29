@@ -26,7 +26,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
 	/**
 	 * Next Development Version
 	 * 
-	 * @parameter expression="${developmentVersion}"
+	 * @parameter property="developmentVersion"
 	 *            default-value="${project.version}"
 	 * @required
 	 */
@@ -40,7 +40,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
 	/**
 	 * Whether the final name is to be used for the version; defaults to false.
 	 * 
-	 * @parameter expression="${finalNameUsedForVersion}"
+	 * @parameter property="finalNameUsedForVersion"
 	 */
 	boolean finalNameUsedForVersion;
 
