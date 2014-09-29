@@ -1,13 +1,17 @@
 Maven JIRA Plugin
 =================
 
-The initial code and older versions were originally placed in http://code.google.com/p/jira-maven-plugins/.
+This plugins is a fork of George Gastaldi's jira-maven-plugin available here: https://github.com/gastaldi/jira-maven-plugin
+The internals of it were changed so that it uses the JIRA REST API rather the SOAP one which is going to be deprecated.
+To do so we're going to use the Atlassian jira-rest-client library. 
 
 This Maven plugin allows performing of JIRA common actions, like releasing a version, create a new version and generate the release notes:
 
-NOTE: This plugin is not installed in any Maven repository, so you must build and install locally before using it.
 
-To build the plugin: 
+Development
+===================
+
+To build and install locally:
 
     mvn clean install
     
@@ -38,7 +42,7 @@ Put the following in the settings.xml file:
     </servers>
 
 
-Also, make sure your JIRA has SOAP access enabled.
+Also, make sure your JIRA has REST API access enabled.
 
 
 release-jira-version goal
