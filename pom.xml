@@ -31,6 +31,7 @@
         <versions.maven.plugin.version>2.1</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
         <jgitflow.maven.plugin.version>1.0-m4.3</jgitflow.maven.plugin.version>
+        <nexus.staging.maven.plugin.version>1.6.4</nexus.staging.maven.plugin.version>
         <easymock.version>3.2</easymock.version>
         <junit.version>4.11</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -108,8 +109,13 @@
 	</developers>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
+            <id>ossrh</id>
             <name>Nexus Staging Repository</name>
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
@@ -192,6 +198,17 @@
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
                 <version>${jgitflow.maven.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus.staging.maven.plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
 		</plugins>
 	</build>
