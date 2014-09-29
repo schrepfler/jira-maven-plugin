@@ -1,11 +1,8 @@
 package com.george.plugins.jira;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
-import javax.xml.rpc.ServiceException;
-
+import com.atlassian.jira.rest.client.domain.User;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -17,21 +14,15 @@ import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-import com.atlassian.jira.rpc.soap.client.JiraSoapService;
-import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 
 /**
- * This class allows the use of {@link JiraSoapService} in JIRA Actions
+ * This class allows the use of {@link JiraRestClient} in JIRA Actions
  * 
  * @author george
+ * @author schrepfler
  * 
  */
 public abstract class AbstractJiraMojo extends AbstractMojo {
-
-	/**
-	 * This is the JIRA SOAP Suffix for accessing the webservice
-	 */
-	protected static final String JIRA_SOAP_SUFFIX = "/rpc/soap/jirasoapservice-v2";
 
 	/**
 	 * @parameter expression="${settings}"
@@ -84,55 +75,55 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	 * @parameter expression="${skip}"
 	 */
 	protected boolean skip;
+    protected User userClient;
 
-	/**
-	 * Returns the stub needed to invoke the WebService
-	 * 
-	 * @return
-	 * @throws MalformedURLException
-	 * @throws ServiceException
-	 */
-	protected JiraSoapService getJiraSoapService()
-			throws MalformedURLException, ServiceException {
-		if (jiraRestClient == null) {
-			JiraSoapServiceServiceLocator locator = new JiraSoapServiceServiceLocator();
-			String url = discoverJiraWSURL();
-			if (url == null)
-				throw new MalformedURLException(
-						"JIRA URL cound not be found. Check your pom.xml configuration.");
-			URL u = new URL(url);
-			jiraRestClient = locator.getJirasoapserviceV2(u);
-		}
-		return jiraRestClient;
-	}
+//    /**
+//	 * Returns the stub needed to invoke the WebService
+//	 *
+//	 * @return
+//	 * @throws MalformedURLException
+//	 * @throws ServiceException
+//	 */
+//	protected JiraSoapService getJiraSoapService() throws MalformedURLException, ServiceException {
+//		if (jiraRestClient == null) {
+//			JiraSoapServiceServiceLocator locator = new JiraSoapServiceServiceLocator();
+//			String url = discoverJiraWSURL();
+//			if (url == null)
+//				throw new MalformedURLException(
+//						"JIRA URL cound not be found. Check your pom.xml configuration.");
+//			URL u = new URL(url);
+//			jiraRestClient = locator.getJirasoapserviceV2(u);
+//		}
+//		return jiraRestClient;
+//	}
 
-	/**
-	 * Returns the formatted JIRA WebService URL
-	 * 
-	 * @return JIRA Web Service URL
-	 */
-	String discoverJiraWSURL() {
-		String url;
-		if (jiraURL == null) {
-			return null;
-		}
-		if (jiraURL.endsWith(JIRA_SOAP_SUFFIX)) {
-			url = jiraURL;
-		} else {
-			int projectIdx = jiraURL.indexOf("/browse");
-			if (projectIdx > -1) {
-				int lastPath = jiraURL.indexOf("/", projectIdx + 8);
-				if (lastPath == -1) {
-					lastPath = jiraURL.length();
-				}
-				jiraProjectKey = jiraURL.substring(projectIdx + 8, lastPath);
-				url = jiraURL.substring(0, projectIdx) + JIRA_SOAP_SUFFIX;
-			} else {
-				url = jiraURL + JIRA_SOAP_SUFFIX;
-			}
-		}
-		return url;
-	}
+//	/**
+//	 * Returns the formatted JIRA WebService URL
+//	 *
+//	 * @return JIRA Web Service URL
+//	 */
+//	String discoverJiraWSURL() {
+//		String url;
+//		if (jiraURL == null) {
+//			return null;
+//		}
+//		if (jiraURL.endsWith(JIRA_SOAP_SUFFIX)) {
+//			url = jiraURL;
+//		} else {
+//			int projectIdx = jiraURL.indexOf("/browse");
+//			if (projectIdx > -1) {
+//				int lastPath = jiraURL.indexOf("/", projectIdx + 8);
+//				if (lastPath == -1) {
+//					lastPath = jiraURL.length();
+//				}
+//				jiraProjectKey = jiraURL.substring(projectIdx + 8, lastPath);
+//				url = jiraURL.substring(0, projectIdx) + JIRA_SOAP_SUFFIX;
+//			} else {
+//				url = jiraURL + JIRA_SOAP_SUFFIX;
+//			}
+//		}
+//		return url;
+//	}
 
 	/**
 	 * Load username password from settings if user has not set them in JVM
@@ -158,8 +149,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	}
 
 	@Override
-	public final void execute() throws MojoExecutionException,
-			MojoFailureException {
+	public final void execute() throws MojoExecutionException, MojoFailureException {
 		Log log = getLog();
 		if (isSkip()) {
 			log.info("Skipping Plugin execution.");
@@ -173,14 +163,14 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 			JiraRestClient jiraRestClient = jiraRestClientFactory.create(URI.create(jiraURL), new BasicHttpAuthenticationHandler(jiraUser, jiraPassword));
 
 			log.debug("Logging in JIRA");
-			jiraRestClient.getUserClient().getUser(jiraUser).claim();
+			userClient = jiraRestClient.getUserClient().getUser(jiraUser).claim();
 			log.debug("Logged in JIRA");
 			
 			try {
-				doExecute(jiraRestClient, loginToken);
+				doExecute();
 			} finally {
 				log.debug("Logging out from JIRA");
-				jiraRestClient.logout(loginToken);
+				// TODO How to logout?
 				log.debug("Logged out from JIRA");
 			}
 		} catch (Exception e) {
@@ -189,7 +179,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 		}
 	}
 
-	public abstract void doExecute(JiraRestClient jiraRestClient) throws Exception;
+	public abstract void doExecute() throws Exception;
 
 	public boolean isSkip() {
 		return skip;
