@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin)
+[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin) [![Stories in Ready](https://badge.waffle.io/schrepfler/jira-maven-plugin.png?label=ready&title=Ready)](http://waffle.io/schrepfler/jira-maven-plugin)
 
 Maven JIRA Plugin
 =================
