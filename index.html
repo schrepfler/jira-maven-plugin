@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Jira-maven-plugin : Set of maven plugins for JIRA integration ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Jira-maven-plugin</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/schrepfler/jira-maven-plugin">View on GitHub</a>
+
+          <h1 id="project_title">Jira-maven-plugin</h1>
+          <h2 id="project_tagline">Set of maven plugins for JIRA integration </h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/schrepfler/jira-maven-plugin/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/schrepfler/jira-maven-plugin/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><a href="https://travis-ci.org/schrepfler/jira-maven-plugin"><img src="https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop" alt="Build Status"></a> <a href="http://waffle.io/schrepfler/jira-maven-plugin"><img src="https://badge.waffle.io/schrepfler/jira-maven-plugin.png?label=ready&amp;title=Ready" alt="Stories in Ready"></a></p>
+
+<h1>
+<a id="maven-jira-plugin" class="anchor" href="#maven-jira-plugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maven JIRA Plugin</h1>
+
+<p>This plugins is a fork of George Gastaldi's jira-maven-plugin available here: <a href="https://github.com/gastaldi/jira-maven-plugin">https://github.com/gastaldi/jira-maven-plugin</a></p>
+
+<p>The internals of it were changed so that it uses the JIRA REST API rather the SOAP one which is going to be deprecated.</p>
+
+<p>To do so, we are going to use the Atlassian jira-rest-client library. </p>
+
+<p>This Maven plugin allows performing of JIRA common actions, like releasing a version, create a new version and generate the release notes:</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>Before you start using this plugin, you must have two configurations already set on your pom.xml:</p>
+
+<h1>
+<a id="issuemanagement-tag" class="anchor" href="#issuemanagement-tag" aria-hidden="true"><span class="octicon octicon-link"></span></a>issueManagement tag</h1>
+
+<pre><code>    &lt;issueManagement&gt;
+       &lt;system&gt;JIRA&lt;/system&gt;
+       &lt;url&gt;http://www.myjira.com/jira/browse/PROJECTKEY&lt;/url&gt;
+    &lt;/issueManagement&gt;
+</code></pre>
+
+<p>Note: This is extremely important, as will use this information to connect on JIRA.</p>
+
+<h1>
+<a id="-entry-in-settingsxml-with-the-authentication-information" class="anchor" href="#-entry-in-settingsxml-with-the-authentication-information" aria-hidden="true"><span class="octicon octicon-link"></span></a> entry in settings.xml with the authentication information</h1>
+
+<p>Put the following in the settings.xml file: </p>
+
+<pre><code>&lt;servers&gt;
+    &lt;server&gt;
+        &lt;id&gt;jira&lt;/id&gt;
+        &lt;username&gt;your_user&lt;/username&gt;
+        &lt;password&gt;your_password&lt;/password&gt;
+    &lt;/server&gt;
+&lt;/servers&gt;
+</code></pre>
+
+<p>Also, make sure your JIRA has REST API access enabled.</p>
+
+<h1>
+<a id="release-jira-version-goal" class="anchor" href="#release-jira-version-goal" aria-hidden="true"><span class="octicon octicon-link"></span></a>release-jira-version goal</h1>
+
+<p>Add the following profile to be executed when released:</p>
+
+<pre><code>&lt;profile&gt;
+    &lt;id&gt;release&lt;/id&gt;
+    &lt;activation&gt;
+        &lt;property&gt;
+            &lt;name&gt;performRelease&lt;/name&gt;
+            &lt;value&gt;true&lt;/value&gt;
+        &lt;/property&gt;
+    &lt;/activation&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;net.sigmalab.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;jira-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;0.3&lt;/version&gt;
+                &lt;inherited&gt;false&lt;/inherited&gt;
+                &lt;configuration&gt;
+                    &lt;!- &lt;server&gt; entry in settings.xml --&gt;
+                    &lt;settingsKey&gt;jira&lt;/settingsKey&gt;
+                &lt;/configuration&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;phase&gt;deploy&lt;/phase&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;release-jira-version&lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/profile&gt;
+</code></pre>
+
+<h1>
+<a id="create-new-version" class="anchor" href="#create-new-version" aria-hidden="true"><span class="octicon octicon-link"></span></a>create-new-version</h1>
+
+<p>Creates a new JIRA version of this project (without the -SNAPSHOT suffix)</p>
+
+<p>Place it on your pom.xml:</p>
+
+<pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;net.sigmalab.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;jira-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.3&lt;/version&gt;
+    &lt;inherited&gt;false&lt;/inherited&gt;
+    &lt;configuration&gt;
+        &lt;!- &lt;server&gt; entry in settings.xml --&gt;
+        &lt;settingsKey&gt;jira&lt;/settingsKey&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;deploy&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;create-new-jira-version&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre>
+
+<h1>
+<a id="development" class="anchor" href="#development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Development</h1>
+
+<p>To build and install locally:</p>
+
+<pre><code>mvn clean install
+</code></pre>
+
+<h1>
+<a id="release-to-sonatype-oss-maven-repository" class="anchor" href="#release-to-sonatype-oss-maven-repository" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release to Sonatype OSS maven repository</h1>
+
+<p>Setup your ~/.m2/settings.xml to contain the credentials for deployment to Sonatype OSS</p>
+
+<pre><code>mvn jgitflow:release-start
+pray
+mvn jgitflow:release-finish
+pray some more
+</code></pre>
+
+<h1>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h1>
+
+<ul>
+<li>Block release if all issues with fixVersion of the release version are not Closed/Resolved.</li>
+<li>Generate release reports mojo</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Jira-maven-plugin maintained by <a href="https://github.com/schrepfler">schrepfler</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-129345-8");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
