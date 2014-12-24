@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin)
+
 Maven JIRA Plugin
 =================
 
