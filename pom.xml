@@ -24,16 +24,16 @@
 
     <properties>
         <maven.plugin.testing.harness.version>3.2.0</maven.plugin.testing.harness.version>
-        <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-		<maven.version>3.2.3</maven.version>
+        <maven.compiler.plugin.version>3.2</maven.compiler.plugin.version>
+		<maven.version>3.2.5</maven.version>
         <maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
-        <license.maven.plugin.version>1.7</license.maven.plugin.version>
+        <license.maven.plugin.version>1.8</license.maven.plugin.version>
         <versions.maven.plugin.version>2.1</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
         <jgitflow.maven.plugin.version>1.0-m4.3</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.4</nexus.staging.maven.plugin.version>
-        <easymock.version>3.2</easymock.version>
-        <junit.version>4.11</junit.version>
+        <easymock.version>3.3</easymock.version>
+        <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -81,7 +81,7 @@
     </organization>
 
     <prerequisites>
-		<maven>2.2.1</maven>
+		<maven>3.0.4</maven>
 	</prerequisites>
 
     <developers>
