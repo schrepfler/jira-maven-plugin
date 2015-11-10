@@ -7,13 +7,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
+
+import com.atlassian.jira.rest.client.IssueRestClient;
+import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
 import com.atlassian.jira.rest.client.domain.Issue;
-import com.atlassian.jira.rest.client.domain.SearchResult;
-import org.apache.maven.plugin.logging.Log;
+import com.google.common.collect.Iterables;
 
 /**
  * Goal that generates release notes based on a version in a JIRA project.
@@ -25,40 +26,42 @@ import org.apache.maven.plugin.logging.Log;
  * @phase deploy
  * 
  * @author George Gastaldi
+ * @author dgrierso
  */
 public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
+    final Log log = getLog();
 
 	/**
 	 * JQL Template to generate release notes. Parameter 0 = Project Key
 	 * Parameter 1 = Fix version
 	 * 
-	 * @parameter property="jqlTemplate"
-	 * @required
+	 * @parameter default-value=
+     *            "project = ''{0}'' AND status in (Resolved, Closed) AND fixVersion = ''{1}''"
+     * @required
 	 */
-	String jqlTemplate = "project = ''{0}'' AND status in (Resolved, Closed) AND fixVersion = ''{1}''";
+	String jqlTemplate;
 
 	/**
 	 * Template used on each issue found by JQL Template. Parameter 0 = Issue
 	 * Key Parameter 1 = Issue Summary
 	 * 
-	 * @parameter property="issueTemplate"
-	 * @required
+	 * @parameter default-value="[{0}] {1}"
+     * @required
 	 */
-	String issueTemplate = "[{0}] {1}";
+	String issueTemplate;
 
 	/**
 	 * Max number of issues to return
 	 * 
-	 * @parameter property="maxIssues" default-value="100"
+	 * @parameter default-value="100"
 	 * @required
 	 */
-	int maxIssues = 100;
+	int maxIssues;
 
 	/**
 	 * Released Version
 	 * 
-	 * @parameter property="releaseVersion"
-	 *            default-value="${project.version}"
+	 * @parameter default-value="${project.version}"
 	 * @required
 	 */
 	String releaseVersion;
@@ -66,8 +69,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	/**
 	 * Target file
 	 * 
-	 * @parameter property="targetFile"
-	 *            default-value="${outputDirectory}/releaseNotes.txt"
+	 * @parameter default-value="${project.build.directory}/releaseNotes.txt"
 	 * @required
 	 */
 	File targetFile;
@@ -75,50 +77,34 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	/**
 	 * Text to be appended BEFORE all issues details.
 	 * 
-	 * @parameter property="beforeText"
+	 * @parameter
 	 */
 	String beforeText;
 
 	/**
 	 * Text to be appended AFTER all issues details.
 	 * 
-	 * @parameter property="afterText"
+	 * @parameter
 	 */
 	String afterText;
 
 	@Override
-	public void doExecute() throws Exception {
-        Iterable<Issue> issues = getIssues();
-		output(issues);
+	public void doExecute(JiraRestClient jiraRestClient) throws Exception {
+        Iterable<BasicIssue> issues = getIssues(jiraRestClient);
+        log.info("Found " + Iterables.size(issues) + " issues.");
+
+		output(jiraRestClient, issues);
 	}
 
 	/**
 	 * Recover issues from JIRA based on JQL Filter
      */
 
-	Iterable<Issue> getIssues() {
-
-
-		Log log = getLog();
+	Iterable<BasicIssue> getIssues(JiraRestClient restClient) {
 		String jql = format(jqlTemplate, jiraProjectKey, releaseVersion);
-		if (log.isInfoEnabled()) {
-			log.info("JQL: " + jql);
-		}
-
-        SearchResult searchResult = jiraRestClient.getSearchClient().searchJql(jql).claim();
-        List<Issue> issues = new ArrayList<>(searchResult.getTotal());
-
-        if (log.isInfoEnabled()) {
-			log.info("Issues: " + searchResult.getTotal());
-		}
-
-
-        for (BasicIssue basicIssue : searchResult.getIssues()) {
-            issues.add(jiraRestClient.getIssueClient().getIssue(basicIssue.getKey()).claim());
-        }
-
-
-        return issues;
+		log.info("JQL: " + jql);
+		
+        return restClient.getSearchClient().searchJql(jql, maxIssues, 0).claim().getIssues();
 	}
 
 	/**
@@ -126,27 +112,35 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 	 * 
 	 * @param issues
 	 */
-	void output(Iterable<Issue> issues) throws IOException {
-		Log log = getLog();
-		if (targetFile == null) {
+	void output(JiraRestClient restClient, Iterable<BasicIssue> issues) throws IOException {
+        IssueRestClient issueClient = restClient.getIssueClient();
+
+        if (targetFile == null) {
 			log.warn("No targetFile specified. Ignoring");
 			return;
 		}
+        
 		if (issues == null) {
 			log.warn("No issues found. File will not be generated.");
 			return;
 		}
+		
 		OutputStreamWriter writer = new OutputStreamWriter(
 				new FileOutputStream(targetFile, true), "UTF8");
 		PrintWriter ps = new PrintWriter(writer);
+		
 		try {
 			if (beforeText != null) {
 				ps.println(beforeText);
 			}
-			for (Issue issue : issues) {
-				String issueDesc = format(issueTemplate, issue.getKey(), issue.getDescription());
-				ps.println(issueDesc);
-			}
+			
+			for ( BasicIssue basicIssue : issues ) {
+                Issue fullIssue = issueClient.getIssue(basicIssue.getKey()).claim();
+                String issueDesc = format(issueTemplate, basicIssue.getKey(), fullIssue.getSummary());
+
+                ps.println(issueDesc);
+            }
+			
 			if (afterText != null) {
 				ps.println(afterText);
 			}
@@ -154,25 +148,5 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 			ps.flush();
 			ps.close();
 		}
-	}
-
-	public void setAfterText(String afterText) {
-		this.afterText = afterText;
-	}
-
-	public void setBeforeText(String beforeText) {
-		this.beforeText = beforeText;
-	}
-
-	public void setReleaseVersion(String releaseVersion) {
-		this.releaseVersion = releaseVersion;
-	}
-
-	public void setIssueTemplate(String issueTemplate) {
-		this.issueTemplate = issueTemplate;
-	}
-
-	public void setJqlTemplate(String jqlTemplate) {
-		this.jqlTemplate = jqlTemplate;
 	}
 }

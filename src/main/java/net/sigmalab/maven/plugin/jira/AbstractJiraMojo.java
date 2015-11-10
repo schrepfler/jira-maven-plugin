@@ -2,17 +2,17 @@ package net.sigmalab.maven.plugin.jira;
 
 import java.net.URI;
 
-import com.atlassian.jira.rest.client.domain.User;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.JiraRestClientFactory;
-import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 
 /**
@@ -20,19 +20,26 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
  * 
  * @author george
  * @author schrepfler
+ * @author dgrierso
  * 
  */
 public abstract class AbstractJiraMojo extends AbstractMojo {
 
 	/**
-	 * @parameter property="settings"
+     * @parameter default-value = "${settings}", readonly = true
 	 */
 	Settings settings;
 
 	/**
+     * @component role-hint="mng-4384"
+     * @required
+     */
+    private SecDispatcher securityDispatcher;
+    
+    /**
 	 * Server's id in settings.xml to look up username and password.
 	 * 
-	 * @parameter property="settingsKey"
+     * @parameter
 	 */
 	private String settingsKey;
 
@@ -40,8 +47,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	 * JIRA Installation URL. If not informed, it will use the
 	 * project.issueManagement.url info.
 	 * 
-	 * @parameter property="jiraURL"
-	 *            default-value="${project.issueManagement.url}"
+	 * @parameter default-value="${project.issueManagement.url}"
 	 * @required
 	 */
 	protected String jiraURL;
@@ -49,25 +55,23 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	/**
 	 * JIRA Authentication User.
 	 * 
-	 * @parameter property="jiraUser" default-value="${scmUsername}"
+	 * @parameter default-value="${scmUsername}"
 	 */
 	protected String jiraUser;
 
 	/**
 	 * JIRA Authentication Password.
 	 * 
-	 * @parameter property="jiraPassword" default-value="${scmPassword}"
+	 * @parameter default-value="${scmPassword}"
 	 */
 	protected String jiraPassword;
 
 	/**
 	 * JIRA Project Key.
 	 * 
-	 * @parameter property="jiraProjectKey"
+	 * @parameter
 	 */
 	protected String jiraProjectKey;
-
-	transient JiraRestClient jiraRestClient;
 
 	/**
 	 * Returns if this plugin is enabled for this context
@@ -75,9 +79,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 	 * @parameter property="skip"
 	 */
 	protected boolean skip;
-    protected User userClient;
-
-
+	
 	/**
 	 * Load username password from settings if user has not set them in JVM
 	 * properties
@@ -86,6 +88,16 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 		if (settingsKey == null) {
 			settingsKey = jiraURL;
 		}
+		
+		/*
+         * If we haven't been supplied with a <jiraProjectKey> configuration parameter
+         * then use the settingsKey parameter to figure out the key for the project.
+         */
+        if ( jiraProjectKey == null ) {
+            jiraProjectKey = jiraURL.substring(jiraURL.lastIndexOf("browse/") + 7);
+            jiraProjectKey = jiraProjectKey.replaceAll("/", "");
+        }
+        
 		if ((jiraUser == null || jiraPassword == null) && (settings != null)) {
 			Server server = settings.getServer(this.settingsKey);
 
@@ -95,7 +107,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 				}
 
 				if (jiraPassword == null) {
-					jiraPassword = server.getPassword();
+				    jiraPassword = decrypt(server.getPassword(), settingsKey);
 				}
 			}
 		}
@@ -109,22 +121,22 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 			return;
 		}
 		try {
-			
-			loadUserInfoFromSettings();
-			
-			JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
-			JiraRestClient jiraRestClient = jiraRestClientFactory.create(URI.create(jiraURL), new BasicHttpAuthenticationHandler(jiraUser, jiraPassword));
+            final JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
 
-			log.debug("Logging in JIRA");
-			userClient = jiraRestClient.getUserClient().getUser(jiraUser).claim();
-			log.debug("Logged in JIRA");
-			
+			loadUserInfoFromSettings();
+            log.debug("JIRA URL    == [" + jiraURL + "]");
+            log.debug("JIRA user   == [" + jiraUser + "]");
+            log.debug("Project key == [" + jiraProjectKey + "]");
+            
+            JiraRestClient jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(URI.create(jiraURL), jiraUser, jiraPassword);
+
 			try {
-				doExecute();
+	            log.info("Starting execute ...");
+
+				doExecute(jiraRestClient);
 			} finally {
-				log.debug("Logging out from JIRA");
+                log.debug("All done!");
 				// TODO How to logout? Is it needed?
-				log.debug("Logged out from JIRA");
 			}
 		} catch (Exception e) {
 			log.error("Error when executing mojo", e);
@@ -132,9 +144,19 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 		}
 	}
 
-	public abstract void doExecute() throws Exception;
+	public abstract void doExecute(JiraRestClient restClient) throws Exception;
 
-	public boolean isSkip() {
+    private String decrypt(String str, String server) {
+        try {
+            return securityDispatcher.decrypt( str );
+        }
+        catch ( SecDispatcherException e ) {
+            getLog().warn( "Failed to decrypt password/passphrase for server " + server + ", using auth token as is" );
+            return str;
+        }
+    }
+    
+    public boolean isSkip() {
 		return skip;
 	}
 

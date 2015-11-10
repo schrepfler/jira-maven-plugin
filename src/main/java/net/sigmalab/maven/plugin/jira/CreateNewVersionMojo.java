@@ -1,15 +1,12 @@
 package net.sigmalab.maven.plugin.jira;
 
-import java.util.Comparator;
+import org.apache.maven.plugin.logging.Log;
 
+import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.VersionRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.input.VersionInput;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
-
-import org.joda.time.DateTime;
 
 /**
  * Goal that creates a version in a JIRA project . NOTE: REST API access must be
@@ -20,14 +17,14 @@ import org.joda.time.DateTime;
  * 
  * @author George Gastaldi
  * @author Srdan Srepfler
+ * @author dgrierso
  */
 public class CreateNewVersionMojo extends AbstractJiraMojo {
 
 	/**
 	 * Next Development Version
 	 * 
-	 * @parameter property="developmentVersion"
-	 *            default-value="${project.version}"
+	 * @parameter default-value="${project.version}"
 	 * @required
 	 */
 	String developmentVersion;
@@ -40,39 +37,39 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
 	/**
 	 * Whether the final name is to be used for the version; defaults to false.
 	 * 
-	 * @parameter property="finalNameUsedForVersion"
+	 * @parameter
 	 */
 	boolean finalNameUsedForVersion;
 
-
+	/**
+     * @parameter default-value="${project.name}"
+     */
+    private String versionDescription;
+    
+    
     @Override
-    public void doExecute(){
+    public void doExecute(JiraRestClient restClient){
         Log log = getLog();
-        Project project = jiraRestClient.getProjectClient().getProject(jiraProjectKey).claim();
-        VersionRestClient versionRestClient = jiraRestClient.getVersionRestClient();
+        
+        String newVersionName = computeVersionName();
+        log.debug(String.format("Name of version to be created == [%s]", newVersionName));
+
+        // Get a list of the existing versions in the project. 
+        Project project = restClient.getProjectClient().getProject(jiraProjectKey).claim();
+        VersionRestClient versionRestClient = restClient.getVersionRestClient();
 
         Iterable<Version> projectVersions = project.getVersions();
-
-        String newDevVersion;
-        if (finalNameUsedForVersion) {
-            newDevVersion = finalName;
-        } else {
-            newDevVersion = developmentVersion;
+        
+        if ( versionAlreadyExists(projectVersions, newVersionName) ) {
+            log.warn(String.format("Version %s already exists. Nothing to do.", newVersionName));
+            return;
         }
-
-        newDevVersion = StringUtils.capitaliseAllWords(newDevVersion.replace("-SNAPSHOT", "").replace("-", " "));
-        boolean versionExists = isVersionAlreadyPresent(projectVersions, newDevVersion);
-        if (!versionExists){
-            log.debug("New Development version in JIRA is: " + newDevVersion);
-            VersionInput newVersionInput = VersionInput.create(jiraProjectKey, newDevVersion, null, new DateTime(), false, false);
-            Version createdNewVersion = versionRestClient.createVersion(newVersionInput).claim();
-            log.info("Version created in JIRA for project key "
-					+ jiraProjectKey + " : " + createdNewVersion);
-
-            // TODO handle version already created in JIRA, nothing to do.
-            // Example of usage https://bitbucket.org/atlassian/jira-rest-java-client/src/454723e7ffb54c1a10a1be5f64e9d052566d8496/test/src/test/java/it/AsynchronousVersionRestClientTest.java?at=master
-        }
-
+        
+        VersionInput newVersion = VersionInput.create(jiraProjectKey, newVersionName, versionDescription, null, false, false);
+        log.debug(String.format("New version description: [%s]", newVersion.getDescription()));
+    
+        versionRestClient.createVersion(newVersion);
+        log.info(String.format("Version created in JIRA for project key [%s] : %s", jiraProjectKey, newVersion.getName()));
     }
 
 	/**
@@ -82,18 +79,28 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
 	 * @param newDevVersion
 	 * @return
 	 */
-	boolean isVersionAlreadyPresent(Iterable<Version> remoteVersions, String newDevVersion) {
-		boolean versionExists = false;
+	boolean versionAlreadyExists(Iterable<Version> remoteVersions, String newDevVersion) {
 		if (remoteVersions != null) {
-			// Creating new Version (if not already created)
 			for (Version remoteVersion : remoteVersions) {
 				if (remoteVersion.getName().equalsIgnoreCase(newDevVersion)) {
-					versionExists = true;
-					break;
+                    return true;
 				}
 			}
 		}
-		// existant
-		return versionExists;
+		return false;
 	}
+	
+	/**
+     * Compute the name of the version to be created based upon the settings provided.
+     * 
+     * @return
+     */
+    private String computeVersionName() {
+        String name = ( finalNameUsedForVersion == false ? developmentVersion : finalName );
+                
+        // Remove the -SNAPSHOT suffix from the version name
+        name = name.replace("-SNAPSHOT", "");
+        
+        return name;
+    }
 }

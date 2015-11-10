@@ -1,16 +1,13 @@
 package net.sigmalab.maven.plugin.jira;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
-import com.atlassian.jira.rest.client.domain.Project;
+import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.domain.Version;
-import com.atlassian.jira.rest.client.domain.input.VersionInput;
-import com.google.common.collect.Lists;
+import com.atlassian.jira.rest.client.domain.input.VersionInputBuilder;
 
 /**
  * Goal that creates a version in a JIRA project . NOTE: API access must be
@@ -20,62 +17,88 @@ import com.google.common.collect.Lists;
  * @phase deploy
  * 
  * @author George Gastaldi
+ * @author dgrierso
  */
 public class ReleaseVersionMojo extends AbstractJiraMojo {
+    private final Log log = getLog();
 
 	/**
 	 * Released Version
 	 * 
-	 * @parameter property="releaseVersion"
-	 *            default-value="${project.version}"
+	 * @parameter default-value="${project.version}"
 	 */
 	String releaseVersion;
 
 	/**
 	 * Auto Discover latest release and release it.
 	 * 
-	 * @parameter property="autoDiscoverLatestRelease" default-value="true"
+     * @parameter default-value="true"
 	 */
 	boolean autoDiscoverLatestRelease;
 
 	/**
 	 * Comparator for discovering the latest release
 	 * 
-	 * @parameter 
-	 *            implementation="com.george.plugins.jira.RemoteVersionComparator"
+	 * @parameter implementation="com.github.gastaldi.jira.VersionComparator"
 	 */
 	Comparator<Version> versionComparator = new VersionComparator();
 
 	@Override
-	public void doExecute() throws Exception {
-		Log log = getLog();
-		log.debug("Login for: " + jiraRestClient.getSessionClient().getCurrentSession().claim().getUsername());
-		Project project = jiraRestClient.getProjectClient().getProject(jiraProjectKey).claim();
-		Iterable<Version> versions = project.getVersions();
-		String thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions):releaseVersion;
-		if (thisReleaseVersion != null) {
-			log.info("Releasing Version " + this.releaseVersion);
-			markVersionAsReleased(versions, thisReleaseVersion);
-		}
+	public void doExecute(JiraRestClient jiraRestClient) throws Exception {
+	    Iterable<Version> versions = getProjectVersions(jiraRestClient);
+        Version thisReleaseVersion = ( autoDiscoverLatestRelease ) ?
+                                        calculateLatestReleaseVersion(versions) : getVersion(jiraRestClient, releaseVersion);
+        
+        if ( thisReleaseVersion != null ) {
+            log.info("Releasing Version " + this.releaseVersion);
+            
+            markVersionAsReleased(jiraRestClient, thisReleaseVersion);
+         }
 	}
 
 	/**
-	 * Returns the latest unreleased version
-	 * 
-	 * @param versions
-	 * @return
-	 */
-	String calculateLatestReleaseVersion(Iterable<Version> versions) {
-		List<Version> versionsList = Lists.newArrayList(versions);
-		Collections.sort(versionsList, versionComparator);
+     * 
+     * @param restClient
+     * @param versionString
+     * @return
+     */
+    private Version getVersion(JiraRestClient restClient, String versionString) {
+        Iterable<Version> versions = getProjectVersions(restClient);
+        
+        if ( versions != null ) {
+            for ( Version version : versions ) {
+                if ( version.getName().equalsIgnoreCase(versionString) ) {
+                    return version;
+                }
+            }
+        }
+        
+        return null;
+    }
 
-		for (Version remoteVersion : versions) {
-			if (!remoteVersion.isReleased())
-				return remoteVersion.getName();
-		}
-
-		return null;
-	}
+    /**
+     * 
+     * @param restClient
+     * @return
+     */
+    private Iterable<Version> getProjectVersions(JiraRestClient restClient) {
+        return restClient.getProjectClient().getProject(jiraProjectKey).claim().getVersions();
+    }
+    
+    /**
+     * Returns the latest unreleased version
+     * 
+     * @param versions
+     * @return
+     */
+    Version calculateLatestReleaseVersion(Iterable<Version> versions) {
+        for (Version version : versions) {
+            if ( version.isReleased() != true )
+                return version;
+        }
+        
+        return null;
+    }
 
 	/**
 	 * Check if version is already present on array
@@ -99,28 +122,19 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
 		return versionExists;
 	}
 
-    /**
-     * Release version
-     * @param versions
+	/**
+     * 
+     * @param restClient
      * @param releaseVersion
-     * @return
      */
-	private Version markVersionAsReleased(Iterable<Version> versions, String releaseVersion) {
-		Version ret = null;
-		if (versions != null) {
-			for (Version remoteReleasedVersion : versions) {
-				if (releaseVersion.equalsIgnoreCase(remoteReleasedVersion.getName()) && !remoteReleasedVersion.isReleased()) {
-
-                    VersionInput updateVersionInput = VersionInput.create(jiraProjectKey, remoteReleasedVersion.getName(), remoteReleasedVersion.getDescription(), new DateTime(), false, true);
-
-					Version updatedVersion = jiraRestClient.getVersionRestClient().updateVersion(remoteReleasedVersion.getSelf(), updateVersionInput).claim();
-
-					getLog().info("Version " + remoteReleasedVersion.getName() + " was released in JIRA.");
-					ret = updatedVersion;
-					break;
-				}
-			}
-		}
-		return ret;
-	}
+    private void markVersionAsReleased(JiraRestClient restClient, Version releaseVersion) {
+        VersionInputBuilder vib = new VersionInputBuilder(jiraProjectKey, releaseVersion);
+        
+        vib.setReleased(true);
+        vib.setReleaseDate(new DateTime());
+        
+        restClient.getVersionRestClient().updateVersion(releaseVersion.getSelf(), vib.build());
+        
+        getLog().info("Version " + releaseVersion.getName() + " was released in JIRA.");
+    }
 }
