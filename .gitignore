@@ -7,3 +7,4 @@ target/
 .idea/
 atlassian-ide-plugin.xml
 jira-maven-plugin.iml
+/pom.xml

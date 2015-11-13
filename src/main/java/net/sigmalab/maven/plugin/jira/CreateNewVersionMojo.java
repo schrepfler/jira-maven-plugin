@@ -28,19 +28,19 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
      * @parameter default-value="${project.version}"
      * @required
      */
-    String developmentVersion;
+    private String developmentVersion;
 
     /**
      * @parameter default-value="${project.build.finalName}"
      */
-    String finalName;
+    private String finalName;
 
     /**
      * Whether the final name is to be used for the version; defaults to false.
      * 
      * @parameter
      */
-    boolean finalNameUsedForVersion;
+    private boolean finalNameUsedForVersion;
 
     /**
      * @parameter default-value="${project.name}"
@@ -57,7 +57,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
         ProjectRestClient projectRestClient = restClient.getProjectClient();
         VersionRestClient versionRestClient = restClient.getVersionRestClient();
         
-        Project project = projectRestClient.getProject(jiraProjectKey).claim();
+        Project project = projectRestClient.getProject(getJiraProjectKey()).claim();
 
         Iterable<Version> projectVersions = project.getVersions();
 
@@ -66,11 +66,11 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
             return;
         }
 
-        VersionInput newVersion = VersionInput.create(jiraProjectKey, newVersionName, versionDescription, null, false, false);
+        VersionInput newVersion = VersionInput.create(getJiraProjectKey(), newVersionName, versionDescription, null, false, false);
         log.debug(String.format("New version description: [%s]", newVersion.getDescription()));
 
         versionRestClient.createVersion(newVersion);
-        log.info(String.format("Version created in JIRA for project key [%s] : %s", jiraProjectKey, newVersion.getName()));
+        log.info(String.format("Version created in JIRA for project key [%s] : %s", getJiraProjectKey(), newVersion.getName()));
     }
 
     /**
@@ -98,11 +98,49 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
      * @return
      */
     private String computeVersionName() {
-        String name = (finalNameUsedForVersion == false ? developmentVersion : finalName);
+        String name = (isFinalNameUsedForVersion() == false ? developmentVersion : finalName);
 
         // Remove the -SNAPSHOT suffix from the version name
         name = name.replace("-SNAPSHOT", "");
 
         return name;
+    }
+
+    public String getDevelopmentVersion() {
+        return developmentVersion;
+    }
+
+    public void setDevelopmentVersion(String developmentVersion) {
+        this.developmentVersion = developmentVersion;
+    }
+
+    public String getFinalName() {
+        return finalName;
+    }
+
+    public void setFinalName(String finalName) {
+        this.finalName = finalName;
+    }
+
+    public String getVersionDescription() {
+        return versionDescription;
+    }
+
+    public void setVersionDescription(String versionDescription) {
+        this.versionDescription = versionDescription;
+    }
+
+    /**
+     * @return the finalNameUsedForVersion
+     */
+    public boolean isFinalNameUsedForVersion() {
+        return finalNameUsedForVersion;
+    }
+
+    /**
+     * @param finalNameUsedForVersion the finalNameUsedForVersion to set
+     */
+    public void setFinalNameUsedForVersion(boolean finalNameUsedForVersion) {
+        this.finalNameUsedForVersion = finalNameUsedForVersion;
     }
 }

@@ -101,7 +101,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      */
 
     Iterable<BasicIssue> getIssues(JiraRestClient restClient) {
-        String jql = format(jqlTemplate, jiraProjectKey, releaseVersion);
+        String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
         log.info("JQL: " + jql);
 
         return restClient.getSearchClient().searchJql(jql, maxIssues, 0).claim().getIssues();

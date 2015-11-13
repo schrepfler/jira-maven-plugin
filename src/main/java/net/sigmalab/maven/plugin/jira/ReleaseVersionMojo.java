@@ -27,7 +27,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * 
      * @parameter default-value="${project.version}"
      */
-    String releaseVersion;
+    private String releaseVersion;
 
     /**
      * Auto Discover latest release and release it.
@@ -44,13 +44,13 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
     Comparator<Version> versionComparator = new VersionComparator();
 
     @Override
-    public void doExecute(JiraRestClient jiraRestClient) throws Exception {
+    public void doExecute(JiraRestClient jiraRestClient) {
         Iterable<Version> versions = getProjectVersions(jiraRestClient);
         Version thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions) : getVersion(
-                jiraRestClient, releaseVersion);
+                jiraRestClient, getReleaseVersion());
 
         if ( thisReleaseVersion != null ) {
-            log.info("Releasing Version " + this.releaseVersion);
+            log.debug("Releasing Version " + this.getReleaseVersion());
 
             markVersionAsReleased(jiraRestClient, thisReleaseVersion);
         }
@@ -82,7 +82,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * @return
      */
     private Iterable<Version> getProjectVersions(JiraRestClient restClient) {
-        return restClient.getProjectClient().getProject(jiraProjectKey).claim().getVersions();
+        return restClient.getProjectClient().getProject(getJiraProjectKey()).claim().getVersions();
     }
 
     /**
@@ -91,7 +91,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * @param versions
      * @return
      */
-    Version calculateLatestReleaseVersion(Iterable<Version> versions) {
+    public Version calculateLatestReleaseVersion(Iterable<Version> versions) {
         for ( Version version : versions ) {
             if ( version.isReleased() != true )
                 return version;
@@ -107,10 +107,10 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * @param newDevVersion
      * @return
      */
-    boolean isVersionAlreadyPresent(Version[] versions, String newDevVersion) {
+    public boolean isVersionAlreadyPresent(Version[] versions, String newDevVersion) {
         boolean versionExists = false;
+
         if ( versions != null ) {
-            // Creating new Version (if not already created)
             for ( Version remoteVersion : versions ) {
                 if ( remoteVersion.getName().equalsIgnoreCase(newDevVersion) ) {
                     versionExists = true;
@@ -118,7 +118,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
                 }
             }
         }
-        // existant
+
         return versionExists;
     }
 
@@ -126,15 +126,32 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * 
      * @param restClient
      * @param releaseVersion
+     * @return 
      */
-    private void markVersionAsReleased(JiraRestClient restClient, Version releaseVersion) {
-        VersionInputBuilder vib = new VersionInputBuilder(jiraProjectKey, releaseVersion);
-
+    private Version markVersionAsReleased(JiraRestClient restClient, Version releaseVersion) {
+        VersionInputBuilder vib = new VersionInputBuilder(getJiraProjectKey(), releaseVersion);
+        
         vib.setReleased(true);
         vib.setReleaseDate(new DateTime());
 
-        restClient.getVersionRestClient().updateVersion(releaseVersion.getSelf(), vib.build());
+        Version returnVersion = restClient.getVersionRestClient().updateVersion(releaseVersion.getSelf(), vib.build()).claim();
 
         getLog().info("Version " + releaseVersion.getName() + " was released in JIRA.");
+        
+        return returnVersion;
+    }
+
+    /**
+     * @return the releaseVersion
+     */
+    public String getReleaseVersion() {
+        return releaseVersion;
+    }
+
+    /**
+     * @param releaseVersion the releaseVersion to set
+     */
+    public void setReleaseVersion(String releaseVersion) {
+        this.releaseVersion = releaseVersion;
     }
 }

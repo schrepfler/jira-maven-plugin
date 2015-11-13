@@ -1,0 +1,96 @@
+/**
+ * 
+ */
+package net.sigmalab.maven.plugin.java;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+
+import net.sigmalab.maven.plugin.jira.ReleaseVersionMojo;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import com.atlassian.jira.rest.client.JiraRestClient;
+import com.atlassian.jira.rest.client.ProjectRestClient;
+import com.atlassian.jira.rest.client.VersionRestClient;
+import com.atlassian.jira.rest.client.domain.Project;
+import com.atlassian.jira.rest.client.domain.Version;
+import com.atlassian.util.concurrent.Promise;
+
+/**
+ * JUnit test case for ReleaseVersionMojo
+ * 
+ * @author george
+ * @author dgrierso
+ * 
+ */
+public class ReleaseVersionMojoTest {
+
+    private static final Version[] versionArray = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, false, new DateTime()),
+                                                                  new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, false, new DateTime()),
+                                                                  new Version(null, null, "2.0", "Release 2.0 (Beta)",  false, false, new DateTime()),
+                                                                  new Version(null, null, "1.0", "Release 1.0 (Alpha)", false, false, new DateTime()) };
+
+    private static final Iterable<Version> VERSIONS = Arrays.asList(versionArray);
+	private static final Version RELEASED_VERSION = new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, true, new DateTime());
+	
+	private ReleaseVersionMojo jiraVersionMojo;
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		this.jiraVersionMojo = new ReleaseVersionMojo();
+		jiraVersionMojo.setJiraUser("user");
+		jiraVersionMojo.setJiraPassword("password");
+		jiraVersionMojo.setJiraProjectKey("JPT");
+		jiraVersionMojo.setJiraURL("http://jira.atlassian.com/browse/" + jiraVersionMojo.getJiraProjectKey());
+
+		JiraRestClient mockJiraRestClient = Mockito.mock(JiraRestClient.class);
+		
+		VersionRestClient mockVersionClient = Mockito.mock(VersionRestClient.class);
+		Mockito.when(mockJiraRestClient.getVersionRestClient()).thenReturn(mockVersionClient);
+		
+		ProjectRestClient mockProjectClient = Mockito.mock(ProjectRestClient.class);
+		Mockito.when(mockJiraRestClient.getProjectClient()).thenReturn(mockProjectClient);
+		
+		@SuppressWarnings("unchecked")
+        Promise<Project> mockProjectPromise = (Promise<Project>) Mockito.mock(Promise.class);
+		Mockito.when(mockProjectClient.getProject(jiraVersionMojo.getJiraProjectKey())).thenReturn(mockProjectPromise);
+		
+		Project mockProject = Mockito.mock(Project.class);
+		Mockito.when(mockProjectPromise.claim()).thenReturn(mockProject);
+		
+		// Mock actual functionality required.
+		Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
+		Mockito.when(mockVersionClient.updateVersion(null, versionInput)).thenReturn(RELEASED_VERSION);
+        
+		jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
+	}
+
+	
+	@Test
+	public void testLatestVersionInfo() throws Exception {
+		final String expected = "3.1";
+		
+		Version actual = jiraVersionMojo.calculateLatestReleaseVersion(VERSIONS);
+		
+		assertThat(actual.getName(), is(equalTo(expected)));
+	}
+
+	@Test
+	public void testExecuteWithReleaseVersion() throws MojoExecutionException, MojoFailureException {
+		jiraVersionMojo.setReleaseVersion("3.0");
+
+		jiraVersionMojo.execute();
+	}
+}

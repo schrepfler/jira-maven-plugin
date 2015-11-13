@@ -1,9 +1,7 @@
 package net.sigmalab.maven.plugin.jira;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -74,7 +72,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      * 
      * @parameter
      */
-    protected String jiraProjectKey;
+    private String jiraProjectKey;
 
     /**
      * Returns if this plugin is enabled for this context
@@ -82,6 +80,8 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      * @parameter property="skip"
      */
     protected boolean skip;
+
+    transient private JiraRestClient jiraRestClient;
 
     /**
      * Load username password from settings if user has not set them in JVM
@@ -97,9 +97,9 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
          * parameter then use the settingsKey parameter to figure out the key
          * for the project.
          */
-        if ( jiraProjectKey == null ) {
-            jiraProjectKey = jiraURL.substring(jiraURL.lastIndexOf("/browse/") + 8);
-            jiraProjectKey = jiraProjectKey.replaceAll("/", "");
+        if ( getJiraProjectKey() == null ) {
+            setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf("/browse/") + 8));
+            setJiraProjectKey(getJiraProjectKey().replaceAll("/", ""));
         }
 
         if ( (jiraUser == null || jiraPassword == null) && (settings != null) ) {
@@ -131,10 +131,11 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             log.debug("JIRA URL    == [" + jiraURL + "]");
             
             log.debug("JIRA user   == [" + jiraUser + "]");
-            log.debug("Project key == [" + jiraProjectKey + "]");
+            log.debug("Project key == [" + getJiraProjectKey() + "]");
 
-            JiraRestClient jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUser,
-                    jiraPassword);
+            if ( jiraRestClient == null ) {
+                jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUser, jiraPassword);
+            }
 
             try {
                 log.debug("Starting execution ...");
@@ -143,7 +144,6 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             }
             finally {
                 log.debug("All done!");
-                // TODO How to logout? Is it needed?
             }
         }
         catch ( Exception e ) {
@@ -174,6 +174,13 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         return skip;
     }
 
+    /**
+     * @return the jiraProjectKey
+     */
+    public String getJiraProjectKey() {
+        return jiraProjectKey;
+    }
+
     public void setJiraProjectKey(String jiraProjectKey) {
         this.jiraProjectKey = jiraProjectKey;
     }
@@ -196,6 +203,10 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 
     public void setSettingsKey(String settingsKey) {
         this.settingsKey = settingsKey;
+    }
+
+    public void setJiraRestClient(JiraRestClient jiraRestClient) {
+        this.jiraRestClient = jiraRestClient;
     }
 
 }
