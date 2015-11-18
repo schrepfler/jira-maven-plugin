@@ -7,17 +7,18 @@ import net.sigmalab.maven.plugin.jira.CreateNewVersionMojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.easymock.EasyMock;
-import org.easymock.EasyMockSupport;
-import org.easymock.Mock;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
+import com.atlassian.jira.rest.client.ProjectRestClient;
+import com.atlassian.jira.rest.client.VersionRestClient;
+import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
-import com.atlassian.jira.rest.client.domain.input.VersionInput;
+import com.atlassian.util.concurrent.Promise;
 
 /**
  * JUnit test case for CreateNewVersionMojo
@@ -28,27 +29,43 @@ import com.atlassian.jira.rest.client.domain.input.VersionInput;
  */
 public class CreateNewVersionMojoTest  {
 
-	private static final Version[] versionArray = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Gamma)", false, false, new DateTime()),
-	                                                              new Version(null, null, "3.0", "Release 3.0 (Delta)", false, false, new DateTime()),
-                                                                  new Version(null, null, "2.0", "Release 2.0 (Beta)",  false, false, new DateTime()),
-                                                                  new Version(null, null, "1.0", "Release 1.0 (Alpha)", false, false, new DateTime()) };
-	
-	private static final Iterable<Version> VERSIONS = Arrays.asList(versionArray);
+    private static final Version[] VERSION_ARRAY = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, false, new DateTime()),
+                                                                   new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, false, new DateTime()),
+                                                                   new Version(null, null, "2.0", "Release 2.0 (Beta)",  false, false, new DateTime()),
+                                                                   new Version(null, null, "1.0", "Release 1.0 (Alpha)", false, false, new DateTime()) };
+    private static final Iterable<Version> VERSIONS = Arrays.asList(VERSION_ARRAY);
 
 	private CreateNewVersionMojo jiraVersionMojo;
 	
-	@Mock
-	private JiraRestClient jiraStub;
+	private JiraRestClient mockJiraRestClient;
 
 	@Before
 	public void setUp() {
-		this.jiraVersionMojo = new CreateNewVersionMojo();
+		jiraVersionMojo = new CreateNewVersionMojo();
+		
 		jiraVersionMojo.setJiraUser("user");
 		jiraVersionMojo.setJiraPassword("password");
+		jiraVersionMojo.setJiraProjectKey("KEY");
+        jiraVersionMojo.setJiraURL("http://cbsjira.bskyb.com/browse/" + jiraVersionMojo.getJiraProjectKey());
+        
+		mockJiraRestClient = Mockito.mock(JiraRestClient.class);
 
-		// This removes the locator coupling
-		jiraStub = EasyMock.createStrictMock(JiraRestClient.class);
-		jiraVersionMojo.setJiraRestClient(jiraStub);
+        VersionRestClient mockVersionClient = Mockito.mock(VersionRestClient.class);
+        Mockito.when(mockJiraRestClient.getVersionRestClient()).thenReturn(mockVersionClient);
+        
+        ProjectRestClient mockProjectClient = Mockito.mock(ProjectRestClient.class);
+        Mockito.when(mockJiraRestClient.getProjectClient()).thenReturn(mockProjectClient);
+        
+        @SuppressWarnings("unchecked")
+        Promise<Project> mockProjectPromise = (Promise<Project>) Mockito.mock(Promise.class);
+        Mockito.when(mockProjectClient.getProject(jiraVersionMojo.getJiraProjectKey())).thenReturn(mockProjectPromise);
+        
+        Project mockProject = Mockito.mock(Project.class);
+        Mockito.when(mockProjectPromise.claim()).thenReturn(mockProject);
+        
+        Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
+        
+        jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
 
 	/**
@@ -60,39 +77,12 @@ public class CreateNewVersionMojoTest  {
 	public void testExecuteWithNewDevVersion() throws MojoExecutionException, MojoFailureException {
 		jiraVersionMojo.setDevelopmentVersion("v4.0");
 
-		EasyMock.expect(
-		        jiraStub.getProjectClient().getProject(jiraVersionMojo.getJiraProjectKey()).claim().getVersions()
-		     ).andReturn(VERSIONS).once();
-
-		// Add a new version
-		EasyMock.expect(
-		        jiraStub.getVersionRestClient().createVersion(new VersionInput(jiraVersionMojo.getJiraProjectKey(),
-								jiraVersionMojo.getDevelopmentVersion(), null,
-								null, false, false)).claim()).andReturn(versionArray[0]);
-
-		// Habilita o controle para inicio dos testes
-		EasyMock.replay(jiraStub);
-
 		jiraVersionMojo.execute();
 	}
 
 	@Test
 	public void testExecuteWithNewDevVersionIncludingQualifierAndSnapshot() throws MojoExecutionException, MojoFailureException {
 		jiraVersionMojo.setDevelopmentVersion("5.0-beta-2-SNAPSHOT");
-
-		// Chama o getVersions
-		EasyMock.expect(
-				jiraStub.getProjectClient().getProject(jiraVersionMojo.getJiraProjectKey()).claim().getVersions()).andReturn(VERSIONS)
-				.once();
-
-		// Adiciona a nova versao
-		EasyMock.expect(
-				jiraStub.getVersionRestClient().createVersion(new VersionInput(jiraVersionMojo.getJiraProjectKey(),
-								"5.0 Beta 2", null, null, false, false)).claim())
-				.andReturn(versionArray[0]);
-
-		// Habilita o controle para inicio dos testes
-		EasyMock.replay(jiraStub);
 
 		jiraVersionMojo.execute();
 	}
@@ -103,40 +93,13 @@ public class CreateNewVersionMojoTest  {
 		jiraVersionMojo.setFinalNameUsedForVersion(true);
 		jiraVersionMojo.setFinalName("my-component-5.0-beta-2-SNAPSHOT");
 
-		// Chama o getVersions
-		EasyMock.expect(
-				jiraStub.getProjectClient().getProject(jiraVersionMojo.getJiraProjectKey()).claim().getVersions()).andReturn(VERSIONS)
-				.once();
-
-		// Adiciona a nova versao
-		EasyMock.expect(
-				jiraStub.getVersionRestClient().createVersion(new VersionInput(jiraVersionMojo.getJiraProjectKey(),
-                        "My Component 5.0 Beta 2", null, null, false,
-								false)).claim()).andReturn(versionArray[0]);
-		// Habilita o controle para inicio dos testes
-		EasyMock.replay(jiraStub);
-
 		jiraVersionMojo.execute();
 	}
 
-	/**
-	 * Test method for {@link ReleaseVersionMojo#execute()}
-	 * @throws MojoFailureException 
-	 * @throws MojoExecutionException 
-	 * 
-	 * @throws Exception
-	 */
 	@Test
-	public void testExecuteWithExistentDevVersion() throws MojoExecutionException, MojoFailureException {
+	public void testExecuteWithExistentDevVersion() throws MojoExecutionException, MojoFailureException  {
 		jiraVersionMojo.setDevelopmentVersion("2.0");
-		// Chama o getVersions
-		EasyMock.expect(
-				jiraStub.getProjectClient().getProject(jiraVersionMojo.getJiraProjectKey()).claim().getVersions()).andReturn(VERSIONS)
-				.once();
-
-		// Habilita o controle para inicio dos testes
-		EasyMock.replay(jiraStub);
-
+		
 		jiraVersionMojo.execute();
 	}
 

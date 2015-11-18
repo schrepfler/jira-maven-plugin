@@ -69,8 +69,8 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
         VersionInput newVersion = VersionInput.create(getJiraProjectKey(), newVersionName, versionDescription, null, false, false);
         log.debug(String.format("New version description: [%s]", newVersion.getDescription()));
 
-        versionRestClient.createVersion(newVersion);
-        log.info(String.format("Version created in JIRA for project key [%s] : %s", getJiraProjectKey(), newVersion.getName()));
+        Version created = versionRestClient.createVersion(newVersion).claim();
+        log.info(String.format("Version created in JIRA for project key [%s] : %s", getJiraProjectKey(), created.getName()));
     }
 
     /**

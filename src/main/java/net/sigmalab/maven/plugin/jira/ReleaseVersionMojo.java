@@ -134,11 +134,11 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
         vib.setReleased(true);
         vib.setReleaseDate(new DateTime());
 
-        Version returnVersion = restClient.getVersionRestClient().updateVersion(releaseVersion.getSelf(), vib.build()).claim();
+        Version updatedVersion = restClient.getVersionRestClient().updateVersion(releaseVersion.getSelf(), vib.build()).claim();
 
-        getLog().info("Version " + releaseVersion.getName() + " was released in JIRA.");
+        getLog().info("Version " + updatedVersion.getName() + " was released in JIRA.");
         
-        return returnVersion;
+        return updatedVersion;
     }
 
     /**
