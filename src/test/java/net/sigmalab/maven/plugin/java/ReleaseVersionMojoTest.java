@@ -23,6 +23,7 @@ import com.atlassian.jira.rest.client.ProjectRestClient;
 import com.atlassian.jira.rest.client.VersionRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
+import com.atlassian.jira.rest.client.domain.input.VersionInput;
 import com.atlassian.util.concurrent.Promise;
 
 /**
@@ -33,14 +34,19 @@ import com.atlassian.util.concurrent.Promise;
  * 
  */
 public class ReleaseVersionMojoTest {
+    
+    private static String KEY = "JPT";
 
-    private static final Version[] versionArray = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, false, new DateTime()),
+    private static final Version[] VERSION_ARRAY = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, false, new DateTime()),
                                                                   new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, false, new DateTime()),
                                                                   new Version(null, null, "2.0", "Release 2.0 (Beta)",  false, false, new DateTime()),
                                                                   new Version(null, null, "1.0", "Release 1.0 (Alpha)", false, false, new DateTime()) };
+    private static final Iterable<Version> VERSIONS = Arrays.asList(VERSION_ARRAY);
 
-    private static final Iterable<Version> VERSIONS = Arrays.asList(versionArray);
-	private static final Version RELEASED_VERSION = new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, true, new DateTime());
+    private static final DateTime RELEASE_TIME = new DateTime();
+    private static final VersionInput VERSION_INPUT = new VersionInput(KEY, "3.0", "Release 3.0 (Gamma)", RELEASE_TIME, false, true);
+    private static final Version RELEASED_VERSION = new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, true, RELEASE_TIME);
+
 	
 	private ReleaseVersionMojo jiraVersionMojo;
 
@@ -52,7 +58,7 @@ public class ReleaseVersionMojoTest {
 		this.jiraVersionMojo = new ReleaseVersionMojo();
 		jiraVersionMojo.setJiraUser("user");
 		jiraVersionMojo.setJiraPassword("password");
-		jiraVersionMojo.setJiraProjectKey("JPT");
+		jiraVersionMojo.setJiraProjectKey(KEY);
 		jiraVersionMojo.setJiraURL("http://jira.atlassian.com/browse/" + jiraVersionMojo.getJiraProjectKey());
 
 		JiraRestClient mockJiraRestClient = Mockito.mock(JiraRestClient.class);
@@ -72,7 +78,7 @@ public class ReleaseVersionMojoTest {
 		
 		// Mock actual functionality required.
 		Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
-		Mockito.when(mockVersionClient.updateVersion(null, versionInput)).thenReturn(RELEASED_VERSION);
+		Mockito.when(mockVersionClient.updateVersion(null, VERSION_INPUT).claim()).thenReturn(RELEASED_VERSION);
         
 		jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
