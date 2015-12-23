@@ -32,7 +32,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
     /**
      * Auto Discover latest release and release it.
      * 
-     * @parameter default-value="true"
+     * @parameter default-value="false"
      */
     boolean autoDiscoverLatestRelease;
 
@@ -46,11 +46,11 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
     @Override
     public void doExecute(JiraRestClient jiraRestClient) {
         Iterable<Version> versions = getProjectVersions(jiraRestClient);
-        Version thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions) : getVersion(
-                jiraRestClient, getReleaseVersion());
+        Version thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions)
+                                                                 : getVersion(jiraRestClient, getReleaseVersion());
 
         if ( thisReleaseVersion != null ) {
-            log.debug("Releasing Version " + this.getReleaseVersion());
+            log.debug("Releasing Version " + thisReleaseVersion.getName());
 
             markVersionAsReleased(jiraRestClient, thisReleaseVersion);
         }
