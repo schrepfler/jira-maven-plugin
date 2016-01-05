@@ -46,7 +46,7 @@ public class CreateNewVersionMojoTest  {
 		jiraVersionMojo.setJiraUser("user");
 		jiraVersionMojo.setJiraPassword("password");
 		jiraVersionMojo.setJiraProjectKey("KEY");
-        jiraVersionMojo.setJiraURL("http://cbsjira.bskyb.com/browse/" + jiraVersionMojo.getJiraProjectKey());
+        jiraVersionMojo.setJiraURL("http://localhost/jira/browse/" + jiraVersionMojo.getJiraProjectKey());
         
 		mockJiraRestClient = Mockito.mock(JiraRestClient.class);
 

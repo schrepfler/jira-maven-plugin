@@ -59,7 +59,7 @@ public class ReleaseVersionMojoTest {
 		jiraVersionMojo.setJiraUser("user");
 		jiraVersionMojo.setJiraPassword("password");
 		jiraVersionMojo.setJiraProjectKey(TESTKEY);
-		jiraVersionMojo.setJiraURL("http://jira.atlassian.com/browse/" + jiraVersionMojo.getJiraProjectKey());
+		jiraVersionMojo.setJiraURL("http://localhost/jira/browse/" + jiraVersionMojo.getJiraProjectKey());
 
 		JiraRestClient mockJiraRestClient = Mockito.mock(JiraRestClient.class);
 		
