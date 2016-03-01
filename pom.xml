@@ -39,9 +39,31 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+	<repositories>
+		<repository>
+			<id>atlassian-public</id>
+			<url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+		</repository>
+	</repositories>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>atlassian-public</id>
+			<url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+	
     <organization>
-        <name>SigmaLab</name>
-        <url>http://blog.sigmalab.net</url>
+        <name>Sky UK</name>
+        <url>http://developer.sky.com/</url>
     </organization>
 
     <prerequisites>
