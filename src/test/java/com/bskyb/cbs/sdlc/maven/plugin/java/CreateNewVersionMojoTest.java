@@ -1,9 +1,7 @@
 
-package net.sigmalab.maven.plugin.java;
+package com.bskyb.cbs.sdlc.maven.plugin.java;
 
 import java.util.Arrays;
-
-import net.sigmalab.maven.plugin.jira.CreateNewVersionMojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -19,6 +17,7 @@ import com.atlassian.jira.rest.client.VersionRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.util.concurrent.Promise;
+import com.bskyb.cbs.sdlc.maven.plugin.jira.CreateNewVersionMojo;
 
 /**
  * JUnit test case for CreateNewVersionMojo

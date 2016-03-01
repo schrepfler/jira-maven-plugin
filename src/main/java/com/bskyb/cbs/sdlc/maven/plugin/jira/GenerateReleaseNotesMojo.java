@@ -1,4 +1,4 @@
-package net.sigmalab.maven.plugin.jira;
+package com.bskyb.cbs.sdlc.maven.plugin.jira;
 
 import static java.text.MessageFormat.format;
 

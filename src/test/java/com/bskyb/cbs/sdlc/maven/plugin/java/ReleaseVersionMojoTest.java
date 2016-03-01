@@ -1,15 +1,13 @@
 /**
  * 
  */
-package net.sigmalab.maven.plugin.java;
+package com.bskyb.cbs.sdlc.maven.plugin.java;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-
-import net.sigmalab.maven.plugin.jira.ReleaseVersionMojo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -25,6 +23,7 @@ import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.input.VersionInput;
 import com.atlassian.util.concurrent.Promise;
+import com.bskyb.cbs.sdlc.maven.plugin.jira.ReleaseVersionMojo;
 
 /**
  * JUnit test case for ReleaseVersionMojo

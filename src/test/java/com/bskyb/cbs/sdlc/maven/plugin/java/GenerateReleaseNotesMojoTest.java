@@ -1,17 +1,17 @@
-package net.sigmalab.maven.plugin.java;
+package com.bskyb.cbs.sdlc.maven.plugin.java;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
 
-import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
-
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.bskyb.cbs.sdlc.maven.plugin.jira.GenerateReleaseNotesMojo;
 
 @RunWith(JUnit4.class)
 public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
