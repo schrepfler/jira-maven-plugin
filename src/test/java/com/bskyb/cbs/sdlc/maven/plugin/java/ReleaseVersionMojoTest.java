@@ -40,6 +40,7 @@ public class ReleaseVersionMojoTest {
                                                                   new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, false, new DateTime()),
                                                                   new Version(null, null, "2.0", "Release 2.0 (Beta)",  false, false, new DateTime()),
                                                                   new Version(null, null, "1.0", "Release 1.0 (Alpha)", false, false, new DateTime()) };
+    
     private static final Iterable<Version> VERSIONS = Arrays.asList(VERSION_ARRAY);
 
     private static final DateTime RELEASE_TIME = new DateTime();
