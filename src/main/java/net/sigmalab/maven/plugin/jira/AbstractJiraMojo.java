@@ -1,18 +1,19 @@
 package net.sigmalab.maven.plugin.jira;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import com.atlassian.jira.rest.client.domain.User;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
 import com.atlassian.jira.rest.client.JiraRestClientFactory;
-import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 
 /**
@@ -20,146 +21,192 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
  * 
  * @author george
  * @author schrepfler
+ * @author dgrierso
  * 
  */
 public abstract class AbstractJiraMojo extends AbstractMojo {
 
-	/**
-	 * @parameter property="settings"
-	 */
-	Settings settings;
+    /**
+     * @parameter default-value = "${settings}", readonly = true
+     */
+    Settings settings;
 
-	/**
-	 * Server's id in settings.xml to look up username and password.
-	 * 
-	 * @parameter property="settingsKey"
-	 */
-	private String settingsKey;
+    /**
+     * @component role-hint="mng-4384"
+     * @required
+     */
+    private SecDispatcher securityDispatcher;
 
-	/**
-	 * JIRA Installation URL. If not informed, it will use the
-	 * project.issueManagement.url info.
-	 * 
-	 * @parameter property="jiraURL"
-	 *            default-value="${project.issueManagement.url}"
-	 * @required
-	 */
-	protected String jiraURL;
+    /**
+     * Server's id in settings.xml to look up username and password.
+     * 
+     * @parameter
+     */
+    private String settingsKey;
 
-	/**
-	 * JIRA Authentication User.
-	 * 
-	 * @parameter property="jiraUser" default-value="${scmUsername}"
-	 */
-	protected String jiraUser;
+    /**
+     * JIRA Installation URL. If not informed, it will use the
+     * project.issueManagement.url info.
+     * 
+     * @parameter default-value="${project.issueManagement.url}"
+     * @required
+     */
+    protected String jiraURL;
 
-	/**
-	 * JIRA Authentication Password.
-	 * 
-	 * @parameter property="jiraPassword" default-value="${scmPassword}"
-	 */
-	protected String jiraPassword;
+    /**
+     * JIRA Authentication User.
+     * 
+     * @parameter default-value="${scmUsername}"
+     */
+    protected String jiraUser;
 
-	/**
-	 * JIRA Project Key.
-	 * 
-	 * @parameter property="jiraProjectKey"
-	 */
-	protected String jiraProjectKey;
+    /**
+     * JIRA Authentication Password.
+     * 
+     * @parameter default-value="${scmPassword}"
+     */
+    protected String jiraPassword;
 
-	transient JiraRestClient jiraRestClient;
+    /**
+     * JIRA Project Key.
+     * 
+     * @parameter
+     */
+    private String jiraProjectKey;
 
-	/**
-	 * Returns if this plugin is enabled for this context
-	 * 
-	 * @parameter property="skip"
-	 */
-	protected boolean skip;
-    protected User userClient;
+    /**
+     * Returns if this plugin is enabled for this context
+     * 
+     * @parameter property="skip"
+     */
+    protected boolean skip;
 
+    transient private JiraRestClient jiraRestClient;
 
-	/**
-	 * Load username password from settings if user has not set them in JVM
-	 * properties
-	 */
-	void loadUserInfoFromSettings() {
-		if (settingsKey == null) {
-			settingsKey = jiraURL;
-		}
-		if ((jiraUser == null || jiraPassword == null) && (settings != null)) {
-			Server server = settings.getServer(this.settingsKey);
+    /**
+     * Load username password from settings if user has not set them in JVM
+     * properties
+     */
+    void loadUserInfoFromSettings() {
+        if ( settingsKey == null ) {
+            settingsKey = jiraURL;
+        }
 
-			if (server != null) {
-				if (jiraUser == null) {
-					jiraUser = server.getUsername();
-				}
+        /*
+         * If we haven't been supplied with a <jiraProjectKey> configuration
+         * parameter then use the settingsKey parameter to figure out the key
+         * for the project.
+         */
+        if ( getJiraProjectKey() == null ) {
+            setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf("/browse/") + 8));
+            setJiraProjectKey(getJiraProjectKey().replaceAll("/", ""));
+        }
 
-				if (jiraPassword == null) {
-					jiraPassword = server.getPassword();
-				}
-			}
-		}
-	}
+        if ( (jiraUser == null || jiraPassword == null) && (settings != null) ) {
+            Server server = settings.getServer(this.settingsKey);
 
-	@Override
-	public final void execute() throws MojoExecutionException, MojoFailureException {
-		Log log = getLog();
-		if (isSkip()) {
-			log.info("Skipping Plugin execution.");
-			return;
-		}
-		try {
-			
-			loadUserInfoFromSettings();
-			
-			JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
-			JiraRestClient jiraRestClient = jiraRestClientFactory.create(URI.create(jiraURL), new BasicHttpAuthenticationHandler(jiraUser, jiraPassword));
+            if ( server != null ) {
+                if ( jiraUser == null ) {
+                    jiraUser = server.getUsername();
+                }
 
-			log.debug("Logging in JIRA");
-			userClient = jiraRestClient.getUserClient().getUser(jiraUser).claim();
-			log.debug("Logged in JIRA");
-			
-			try {
-				doExecute();
-			} finally {
-				log.debug("Logging out from JIRA");
-				// TODO How to logout? Is it needed?
-				log.debug("Logged out from JIRA");
-			}
-		} catch (Exception e) {
-			log.error("Error when executing mojo", e);
-			// XXX: Por enquanto nao faz nada.
-		}
-	}
+                if ( jiraPassword == null ) {
+                    jiraPassword = decrypt(server.getPassword(), settingsKey);
+                }
+            }
+        }
+    }
 
-	public abstract void doExecute() throws Exception;
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        Log log = getLog();
+        if ( isSkip() ) {
+            log.info("Skipping Plugin execution.");
+            return;
+        }
+        try {
+            final JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
 
-	public boolean isSkip() {
-		return skip;
-	}
+            loadUserInfoFromSettings();
+            log.debug("JIRA URL    == [" + jiraURL + "]");
+            
+            log.debug("JIRA user   == [" + jiraUser + "]");
+            log.debug("Project key == [" + getJiraProjectKey() + "]");
 
-	public void setJiraProjectKey(String jiraProjectKey) {
-		this.jiraProjectKey = jiraProjectKey;
-	}
+            if ( jiraRestClient == null ) {
+                jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUser, jiraPassword);
+            }
 
-	public void setJiraPassword(String jiraPassword) {
-		this.jiraPassword = jiraPassword;
-	}
+            try {
+                log.debug("Starting execution ...");
 
-	public void setJiraURL(String jiraURL) {
-		this.jiraURL = jiraURL;
-	}
+                doExecute(jiraRestClient);
+            }
+            finally {
+                log.debug("All done!");
+            }
+        }
+        catch ( Exception e ) {
+            log.error("Error when executing mojo", e);
+            // XXX: Por enquanto nao faz nada.
+        }
+    }
 
-	public void setJiraUser(String jiraUser) {
-		this.jiraUser = jiraUser;
-	}
+    private URI computeRootURI(String url) throws URISyntaxException {
+        String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf("/browse/")));
+        
+        return new URI(rootURL);
+    }
 
-	public void setSettings(Settings settings) {
-		this.settings = settings;
-	}
+    public abstract void doExecute(JiraRestClient restClient) throws Exception;
 
-	public void setSettingsKey(String settingsKey) {
-		this.settingsKey = settingsKey;
-	}
+    private String decrypt(String str, String server) {
+        try {
+            return securityDispatcher.decrypt(str);
+        }
+        catch ( SecDispatcherException e ) {
+            getLog().warn("Failed to decrypt password/passphrase for server " + server + ", using auth token as is");
+            return str;
+        }
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    /**
+     * @return the jiraProjectKey
+     */
+    public String getJiraProjectKey() {
+        return jiraProjectKey;
+    }
+
+    public void setJiraProjectKey(String jiraProjectKey) {
+        this.jiraProjectKey = jiraProjectKey;
+    }
+
+    public void setJiraPassword(String jiraPassword) {
+        this.jiraPassword = jiraPassword;
+    }
+
+    public void setJiraURL(String jiraURL) {
+        this.jiraURL = jiraURL;
+    }
+
+    public void setJiraUser(String jiraUser) {
+        this.jiraUser = jiraUser;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public void setSettingsKey(String settingsKey) {
+        this.settingsKey = settingsKey;
+    }
+
+    public void setJiraRestClient(JiraRestClient jiraRestClient) {
+        this.jiraRestClient = jiraRestClient;
+    }
 
 }
