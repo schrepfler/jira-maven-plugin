@@ -1,4 +1,4 @@
-package com.bskyb.cbs.sdlc.maven.plugin.java;
+package net.sigmalab.maven.plugin.jira.tests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

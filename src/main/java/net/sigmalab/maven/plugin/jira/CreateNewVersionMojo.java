@@ -1,4 +1,4 @@
-package com.bskyb.cbs.sdlc.maven.plugin.jira;
+package net.sigmalab.maven.plugin.jira;
 
 import org.apache.maven.plugin.logging.Log;
 
