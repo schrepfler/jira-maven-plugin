@@ -24,15 +24,23 @@
     </issueManagement>
 
     <properties>
-        <maven.plugin.testing.harness.version>3.2.0</maven.plugin.testing.harness.version>
-        <maven.compiler.plugin.version>3.2</maven.compiler.plugin.version>
-        <maven.version>3.2.5</maven.version>
-        <maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
-        <license.maven.plugin.version>1.8</license.maven.plugin.version>
-        <versions.maven.plugin.version>2.1</versions.maven.plugin.version>
+        <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
+        <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
+        <maven.version>3.3.9</maven.version>
+        <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+        <license.maven.plugin.version>1.9</license.maven.plugin.version>
+        <versions.maven.plugin.version>2.2</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
-        <jgitflow.maven.plugin.version>1.0-m4.3</jgitflow.maven.plugin.version>
-        <nexus.staging.maven.plugin.version>1.6.4</nexus.staging.maven.plugin.version>
+        <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
+        <nexus.staging.maven.plugin.version>1.6.7</nexus.staging.maven.plugin.version>
+        <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
+        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
+        <maven.jar.plugin.version>2.6</maven.jar.plugin.version>
+        <maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
+        <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
+        <maven.site.plugin.version>3.5</maven.site.plugin.version>
+        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
         <easymock.version>3.3</easymock.version>
         <mockito.version>1.10.8</mockito.version>
         <junit.version>4.12</junit.version>
@@ -195,6 +203,12 @@
                     <groupId>external.atlassian.jgitflow</groupId>
                     <artifactId>jgitflow-maven-plugin</artifactId>
                     <version>${jgitflow.maven.plugin.version}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <pushFeatures>true</pushFeatures>
+                        <pushReleases>true</pushReleases>
+                        <pushHotfixes>true</pushHotfixes>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
@@ -254,6 +268,41 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven.install.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${maven.plugin.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resources.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven.site.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -286,6 +335,11 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven.clean.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
