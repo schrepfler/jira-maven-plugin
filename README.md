@@ -130,3 +130,4 @@ TODO
 
 * Block release if all issues with fixVersion of the release version are not Closed/Resolved.
 * Generate release reports mojo
+* Capability to add a prefix/postfix to the JIRA version (as JIRA struggles supporting multiple components per project).
