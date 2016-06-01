@@ -62,7 +62,7 @@ Add the following profile to be executed when released:
 			    <plugin>
 				    <groupId>net.sigmalab.maven.plugins</groupId>
 				    <artifactId>jira-maven-plugin</artifactId>
-				    <version>0.3</version>
+				    <version>0.4</version>
 				    <inherited>false</inherited>
 				    <configuration>
 					    <!- <server> entry in settings.xml -->
@@ -91,7 +91,7 @@ Place it on your pom.xml:
     <plugin>
 	    <groupId>net.sigmalab.maven.plugins</groupId>
 	    <artifactId>jira-maven-plugin</artifactId>
-	    <version>0.3</version>
+	    <version>0.4</version>
 	    <inherited>false</inherited>
 	    <configuration>
 		    <!- <server> entry in settings.xml -->
