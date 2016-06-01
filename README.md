@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin) [![Stories in Ready](https://badge.waffle.io/schrepfler/jira-maven-plugin.png?label=ready&title=Ready)](http://waffle.io/schrepfler/jira-maven-plugin)
+
 Maven JIRA Plugin
 =================
 
@@ -122,3 +124,9 @@ Setup your ~/.m2/settings.xml to contain the credentials for deployment to Sonat
     pray
     mvn jgitflow:release-finish
     pray some more
+
+TODO
+===================
+
+* Block release if all issues with fixVersion of the release version are not Closed/Resolved.
+* Generate release reports mojo

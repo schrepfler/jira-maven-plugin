@@ -1,15 +1,13 @@
 package net.sigmalab.maven.plugin.jira;
 
-import java.util.Comparator;
+import org.apache.maven.plugin.logging.Log;
 
+import com.atlassian.jira.rest.client.JiraRestClient;
+import com.atlassian.jira.rest.client.ProjectRestClient;
 import com.atlassian.jira.rest.client.VersionRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.input.VersionInput;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
-
-import org.joda.time.DateTime;
 
 /**
  * Goal that creates a version in a JIRA project . NOTE: REST API access must be
@@ -20,80 +18,129 @@ import org.joda.time.DateTime;
  * 
  * @author George Gastaldi
  * @author Srdan Srepfler
+ * @author dgrierso
  */
 public class CreateNewVersionMojo extends AbstractJiraMojo {
 
-	/**
-	 * Next Development Version
-	 * 
-	 * @parameter property="developmentVersion"
-	 *            default-value="${project.version}"
-	 * @required
-	 */
-	String developmentVersion;
+    /**
+     * Next Development Version
+     * 
+     * @parameter default-value="${project.version}"
+     * @required
+     */
+    private String developmentVersion;
 
-	/**
-	 * @parameter default-value="${project.build.finalName}"
-	 */
-	String finalName;
+    /**
+     * @parameter default-value="${project.build.finalName}"
+     */
+    private String finalName;
 
-	/**
-	 * Whether the final name is to be used for the version; defaults to false.
-	 * 
-	 * @parameter property="finalNameUsedForVersion"
-	 */
-	boolean finalNameUsedForVersion;
+    /**
+     * Whether the final name is to be used for the version; defaults to false.
+     * 
+     * @parameter
+     */
+    private boolean finalNameUsedForVersion;
 
+    /**
+     * @parameter default-value="${project.name}"
+     */
+    private String versionDescription;
 
     @Override
-    public void doExecute(){
+    public void doExecute(JiraRestClient restClient) {
         Log log = getLog();
-        Project project = jiraRestClient.getProjectClient().getProject(jiraProjectKey).claim();
-        VersionRestClient versionRestClient = jiraRestClient.getVersionRestClient();
+
+        String newVersionName = computeVersionName();
+        log.debug(String.format("Name of version to be created == [%s]", newVersionName));
+
+        ProjectRestClient projectRestClient = restClient.getProjectClient();
+        VersionRestClient versionRestClient = restClient.getVersionRestClient();
+        
+        Project project = projectRestClient.getProject(getJiraProjectKey()).claim();
 
         Iterable<Version> projectVersions = project.getVersions();
 
-        String newDevVersion;
-        if (finalNameUsedForVersion) {
-            newDevVersion = finalName;
-        } else {
-            newDevVersion = developmentVersion;
+        if ( versionAlreadyExists(projectVersions, newVersionName) ) {
+            log.warn(String.format("Version %s already exists. Nothing to do.", newVersionName));
+            return;
         }
 
-        newDevVersion = StringUtils.capitaliseAllWords(newDevVersion.replace("-SNAPSHOT", "").replace("-", " "));
-        boolean versionExists = isVersionAlreadyPresent(projectVersions, newDevVersion);
-        if (!versionExists){
-            log.debug("New Development version in JIRA is: " + newDevVersion);
-            VersionInput newVersionInput = VersionInput.create(jiraProjectKey, newDevVersion, null, new DateTime(), false, false);
-            Version createdNewVersion = versionRestClient.createVersion(newVersionInput).claim();
-            log.info("Version created in JIRA for project key "
-					+ jiraProjectKey + " : " + createdNewVersion);
+        VersionInput newVersion = VersionInput.create(getJiraProjectKey(), newVersionName, versionDescription, null, false, false);
+        log.debug(String.format("New version description: [%s]", newVersion.getDescription()));
 
-            // TODO handle version already created in JIRA, nothing to do.
-            // Example of usage https://bitbucket.org/atlassian/jira-rest-java-client/src/454723e7ffb54c1a10a1be5f64e9d052566d8496/test/src/test/java/it/AsynchronousVersionRestClientTest.java?at=master
-        }
-
+        Version created = versionRestClient.createVersion(newVersion).claim();
+        log.info(String.format("Version created in JIRA for project key [%s] : %s", getJiraProjectKey(), created.getName()));
     }
 
-	/**
-	 * Check if version is already present on array
-	 * 
-	 * @param remoteVersions
-	 * @param newDevVersion
-	 * @return
-	 */
-	boolean isVersionAlreadyPresent(Iterable<Version> remoteVersions, String newDevVersion) {
-		boolean versionExists = false;
-		if (remoteVersions != null) {
-			// Creating new Version (if not already created)
-			for (Version remoteVersion : remoteVersions) {
-				if (remoteVersion.getName().equalsIgnoreCase(newDevVersion)) {
-					versionExists = true;
-					break;
-				}
-			}
-		}
-		// existant
-		return versionExists;
-	}
+    /**
+     * Check if version is already present on array
+     * 
+     * @param remoteVersions
+     * @param newDevVersion
+     * @return
+     */
+    boolean versionAlreadyExists(Iterable<Version> remoteVersions, String newDevVersion) {
+        if ( remoteVersions != null ) {
+            for ( Version remoteVersion : remoteVersions ) {
+                if ( remoteVersion.getName().equalsIgnoreCase(newDevVersion) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Compute the name of the version to be created based upon the settings
+     * provided.
+     * 
+     * @return
+     */
+    private String computeVersionName() {
+        String name = (isFinalNameUsedForVersion() == false ? developmentVersion : finalName);
+
+        // Remove the -SNAPSHOT suffix from the version name
+        name = name.replace("-SNAPSHOT", "");
+
+        return name;
+    }
+
+    public String getDevelopmentVersion() {
+        return developmentVersion;
+    }
+
+    public void setDevelopmentVersion(String developmentVersion) {
+        this.developmentVersion = developmentVersion;
+    }
+
+    public String getFinalName() {
+        return finalName;
+    }
+
+    public void setFinalName(String finalName) {
+        this.finalName = finalName;
+    }
+
+    public String getVersionDescription() {
+        return versionDescription;
+    }
+
+    public void setVersionDescription(String versionDescription) {
+        this.versionDescription = versionDescription;
+    }
+
+    /**
+     * @return the finalNameUsedForVersion
+     */
+    public boolean isFinalNameUsedForVersion() {
+        return finalNameUsedForVersion;
+    }
+
+    /**
+     * @param finalNameUsedForVersion the finalNameUsedForVersion to set
+     */
+    public void setFinalNameUsedForVersion(boolean finalNameUsedForVersion) {
+        this.finalNameUsedForVersion = finalNameUsedForVersion;
+    }
 }
