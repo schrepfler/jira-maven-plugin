@@ -93,8 +93,9 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      */
     public Version calculateLatestReleaseVersion(Iterable<Version> versions) {
         for ( Version version : versions ) {
-            if ( version.isReleased() != true )
+            if ( ! version.isReleased() ) {
                 return version;
+            }
         }
 
         return null;
