@@ -109,18 +109,15 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * @return
      */
     public boolean isVersionAlreadyPresent(Version[] versions, String newDevVersion) {
-        boolean versionExists = false;
-
         if ( versions != null ) {
             for ( Version remoteVersion : versions ) {
                 if ( remoteVersion.getName().equalsIgnoreCase(newDevVersion) ) {
-                    versionExists = true;
-                    break;
+                    return true;
                 }
             }
         }
 
-        return versionExists;
+        return false;
     }
 
     /**
