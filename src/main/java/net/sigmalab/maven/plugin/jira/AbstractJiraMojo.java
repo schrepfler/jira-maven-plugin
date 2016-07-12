@@ -26,6 +26,8 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
  */
 public abstract class AbstractJiraMojo extends AbstractMojo {
 
+    private static final String JIRA_ISSUE_URL_PREFIX = "/browse/";
+
     /**
      * @parameter default-value = "${settings}", readonly = true
      */
@@ -81,7 +83,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      */
     protected boolean skip;
 
-    transient private JiraRestClient jiraRestClient;
+    private transient JiraRestClient jiraRestClient;
 
     /**
      * Load username password from settings if user has not set them in JVM
@@ -98,7 +100,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
          * for the project.
          */
         if ( getJiraProjectKey() == null ) {
-            setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf("/browse/") + 8));
+            setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf(JIRA_ISSUE_URL_PREFIX) + JIRA_ISSUE_URL_PREFIX.length()));
             setJiraProjectKey(getJiraProjectKey().replaceAll("/", ""));
         }
 
@@ -153,7 +155,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     }
 
     private URI computeRootURI(String url) throws URISyntaxException {
-        String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf("/browse/")));
+        String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf(JIRA_ISSUE_URL_PREFIX)));
         
         return new URI(rootURL);
     }

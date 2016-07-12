@@ -9,6 +9,8 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
@@ -27,6 +29,7 @@ import net.sigmalab.maven.plugin.jira.CreateNewVersionMojo;
  * @author dgrierso
  * 
  */
+@RunWith(JUnit4.class)
 public class CreateNewVersionMojoTest  {
 
     private static final Version[] VERSION_ARRAY = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, false, new DateTime()),
