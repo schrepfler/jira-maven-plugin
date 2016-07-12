@@ -98,7 +98,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
      * @return
      */
     private String computeVersionName() {
-        String name = (isFinalNameUsedForVersion() == false ? developmentVersion : finalName);
+        String name = ( isFinalNameUsedForVersion() ? finalName : developmentVersion );
 
         // Remove the -SNAPSHOT suffix from the version name
         name = name.replace("-SNAPSHOT", "");
