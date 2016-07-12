@@ -62,7 +62,7 @@ Add the following profile to be executed when released:
 			    <plugin>
 				    <groupId>net.sigmalab.maven.plugins</groupId>
 				    <artifactId>jira-maven-plugin</artifactId>
-				    <version>0.3</version>
+				    <version>0.4</version>
 				    <inherited>false</inherited>
 				    <configuration>
 					    <!- <server> entry in settings.xml -->
@@ -91,7 +91,7 @@ Place it on your pom.xml:
     <plugin>
 	    <groupId>net.sigmalab.maven.plugins</groupId>
 	    <artifactId>jira-maven-plugin</artifactId>
-	    <version>0.3</version>
+	    <version>0.4</version>
 	    <inherited>false</inherited>
 	    <configuration>
 		    <!- <server> entry in settings.xml -->
@@ -130,3 +130,4 @@ TODO
 
 * Block release if all issues with fixVersion of the release version are not Closed/Resolved.
 * Generate release reports mojo
+* Capability to add a prefix/postfix to the JIRA version (as JIRA struggles supporting multiple components per project).
