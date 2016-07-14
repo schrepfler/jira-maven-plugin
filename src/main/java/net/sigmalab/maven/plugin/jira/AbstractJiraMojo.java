@@ -58,14 +58,14 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     /**
      * JIRA Authentication User.
      * 
-     * @parameter default-value="${scmUsername}"
+     * @parameter
      */
-    protected String jiraUser;
+    protected String jiraUsername;
 
     /**
      * JIRA Authentication Password.
      * 
-     * @parameter default-value="${scmPassword}"
+     * @parameter
      */
     protected String jiraPassword;
 
@@ -104,12 +104,12 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             setJiraProjectKey(getJiraProjectKey().replaceAll("/", ""));
         }
 
-        if ( (jiraUser == null || jiraPassword == null) && (settings != null) ) {
+        if ( (jiraUsername == null || jiraPassword == null) && (settings != null) ) {
             Server server = settings.getServer(this.settingsKey);
 
             if ( server != null ) {
-                if ( jiraUser == null ) {
-                    jiraUser = server.getUsername();
+                if ( jiraUsername == null ) {
+                    jiraUsername = server.getUsername();
                 }
 
                 if ( jiraPassword == null ) {
@@ -132,11 +132,11 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             loadUserInfoFromSettings();
             log.debug("JIRA URL    == [" + jiraURL + "]");
             
-            log.debug("JIRA user   == [" + jiraUser + "]");
+            log.debug("JIRA user   == [" + jiraUsername + "]");
             log.debug("Project key == [" + getJiraProjectKey() + "]");
 
             if ( jiraRestClient == null ) {
-                jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUser, jiraPassword);
+                jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUsername, jiraPassword);
             }
 
             try {
@@ -155,9 +155,17 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     }
 
     private URI computeRootURI(String url) throws URISyntaxException {
-        String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf(JIRA_ISSUE_URL_PREFIX)));
+        // Test whether the JIRA_ISSUE_URL_PREFIX is missing from the specified URL
+        // - in which case just return the URL we've been passed.
+        if ( url.lastIndexOf(JIRA_ISSUE_URL_PREFIX) < 0 ) {
+            return new URI(url);
+        }
+        else {
+            // Otherwise, compute the part of the URL in front of the prefix and return that.
+            String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf(JIRA_ISSUE_URL_PREFIX)));
         
-        return new URI(rootURL);
+            return new URI(rootURL);
+        }
     }
 
     public abstract void doExecute(JiraRestClient restClient) throws Exception;
@@ -203,7 +211,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     }
 
     public void setJiraUser(String jiraUser) {
-        this.jiraUser = jiraUser;
+        this.jiraUsername = jiraUser;
     }
 
     public void setSettings(Settings settings) {

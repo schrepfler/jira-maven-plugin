@@ -1,53 +1,55 @@
 [![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin) [![Stories in Ready](https://badge.waffle.io/schrepfler/jira-maven-plugin.png?label=ready&title=Ready)](http://waffle.io/schrepfler/jira-maven-plugin)
 
-Maven JIRA Plugin
-=================
+JIRA Maven Plugin
+=
 
 This plugins is a fork of George Gastaldi's jira-maven-plugin available here: https://github.com/gastaldi/jira-maven-plugin
 
-The internals of it were changed so that it uses the JIRA REST API rather the SOAP one which is going to be deprecated.
+The internals of it were changed so that it uses the JIRA REST API rather the SOAP one which is deprecated in JIRA 7.x.
 
-To do so, we are going to use the Atlassian jira-rest-client library. 
-
-This Maven plugin allows performing of JIRA common actions, like releasing a version, create a new version and generate the release notes:
+This Maven plugin allows the manipulation of JIRA fixVersions within the project associated with the built component.
 
 
-Usage
-=====================
+# Usage
 
-Before you start using this plugin, you must have two configurations already set on your pom.xml:
+Before you start using this plugin, you *must* define the URL of your JIRA server inside the `<issueManagement>` section of your project's pom.xml:
 
-issueManagement tag
-=====================
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://www.myjira.com/jira/browse/PROJECTKEY</url>
+    </issueManagement>
 
-        <issueManagement>
-           <system>JIRA</system>
-           <url>http://www.myjira.com/jira/browse/PROJECTKEY</url>
-        </issueManagement>
+The URL specified here is used to identify the associated JIRA project and server URL.
 
-Note: This is extremely important, as will use this information to connect on JIRA.
+To use the jira-maven-plugin you should include it in the appropriate `<plugins>` section of your POM -- for example:
 
-<server> entry in settings.xml with the authentication information
-=====================
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.sigmalab.maven.plugins</groupId>
+                <artifactId>jira-maven-plugin</artifactId>
+                <version>0.4</version>
+                <configuration>
+                    <!-- Particular configuration options -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>deploy</phase>
+                        <goals>
+                            <!-- Goals which you're interested in executing during the deploy phase -->
+                        </goals>
+                        </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-Put the following in the settings.xml file: 
-
-    <servers>
-        <server>
-            <id>jira</id>
-            <username>your_user</username>
-            <password>your_password</password>
-        </server>
-    </servers>
+##Goals
 
 
-Also, make sure your JIRA has REST API access enabled.
+###`release-jira-version`
 
-
-release-jira-version goal
-=====================
-
-Add the following profile to be executed when released:
+Add the following profile to be performed when the `deploy` phase is executed:
 
     <profile>
 	    <id>release</id>
@@ -81,8 +83,7 @@ Add the following profile to be executed when released:
 	    </build>
     </profile>
 
-create-new-version
-=====================
+### `create-new-version`
 
 Creates a new JIRA version of this project (without the -SNAPSHOT suffix)
 
@@ -107,27 +108,59 @@ Place it on your pom.xml:
 	    </executions>
     </plugin>
 
+### `generate-release-notes`
 
-Development
-===================
+##Configuration Options
 
-To build and install locally:
+The following options can be specified in the `<configuration> ... </configuration>` section:
 
-    mvn clean install
+`<jiraProjectKey>` : 
+`<jiraURL>` :
+`<skip>` :
+`<versionDescription>` : 
+`<finalName>` :
+`<finalNameUsedForVersion>` :
+`<developmentVersion>` :
+`<autoDiscoverLatestRelease>` : 
+`<releaseVersion>` :
+
+### Authentication
+
+The username and password used to authenticate with JIRA can be explicitly specified using the `<jiraUsername>` and `<jiraPassword>` configuration parameters respectively.
+
+#### `<settingsKey>` Configuration
+
+Alternatively, the authentication configuration can be controlled using Maven's standard `<servers>` configuration by specifying the `<settingsKey>` configuration parameter to identify which `<server>` section of your `settings.xml` to be used to define the username and password.
+
+For example - if you specify:
+
+    ...
+        <configuration>
+            <settingsKey>JIRA Server</settingsKey>
+        </configuration>
+    ...
     
-Release to Sonatype OSS maven repository
-===================
+This will look for the a `<server>` entry with the same name - something like:
 
-Setup your ~/.m2/settings.xml to contain the credentials for deployment to Sonatype OSS
+    <servers>
+        <server>
+            <id>JIRA Server</id>
+            <username>bob</username>
+            <password>...</password>
+        </server>
+        <!-- ... etc ... -->
+    </servers>
+    
+If the password in the `<server>` section uses Maven's standard encryption mechanism this will be automatically decrypted for authentication to JIRA.
 
-    mvn jgitflow:release-start
-    pray
-    mvn jgitflow:release-finish
-    pray some more
+### Release Notes
 
-TODO
-===================
+`<jqlTemplate>` :
+`<issueTemplate>` :
+`<maxIssues>` :
+`<releaseVersion>` :
+`<targetFile>` :
+`<beforeText>` :
+`<afterText>` :
 
-* Block release if all issues with fixVersion of the release version are not Closed/Resolved.
-* Generate release reports mojo
-* Capability to add a prefix/postfix to the JIRA version (as JIRA struggles supporting multiple components per project).
+
