@@ -1,10 +1,8 @@
 .settings/
 .classpath
 .project
-target/
 .factorypath
-
 .idea/
+target/
 atlassian-ide-plugin.xml
 jira-maven-plugin.iml
-/pom.xml
