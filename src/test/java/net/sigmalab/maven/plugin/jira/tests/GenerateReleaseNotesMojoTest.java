@@ -26,7 +26,6 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 				"src/test/resources/GenerateReleaseNotesMojoTest.xml");
 	}
 
-	@Ignore
 	@Test
 	public void testDoExecute() throws Exception {
 		mojo.execute();
