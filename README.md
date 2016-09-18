@@ -154,20 +154,14 @@ If the password in the `<server>` section uses Maven's standard encryption mecha
 
 ### Release Note Structure
 
-
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-
 | Paramter | Description |
 |----------|-------------|
-| `<jqlTemplate>` | Description of 
-`<issueTemplate>` :
-`<maxIssues>` :
-`<releaseVersion>` :
-`<targetFile>` :
-`<beforeText>` :
-`<afterText>` :
+| `<jqlTemplate>` | Blah |
+|  `<issueTemplate>` | |
+| `<maxIssues>` | |
+| `<releaseVersion>` | |
+| `<targetFile>` | |
+| `<beforeText>` | |
+| `<afterText>` | |
 
 
