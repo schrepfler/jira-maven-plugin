@@ -152,9 +152,17 @@ This will look for the a `<server>` entry with the same name - something like:
     
 If the password in the `<server>` section uses Maven's standard encryption mechanism this will be automatically decrypted for authentication to JIRA.
 
-### Release Notes
+### Release Note Structure
 
-`<jqlTemplate>` :
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
+
+| Paramter | Description |
+|----------|-------------|
+| `<jqlTemplate>` | Description of 
 `<issueTemplate>` :
 `<maxIssues>` :
 `<releaseVersion>` :
