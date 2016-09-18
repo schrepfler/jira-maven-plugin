@@ -113,15 +113,17 @@ Place it on your pom.xml:
 
 The following options can be specified in the `<configuration> ... </configuration>` section:
 
-`<jiraProjectKey>` : 
-`<jiraURL>` :
-`<skip>` :
-`<versionDescription>` : 
-`<finalName>` :
-`<finalNameUsedForVersion>` :
-`<developmentVersion>` :
-`<autoDiscoverLatestRelease>` : 
-`<releaseVersion>` :
+| Paramter | Description |
+|----------|-------------|
+| `<jiraProjectKey>` | The project key associated with the JIRA project -- if not specified this is computed from the jiraURL and/or the `<issuetracking>` component of your POM. | 
+| `<jiraURL>` | The root URL of the JIRA server - this can be used to override the `<issueTracking>` section of your POM. |
+| `<skip>` | Controls whether the plugin is enabled for this context. |
+| `<versionDescription>` | Description which will be applied to the version if it is created -- defaults to the project name. | 
+| `<finalName>` | Name of the version to be created - defaults to the project's finalName -- typically `${project.artifactId}-${project.version}` |
+| `<finalNameUsedForVersion>` | Boolean controlling whether the finalName or |
+| `<developmentVersion>` | The version number -- defaults to `${project.version}` |
+| `<autoDiscoverLatestRelease>` | Boolean controlling whether the latest version in JIRA should be the one identified for release. | 
+| `<releaseVersion>` | Version to release within JIRA -- defaults to `${project.version}` |
 
 ### Authentication
 
@@ -156,7 +158,7 @@ If the password in the `<server>` section uses Maven's standard encryption mecha
 
 | Paramter | Description |
 |----------|-------------|
-| `<jqlTemplate>` | Blah |
+| `<jqlTemplate>` | |
 |  `<issueTemplate>` | |
 | `<maxIssues>` | |
 | `<releaseVersion>` | |
