@@ -123,6 +123,7 @@ The following options can be specified in the `<configuration> ... </configurati
 `<developmentVersion>` :
 `<autoDiscoverLatestRelease>` : 
 `<releaseVersion>` :
+`<scope>` : `project` (the default) or `session` if you want the goal to be executed for each project or only the last one in the Maven session
 
 ### Authentication
 
