@@ -62,7 +62,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
         Iterable<Version> projectVersions = project.getVersions();
 
         if ( versionAlreadyExists(projectVersions, newVersionName) ) {
-            log.warn(String.format("Version %s already exists. Nothing to do.", newVersionName));
+            log.warn(String.format("Version %s already exists in %s. Nothing to do.", newVersionName, getSettingsKey()));
             return;
         }
 
@@ -70,7 +70,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
         log.debug(String.format("New version description: [%s]", newVersion.getDescription()));
 
         Version created = versionRestClient.createVersion(newVersion).claim();
-        log.info(String.format("Version created in JIRA for project key [%s] : %s", getJiraProjectKey(), created.getName()));
+        log.info(String.format("Version created in %s for project key [%s] : %s", getSettingsKey(), getJiraProjectKey(), created.getName()));
     }
 
     /**
@@ -98,7 +98,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
      * @return
      */
     private String computeVersionName() {
-        String name = (isFinalNameUsedForVersion() == false ? developmentVersion : finalName);
+        String name = ( isFinalNameUsedForVersion() ? finalName : developmentVersion );
 
         // Remove the -SNAPSHOT suffix from the version name
         name = name.replace("-SNAPSHOT", "");

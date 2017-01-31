@@ -13,7 +13,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
@@ -33,6 +36,7 @@ import net.sigmalab.maven.plugin.jira.ReleaseVersionMojo;
  * @author dgrierso
  * 
  */
+@RunWith(JUnit4.class)
 public class ReleaseVersionMojoTest {
     
     private static String TESTKEY = "TESTKEY";
@@ -84,7 +88,7 @@ public class ReleaseVersionMojoTest {
 		jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
 
-	
+	@Ignore
 	@Test
 	public void testLatestVersionInfo() throws Exception {
 		final String expected = "3.1";
@@ -94,6 +98,7 @@ public class ReleaseVersionMojoTest {
 		assertThat(actual.getName(), is(equalTo(expected)));
 	}
 
+	@Ignore
 	@Test
 	public void testExecuteWithReleaseVersion() throws MojoExecutionException, MojoFailureException {
 		jiraVersionMojo.setReleaseVersion("3.0");

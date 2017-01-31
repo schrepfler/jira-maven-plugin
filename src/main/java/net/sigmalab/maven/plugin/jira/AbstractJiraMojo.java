@@ -2,11 +2,14 @@ package net.sigmalab.maven.plugin.jira;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -26,6 +29,10 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
  */
 public abstract class AbstractJiraMojo extends AbstractMojo {
 
+    private static final String JIRA_ISSUE_URL_PREFIX = "/browse/";
+
+    private static final String SCOPE_SESSION = "session";
+
     /**
      * @parameter default-value = "${settings}", readonly = true
      */
@@ -36,6 +43,19 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      * @required
      */
     private SecDispatcher securityDispatcher;
+
+    /**
+     * @parameter default-value = "${session}", readonly = true
+     * @required
+     */
+    private MavenSession mavenSession;
+
+    /**
+     * The current Maven project.
+     * @parameter default-value = "${project}", readonly = true
+     * @required
+     */
+    protected MavenProject project;
 
     /**
      * Server's id in settings.xml to look up username and password.
@@ -56,14 +76,14 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     /**
      * JIRA Authentication User.
      * 
-     * @parameter default-value="${scmUsername}"
+     * @parameter
      */
-    protected String jiraUser;
+    protected String jiraUsername;
 
     /**
      * JIRA Authentication Password.
      * 
-     * @parameter default-value="${scmPassword}"
+     * @parameter
      */
     protected String jiraPassword;
 
@@ -81,7 +101,18 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      */
     protected boolean skip;
 
-    transient private JiraRestClient jiraRestClient;
+    /**
+     * Indicate when to actually execute the goal.
+     * <ul>
+     * <li>project: always (the default)</li>
+     * <li>session: only for the last project of the reactor</li>
+     * </ul>
+     * 
+     * @parameter default-value="project"
+     */
+    protected String scope;
+
+    private transient JiraRestClient jiraRestClient;
 
     /**
      * Load username password from settings if user has not set them in JVM
@@ -98,16 +129,16 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
          * for the project.
          */
         if ( getJiraProjectKey() == null ) {
-            setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf("/browse/") + 8));
+            setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf(JIRA_ISSUE_URL_PREFIX) + JIRA_ISSUE_URL_PREFIX.length()));
             setJiraProjectKey(getJiraProjectKey().replaceAll("/", ""));
         }
 
-        if ( (jiraUser == null || jiraPassword == null) && (settings != null) ) {
+        if ( (jiraUsername == null || jiraPassword == null) && (settings != null) ) {
             Server server = settings.getServer(this.settingsKey);
 
             if ( server != null ) {
-                if ( jiraUser == null ) {
-                    jiraUser = server.getUsername();
+                if ( jiraUsername == null ) {
+                    jiraUsername = server.getUsername();
                 }
 
                 if ( jiraPassword == null ) {
@@ -120,21 +151,37 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
+
+        // Skip property
         if ( isSkip() ) {
             log.info("Skipping Plugin execution.");
             return;
         }
+
+        // Scope property
+        if (SCOPE_SESSION.equals(this.scope)) {
+            List<MavenProject> projects = this.mavenSession.getProjects();
+
+            MavenProject lastProject = projects.get(projects.size() - 1);
+
+            if (lastProject != this.project) {
+                log.info("Skipping waiting for the last Maven session project.");
+
+                return;
+            }
+        }
+
         try {
             final JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
 
             loadUserInfoFromSettings();
             log.debug("JIRA URL    == [" + jiraURL + "]");
             
-            log.debug("JIRA user   == [" + jiraUser + "]");
+            log.debug("JIRA user   == [" + jiraUsername + "]");
             log.debug("Project key == [" + getJiraProjectKey() + "]");
 
             if ( jiraRestClient == null ) {
-                jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUser, jiraPassword);
+                jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUsername, jiraPassword);
             }
 
             try {
@@ -153,9 +200,17 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     }
 
     private URI computeRootURI(String url) throws URISyntaxException {
-        String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf("/browse/")));
+        // Test whether the JIRA_ISSUE_URL_PREFIX is missing from the specified URL
+        // - in which case just return the URL we've been passed.
+        if ( url.lastIndexOf(JIRA_ISSUE_URL_PREFIX) < 0 ) {
+            return new URI(url);
+        }
+        else {
+            // Otherwise, compute the part of the URL in front of the prefix and return that.
+            String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf(JIRA_ISSUE_URL_PREFIX)));
         
-        return new URI(rootURL);
+            return new URI(rootURL);
+        }
     }
 
     public abstract void doExecute(JiraRestClient restClient) throws Exception;
@@ -181,6 +236,13 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         return jiraProjectKey;
     }
 
+    /**
+     * @return the settingsKey
+     */
+    public String getSettingsKey() {
+        return settingsKey;
+    }
+
     public void setJiraProjectKey(String jiraProjectKey) {
         this.jiraProjectKey = jiraProjectKey;
     }
@@ -194,7 +256,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     }
 
     public void setJiraUser(String jiraUser) {
-        this.jiraUser = jiraUser;
+        this.jiraUsername = jiraUser;
     }
 
     public void setSettings(Settings settings) {
@@ -208,5 +270,4 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     public void setJiraRestClient(JiraRestClient jiraRestClient) {
         this.jiraRestClient = jiraRestClient;
     }
-
 }
