@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin)
 
 JIRA Maven Plugin
 =
@@ -124,6 +125,7 @@ The following options can be specified in the `<configuration> ... </configurati
 | `<developmentVersion>` | The version number -- defaults to `${project.version}` |
 | `<autoDiscoverLatestRelease>` | Boolean controlling whether the latest version in JIRA should be the one identified for release. | 
 | `<releaseVersion>` | Version to release within JIRA -- defaults to `${project.version}` |
+| `<scope>` | `project` (the default) or `session` if you want the goal to be executed for each project or only the last one in the Maven session |
 
 ### Authentication
 
@@ -159,7 +161,7 @@ If the password in the `<server>` section uses Maven's standard encryption mecha
 | Paramter | Description |
 |----------|-------------|
 | `<jqlTemplate>` | |
-|  `<issueTemplate>` | |
+| `<issueTemplate>` | |
 | `<maxIssues>` | |
 | `<releaseVersion>` | |
 | `<targetFile>` | |

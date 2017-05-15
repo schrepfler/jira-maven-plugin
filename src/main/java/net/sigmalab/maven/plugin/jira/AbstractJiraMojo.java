@@ -2,11 +2,14 @@ package net.sigmalab.maven.plugin.jira;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -28,6 +31,8 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 
     private static final String JIRA_ISSUE_URL_PREFIX = "/browse/";
 
+    private static final String SCOPE_SESSION = "session";
+
     /**
      * @parameter default-value = "${settings}", readonly = true
      */
@@ -38,6 +43,19 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      * @required
      */
     private SecDispatcher securityDispatcher;
+
+    /**
+     * @parameter default-value = "${session}", readonly = true
+     * @required
+     */
+    private MavenSession mavenSession;
+
+    /**
+     * The current Maven project.
+     * @parameter default-value = "${project}", readonly = true
+     * @required
+     */
+    protected MavenProject project;
 
     /**
      * Server's id in settings.xml to look up username and password.
@@ -83,6 +101,17 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      */
     protected boolean skip;
 
+    /**
+     * Indicate when to actually execute the goal.
+     * <ul>
+     * <li>project: always (the default)</li>
+     * <li>session: only for the last project of the reactor</li>
+     * </ul>
+     * 
+     * @parameter default-value="project"
+     */
+    protected String scope;
+
     private transient JiraRestClient jiraRestClient;
 
     /**
@@ -122,10 +151,26 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
+
+        // Skip property
         if ( isSkip() ) {
             log.info("Skipping Plugin execution.");
             return;
         }
+
+        // Scope property
+        if ( SCOPE_SESSION.equals(this.scope) ) {
+            List<MavenProject> projects = this.mavenSession.getProjects();
+
+            MavenProject lastProject = projects.get(projects.size() - 1);
+
+            if ( lastProject != this.project ) {
+                log.info("Skipping waiting for the last Maven session project.");
+
+                return;
+            }
+        }
+
         try {
             final JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
 
@@ -225,5 +270,4 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     public void setJiraRestClient(JiraRestClient jiraRestClient) {
         this.jiraRestClient = jiraRestClient;
     }
-
 }
