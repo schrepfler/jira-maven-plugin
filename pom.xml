@@ -11,7 +11,7 @@
     <artifactId>jira-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Maven JIRA Plugin</name>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
     <description>This maven plugin contains MOJOs to ease integration with JIRA</description>
     <url>https://github.com/schrepfler/jira-maven-plugin</url>
 
@@ -23,27 +23,28 @@
     </issueManagement>
 
     <properties>
-        <maven.plugin.testing.annotation.version>3.4</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.5</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
         <maven.version>3.3.9</maven.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <license.maven.plugin.version>1.9</license.maven.plugin.version>
-        <versions.maven.plugin.version>2.2</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.3</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.7</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
-        <maven.jar.plugin.version>2.6</maven.jar.plugin.version>
-        <maven.plugin.plugin.version>3.4</maven.plugin.plugin.version>
-        <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
-        <maven.site.plugin.version>3.5</maven.site.plugin.version>
+        <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+        <maven.plugin.plugin.version>3.5</maven.plugin.plugin.version>
+        <maven.resources.plugin.version>3.0.1</maven.resources.plugin.version>
+        <maven.site.plugin.version>3.5.1</maven.site.plugin.version>
         <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
-        <maven.javadoc.plugin.version>2.10.3</maven.javadoc.plugin.version>
+        <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
+        <plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
         <easymock.version>3.3</easymock.version>
-        <mockito.version>1.10.8</mockito.version>
+        <mockito.version>2.7.1</mockito.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -246,7 +247,7 @@
                 <plugin>
                     <groupId>org.codehaus.plexus</groupId>
                     <artifactId>plexus-component-metadata</artifactId>
-                    <version>1.6</version>
+                    <version>${plexus-component-metadata.version}</version>
                     <executions>
                         <execution>
                             <id>merge</id>
