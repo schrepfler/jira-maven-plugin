@@ -159,12 +159,12 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         }
 
         // Scope property
-        if (SCOPE_SESSION.equals(this.scope)) {
+        if ( SCOPE_SESSION.equals(this.scope) ) {
             List<MavenProject> projects = this.mavenSession.getProjects();
 
             MavenProject lastProject = projects.get(projects.size() - 1);
 
-            if (lastProject != this.project) {
+            if ( lastProject != this.project ) {
                 log.info("Skipping waiting for the last Maven session project.");
 
                 return;
