@@ -31,6 +31,7 @@
         <license.maven.plugin.version>1.9</license.maven.plugin.version>
         <versions.maven.plugin.version>2.3</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
+        <jira.server.version>7.4.3</jira.server.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.7</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.0.0</maven.clean.plugin.version>
@@ -52,7 +53,7 @@
     <repositories>
         <repository>
             <id>atlassian-public</id>
-            <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+            <url>https://packages.atlassian.com/maven/repository/public</url>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
@@ -63,7 +64,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>atlassian-public</id>
-            <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+            <url>https://packages.atlassian.com/maven/repository/public</url>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
@@ -131,6 +132,13 @@
     </licenses>
 
     <dependencies>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-webapp</artifactId>
+            <version>${jira.server.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client</artifactId>
