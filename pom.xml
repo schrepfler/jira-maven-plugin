@@ -133,6 +133,13 @@
     <dependencies>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
+            <artifactId>atlassian-jira-webapp</artifactId>
+            <version>7.4.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client</artifactId>
             <version>${jira.rest.java.client.version}</version>
         </dependency>
