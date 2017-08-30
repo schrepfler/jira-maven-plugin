@@ -134,7 +134,7 @@
     <dependencies>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-webapp</artifactId>
+            <artifactId>atlassian-jira-webapp</artifactId>
             <version>${jira.server.version}</version>
             <scope>test</scope>
         </dependency>
