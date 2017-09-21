@@ -36,7 +36,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     /**
      * @parameter default-value = "${settings}", readonly = true
      */
-    Settings settings;
+    private Settings settings;
 
     /**
      * @component role-hint="mng-4384"
@@ -118,7 +118,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      * Load username password from settings if user has not set them in JVM
      * properties
      */
-    void loadUserInfoFromSettings() {
+    private void loadUserInfoFromSettings() {
         if ( settingsKey == null ) {
             settingsKey = jiraURL;
         }
@@ -200,13 +200,17 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     }
 
     private URI computeRootURI(String url) throws URISyntaxException {
-        // Test whether the JIRA_ISSUE_URL_PREFIX is missing from the specified URL
-        // - in which case just return the URL we've been passed.
+        /*
+         *  Test whether the JIRA_ISSUE_URL_PREFIX is missing from the specified URL
+         *  in which case just return the URL we've been passed.
+         */
         if ( url.lastIndexOf(JIRA_ISSUE_URL_PREFIX) < 0 ) {
             return new URI(url);
         }
         else {
-            // Otherwise, compute the part of the URL in front of the prefix and return that.
+            /*
+             * Otherwise, compute the part of the URL in front of the prefix and return that.
+             */
             String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf(JIRA_ISSUE_URL_PREFIX)));
         
             return new URI(rootURL);

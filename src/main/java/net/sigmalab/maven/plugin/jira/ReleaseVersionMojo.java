@@ -34,14 +34,14 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * 
      * @parameter default-value="false"
      */
-    boolean autoDiscoverLatestRelease;
+    private boolean autoDiscoverLatestRelease;
 
     /**
      * Comparator for discovering the latest release
      * 
      * @parameter implementation="com.github.gastaldi.jira.VersionComparator"
      */
-    Comparator<Version> versionComparator = new VersionComparator();
+    private Comparator<Version> versionComparator = new VersionComparator();
 
     @Override
     public void doExecute(JiraRestClient jiraRestClient) {
