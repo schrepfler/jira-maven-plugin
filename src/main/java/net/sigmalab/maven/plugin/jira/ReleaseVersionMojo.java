@@ -46,8 +46,8 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
     @Override
     public void doExecute(JiraRestClient jiraRestClient) {
         Iterable<Version> versions = getProjectVersions(jiraRestClient);
-        Version thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions)
-                                                                 : getVersion(jiraRestClient, getReleaseVersion());
+        Version thisReleaseVersion = ( autoDiscoverLatestRelease ? calculateLatestReleaseVersion(versions)
+                                                                 : getVersion(jiraRestClient, getReleaseVersion()) );
 
         if ( thisReleaseVersion != null ) {
             log.debug("Releasing Version " + thisReleaseVersion.getName());
