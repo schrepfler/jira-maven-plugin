@@ -80,7 +80,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
      * @param newDevVersion
      * @return
      */
-    boolean versionAlreadyExists(Iterable<Version> remoteVersions, String newDevVersion) {
+    private boolean versionAlreadyExists(Iterable<Version> remoteVersions, String newDevVersion) {
         if ( remoteVersions != null ) {
             for ( Version remoteVersion : remoteVersions ) {
                 if ( remoteVersion.getName().equalsIgnoreCase(newDevVersion) ) {

@@ -99,8 +99,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     /**
      * Recover issues from JIRA based on JQL Filter
      */
-
-    Iterable<BasicIssue> getIssues(JiraRestClient restClient) {
+    private Iterable<BasicIssue> getIssues(JiraRestClient restClient) {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
         log.info("JQL: " + jql);
 
@@ -112,7 +111,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * 
      * @param issues
      */
-    void output(JiraRestClient restClient, Iterable<BasicIssue> issues) throws IOException {
+    private void output(JiraRestClient restClient, Iterable<BasicIssue> issues) throws IOException {
         IssueRestClient issueClient = restClient.getIssueClient();
 
         if ( targetFile == null ) {

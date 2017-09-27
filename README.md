@@ -28,7 +28,7 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
             <plugin>
                 <groupId>net.sigmalab.maven.plugins</groupId>
                 <artifactId>jira-maven-plugin</artifactId>
-                <version>0.4</version>
+                <version>0.5</version>
                 <configuration>
                     <!-- Particular configuration options -->
                 </configuration>
@@ -64,7 +64,7 @@ Add the following profile to be performed when the `deploy` phase is executed:
 			    <plugin>
 				    <groupId>net.sigmalab.maven.plugins</groupId>
 				    <artifactId>jira-maven-plugin</artifactId>
-				    <version>0.4</version>
+				    <version>0.5</version>
 				    <inherited>false</inherited>
 				    <configuration>
 					    <!- <server> entry in settings.xml -->
@@ -92,7 +92,7 @@ Place it on your pom.xml:
     <plugin>
 	    <groupId>net.sigmalab.maven.plugins</groupId>
 	    <artifactId>jira-maven-plugin</artifactId>
-	    <version>0.4</version>
+	    <version>0.5</version>
 	    <inherited>false</inherited>
 	    <configuration>
 		    <!- <server> entry in settings.xml -->
