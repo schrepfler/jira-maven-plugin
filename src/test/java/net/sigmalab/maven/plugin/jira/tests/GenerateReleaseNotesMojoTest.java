@@ -22,8 +22,7 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		mojo = (GenerateReleaseNotesMojo) lookupMojo("generate-release-notes",
-				"src/test/resources/GenerateReleaseNotesMojoTest.xml");
+		mojo = (GenerateReleaseNotesMojo) lookupMojo("generate-release-notes", "src/test/resources/GenerateReleaseNotesMojoTest.xml");
 	}
 
 	@Test
