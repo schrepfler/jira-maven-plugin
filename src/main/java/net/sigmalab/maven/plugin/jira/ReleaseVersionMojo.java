@@ -1,7 +1,5 @@
 package net.sigmalab.maven.plugin.jira;
 
-import java.util.Comparator;
-
 import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
@@ -35,13 +33,6 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * @parameter default-value="false"
      */
     private boolean autoDiscoverLatestRelease;
-
-    /**
-     * Comparator for discovering the latest release
-     * 
-     * @parameter implementation="com.github.gastaldi.jira.VersionComparator"
-     */
-    private Comparator<Version> versionComparator = new VersionComparator();
 
     @Override
     public void doExecute(JiraRestClient jiraRestClient) {

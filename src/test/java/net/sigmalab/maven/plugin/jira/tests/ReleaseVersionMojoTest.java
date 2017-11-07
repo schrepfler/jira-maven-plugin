@@ -61,6 +61,7 @@ public class ReleaseVersionMojoTest {
 	@Before
 	public void setUp() throws Exception {
 		this.jiraVersionMojo = new ReleaseVersionMojo();
+		
 		jiraVersionMojo.setJiraUser("user");
 		jiraVersionMojo.setJiraPassword("password");
 		jiraVersionMojo.setJiraProjectKey(TESTKEY);
