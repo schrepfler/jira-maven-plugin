@@ -1,4 +1,4 @@
-package net.sigmalab.maven.plugin.jira.tests;
+package net.sigmalab.maven.plugin.jira.testClasses;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

@@ -1,5 +1,5 @@
 
-package net.sigmalab.maven.plugin.jira.tests;
+package net.sigmalab.maven.plugin.jira.testClasses;
 
 import java.util.Arrays;
 
