@@ -40,7 +40,8 @@ public class ReleaseVersionMojoTest {
     
     private static String TESTKEY = "TESTKEY";
 
-    private static final Version[] VERSION_ARRAY = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, false, new DateTime()),
+    // Latest version is released.
+    private static final Version[] VERSION_ARRAY = new Version[] { new Version(null, null, "3.1", "Release 3.1 (Delta)", false, true, new DateTime()),
                                                                   new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, false, new DateTime()),
                                                                   new Version(null, null, "2.0", "Release 2.0 (Beta)",  false, false, new DateTime()),
                                                                   new Version(null, null, "1.0", "Release 1.0 (Alpha)", false, false, new DateTime()) };
@@ -83,14 +84,14 @@ public class ReleaseVersionMojoTest {
 		
 		// Mock actual functionality required.
 		Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
-		Mockito.when(mockVersionClient.updateVersion(null, VERSION_INPUT).claim()).thenReturn(RELEASED_VERSION);
+		// Mockito.when(mockVersionClient.updateVersion(null, VERSION_INPUT).claim()).thenReturn(RELEASED_VERSION);
         
 		jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
 
 	@Test
 	public void testLatestVersionInfo() throws Exception {
-		final String expected = "3.1";
+		final String expected = "3.0";
 		
 		Version actual = jiraVersionMojo.calculateLatestReleaseVersion(VERSIONS);
 		
