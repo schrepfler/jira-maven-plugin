@@ -1,6 +1,8 @@
 
 package net.sigmalab.maven.plugin.jira.testClasses;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -18,6 +20,7 @@ import com.atlassian.jira.rest.client.ProjectRestClient;
 import com.atlassian.jira.rest.client.VersionRestClient;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.domain.Version;
+import com.atlassian.jira.rest.client.domain.input.VersionInput;
 import com.atlassian.util.concurrent.Promise;
 
 import net.sigmalab.maven.plugin.jira.CreateNewVersionMojo;
@@ -51,23 +54,33 @@ public class CreateNewVersionMojoTest  {
 		jiraVersionMojo.setJiraProjectKey("KEY");
         jiraVersionMojo.setJiraURL("http://localhost/jira/browse/" + jiraVersionMojo.getJiraProjectKey());
         
-		mockJiraRestClient = Mockito.mock(JiraRestClient.class);
-
-        VersionRestClient mockVersionClient = Mockito.mock(VersionRestClient.class);
-        Mockito.when(mockJiraRestClient.getVersionRestClient()).thenReturn(mockVersionClient);
+		mockJiraRestClient = Mockito.mock(JiraRestClient.class);        
         
+        // Mocking the Project REST handling
+		// First the ProjectRestClient
         ProjectRestClient mockProjectClient = Mockito.mock(ProjectRestClient.class);
         Mockito.when(mockJiraRestClient.getProjectClient()).thenReturn(mockProjectClient);
         
+        // Next the retrieval of project information from that REST client.
         @SuppressWarnings("unchecked")
         Promise<Project> mockProjectPromise = (Promise<Project>) Mockito.mock(Promise.class);
         Mockito.when(mockProjectClient.getProject(jiraVersionMojo.getJiraProjectKey())).thenReturn(mockProjectPromise);
         
         Project mockProject = Mockito.mock(Project.class);
         Mockito.when(mockProjectPromise.claim()).thenReturn(mockProject);
-        
         Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
         
+        // Mocking the Version REST handling
+        VersionRestClient mockVersionClient = Mockito.mock(VersionRestClient.class);
+        Mockito.when(mockJiraRestClient.getVersionRestClient()).thenReturn(mockVersionClient);
+        
+        @SuppressWarnings("unchecked")
+        Promise<Version> mockVersionPromise = (Promise<Version>) Mockito.mock(Promise.class);
+        Mockito.when(mockVersionClient.createVersion(any(VersionInput.class))).thenReturn(mockVersionPromise);
+        
+        Version mockVersion = Mockito.mock(Version.class);
+        Mockito.when(mockVersionPromise.claim()).thenReturn(mockVersion);
+                
         jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
 
