@@ -2,7 +2,8 @@ package net.sigmalab.maven.plugin.jira.testClasses;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 import java.io.File;
 import java.util.Arrays;
@@ -70,7 +71,7 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 
         @SuppressWarnings("unchecked")
         Promise<SearchResult> mockSearchPromise = (Promise<SearchResult>) Mockito.mock(Promise.class);
-        Mockito.when(mockSearchClient.searchJql(any(String.class), any(int.class), any(int.class))).thenReturn(mockSearchPromise);
+        Mockito.when(mockSearchClient.searchJql(anyString(), anyInt(), anyInt())).thenReturn(mockSearchPromise);
 
         SearchResult mockSearchResult = Mockito.mock(SearchResult.class);
         Mockito.when(mockSearchPromise.claim()).thenReturn(mockSearchResult);
@@ -84,7 +85,7 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 
         @SuppressWarnings("unchecked")
         Promise<Issue> mockIssuePromise = (Promise<Issue>) Mockito.mock(Promise.class);
-        Mockito.when(mockIssueClient.getIssue(any(String.class))).thenReturn(mockIssuePromise);
+        Mockito.when(mockIssueClient.getIssue(anyString())).thenReturn(mockIssuePromise);
         Mockito.when(mockIssuePromise.claim()).thenReturn(DUMMY_ISSUE);
         
         releaseNoteMojo.setJiraRestClient(mockJiraRestClient);
