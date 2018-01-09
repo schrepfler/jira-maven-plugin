@@ -151,4 +151,60 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             ps.close();
         }
     }
+
+    public String getJqlTemplate() {
+        return jqlTemplate;
+    }
+
+    public void setJqlTemplate(String jqlTemplate) {
+        this.jqlTemplate = jqlTemplate;
+    }
+
+    public String getIssueTemplate() {
+        return issueTemplate;
+    }
+
+    public void setIssueTemplate(String issueTemplate) {
+        this.issueTemplate = issueTemplate;
+    }
+
+    public int getMaxIssues() {
+        return maxIssues;
+    }
+
+    public void setMaxIssues(int maxIssues) {
+        this.maxIssues = maxIssues;
+    }
+
+    public String getReleaseVersion() {
+        return releaseVersion;
+    }
+
+    public void setReleaseVersion(String releaseVersion) {
+        this.releaseVersion = releaseVersion;
+    }
+
+    public File getTargetFile() {
+        return targetFile;
+    }
+
+    public void setTargetFile(File targetFile) {
+        this.targetFile = targetFile;
+    }
+
+    public String getBeforeText() {
+        return beforeText;
+    }
+
+    public void setBeforeText(String beforeText) {
+        this.beforeText = beforeText;
+    }
+
+    public String getAfterText() {
+        return afterText;
+    }
+
+    public void setAfterText(String afterText) {
+        this.afterText = afterText;
+    }
 }
