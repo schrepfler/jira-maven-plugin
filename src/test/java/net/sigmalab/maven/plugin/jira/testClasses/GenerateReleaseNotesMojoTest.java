@@ -2,8 +2,8 @@ package net.sigmalab.maven.plugin.jira.testClasses;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.io.File;
 import java.util.Arrays;
