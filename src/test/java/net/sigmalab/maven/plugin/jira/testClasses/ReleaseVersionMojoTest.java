@@ -6,7 +6,10 @@ package net.sigmalab.maven.plugin.jira.testClasses;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 
+import java.net.URI;
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -81,10 +84,12 @@ public class ReleaseVersionMojoTest {
 		
 		Project mockProject = Mockito.mock(Project.class);
 		Mockito.when(mockProjectPromise.claim()).thenReturn(mockProject);
-		
-		// Mock actual functionality required.
 		Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
-		// Mockito.when(mockVersionClient.updateVersion(null, VERSION_INPUT).claim()).thenReturn(RELEASED_VERSION);
+		
+		@SuppressWarnings("unchecked")
+        Promise<Version> mockVersionPromise = (Promise<Version>) Mockito.mock(Promise.class);
+		Mockito.when(mockVersionClient.updateVersion((URI) any(), any(VersionInput.class))).thenReturn(mockVersionPromise);
+		Mockito.when(mockVersionPromise.claim()).thenReturn(RELEASED_VERSION);
         
 		jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
