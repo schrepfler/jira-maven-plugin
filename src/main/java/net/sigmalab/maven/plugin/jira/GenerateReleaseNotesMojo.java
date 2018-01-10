@@ -19,9 +19,6 @@ import com.google.common.collect.Iterables;
 /**
  * Goal that generates release notes based on a version in a JIRA project.
  * 
- * NOTE: REST API access must be enabled in your JIRA installation. Check JIRA
- * docs for more info.
- * 
  * @goal generate-release-notes
  * @phase deploy
  * 
@@ -32,18 +29,21 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     final Log log = getLog();
 
     /**
-     * JQL Template to generate release notes. Parameter 0 = Project Key
+     * JQL Template to find issues associated with this version.
+     * 
+     * Parameter 0 = Project Key
      * Parameter 1 = Fix version
      * 
-     * @parameter default-value=
-     *            "project = ''{0}'' AND status in (Resolved, Closed) AND fixVersion = ''{1}''"
+     * @parameter default-value="project = ''{0}'' AND fixVersion = ''{1}''"
      * @required
      */
     String jqlTemplate;
 
     /**
-     * Template used on each issue found by JQL Template. Parameter 0 = Issue
-     * Key Parameter 1 = Issue Summary
+     * Template used on each issue found by JQL Template.
+     * 
+     * Parameter 0 = Issue Key
+     * Parameter 1 = Issue Summary
      * 
      * @parameter default-value="[{0}] {1}"
      * @required
@@ -53,7 +53,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     /**
      * Max number of issues to return
      * 
-     * @parameter default-value="100"
+     * @parameter default-value="500"
      * @required
      */
     int maxIssues;
@@ -90,8 +90,10 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
     @Override
     public void doExecute(JiraRestClient jiraRestClient) throws Exception {
+        log.info("Generating release note");
+        
         Iterable<BasicIssue> issues = getIssues(jiraRestClient);
-        log.info("Found " + Iterables.size(issues) + " issues.");
+        log.debug("Found " + Iterables.size(issues) + " issues.");
 
         output(jiraRestClient, issues);
     }
@@ -101,7 +103,8 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      */
     private Iterable<BasicIssue> getIssues(JiraRestClient restClient) {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
-        log.info("JQL: " + jql);
+        log.info("Searching for ");
+        log.debug("JQL Query: " + jql);
 
         return restClient.getSearchClient().searchJql(jql, maxIssues, 0).claim().getIssues();
     }
@@ -115,7 +118,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
         IssueRestClient issueClient = restClient.getIssueClient();
 
         if ( targetFile == null ) {
-            log.warn("No targetFile specified. Ignoring");
+            log.warn("No targetFile specified using default.");
             return;
         }
 
@@ -147,5 +150,61 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             ps.flush();
             ps.close();
         }
+    }
+
+    public String getJqlTemplate() {
+        return jqlTemplate;
+    }
+
+    public void setJqlTemplate(String jqlTemplate) {
+        this.jqlTemplate = jqlTemplate;
+    }
+
+    public String getIssueTemplate() {
+        return issueTemplate;
+    }
+
+    public void setIssueTemplate(String issueTemplate) {
+        this.issueTemplate = issueTemplate;
+    }
+
+    public int getMaxIssues() {
+        return maxIssues;
+    }
+
+    public void setMaxIssues(int maxIssues) {
+        this.maxIssues = maxIssues;
+    }
+
+    public String getReleaseVersion() {
+        return releaseVersion;
+    }
+
+    public void setReleaseVersion(String releaseVersion) {
+        this.releaseVersion = releaseVersion;
+    }
+
+    public File getTargetFile() {
+        return targetFile;
+    }
+
+    public void setTargetFile(File targetFile) {
+        this.targetFile = targetFile;
+    }
+
+    public String getBeforeText() {
+        return beforeText;
+    }
+
+    public void setBeforeText(String beforeText) {
+        this.beforeText = beforeText;
+    }
+
+    public String getAfterText() {
+        return afterText;
+    }
+
+    public void setAfterText(String afterText) {
+        this.afterText = afterText;
     }
 }
