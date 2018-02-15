@@ -1,5 +1,6 @@
 package net.sigmalab.maven.plugin.jira;
 
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
@@ -35,7 +36,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
     private boolean autoDiscoverLatestRelease;
 
     @Override
-    public void doExecute(JiraRestClient jiraRestClient) {
+    public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
         Iterable<Version> versions = getProjectVersions(jiraRestClient);
         Version thisReleaseVersion = ( autoDiscoverLatestRelease ? calculateLatestReleaseVersion(versions)
                                                                  : getVersion(jiraRestClient, getReleaseVersion()) );
