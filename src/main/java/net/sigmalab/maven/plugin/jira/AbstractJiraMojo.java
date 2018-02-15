@@ -195,7 +195,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         }
         catch ( Exception e ) {
             log.error("Error when executing mojo", e);
-            // XXX: Por enquanto nao faz nada.
+            // Nothing further to do - perhaps print some more useful error message?
         }
     }
 
