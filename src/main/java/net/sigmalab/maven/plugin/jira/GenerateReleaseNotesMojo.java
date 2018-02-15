@@ -127,7 +127,8 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             return;
         }
 
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, true), "UTF8");
+        // Creates a new file - DOES NOT APPEND
+        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
         PrintWriter ps = new PrintWriter(writer);
 
         try {
