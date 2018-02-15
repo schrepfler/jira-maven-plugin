@@ -28,6 +28,7 @@ import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 
 @RunWith(JUnit4.class)
 public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
+    private static final String NEWLINE = System.getProperty("line.separator");
 
     private static final BasicIssue[] ISSUE_ARRAY = new BasicIssue[] { new BasicIssue(null, "DUMMY-1"),
                                                                        new BasicIssue(null, "DUMMY-4"),
@@ -46,13 +47,15 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
+        
         releaseNoteMojo = new GenerateReleaseNotesMojo();
         
         releaseNoteMojo.setJiraUser("user");
         releaseNoteMojo.setJiraPassword("password");
         releaseNoteMojo.setJiraProjectKey("DUMMY");
-        releaseNoteMojo.setBeforeText("This is BEFORE TEXT\n==============================");
-        releaseNoteMojo.setAfterText("==============================\nThis is AFTER TEXT");
+        releaseNoteMojo.setBeforeText("This is BEFORE TEXT" + NEWLINE + "==============================");
+        releaseNoteMojo.setAfterText("==============================" + NEWLINE + "This is AFTER TEXT");
         releaseNoteMojo.setJiraProjectKey("KEY");
         releaseNoteMojo.setSettingsKey("jira");
         releaseNoteMojo.setReleaseVersion("3.3.2.SR1");
@@ -95,11 +98,11 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
     public void testDoExecute() throws Exception {
         releaseNoteMojo.execute();
 
-        File createdFile = new File("target/releaseNotes.txt");
+        File newFile = new File("target/releaseNotes.txt");
         File staticFile = new File("src/test/resources/expectedReleaseNotes.txt");
 
-        assertThat(createdFile.exists(), is(true));
-        assertThat(FileUtils.contentEquals(createdFile, staticFile), is(true));
+        assertThat(newFile.exists(), is(true));
+        assertThat(FileUtils.contentEqualsIgnoreEOL(newFile, staticFile, null), is(true));
     }
 
 }
