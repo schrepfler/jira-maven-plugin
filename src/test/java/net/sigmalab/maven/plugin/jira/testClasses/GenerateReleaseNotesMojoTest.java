@@ -28,7 +28,6 @@ import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 
 @RunWith(JUnit4.class)
 public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
-
     private static final String NEWLINE = System.getProperty("line.separator");
 
     private static final BasicIssue[] ISSUE_ARRAY = new BasicIssue[] { new BasicIssue(null, "DUMMY-1"),

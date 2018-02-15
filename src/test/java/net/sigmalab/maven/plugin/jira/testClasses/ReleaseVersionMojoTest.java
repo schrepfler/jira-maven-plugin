@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.sigmalab.maven.plugin.jira.testClasses;
 
 import static org.hamcrest.CoreMatchers.equalTo;
