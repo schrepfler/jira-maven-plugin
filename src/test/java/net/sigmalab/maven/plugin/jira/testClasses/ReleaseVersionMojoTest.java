@@ -7,7 +7,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNull;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -52,7 +51,6 @@ public class ReleaseVersionMojoTest {
     private static final Iterable<Version> VERSIONS = Arrays.asList(VERSION_ARRAY);
 
     private static final DateTime RELEASE_TIME = new DateTime();
-    private static final VersionInput VERSION_INPUT = new VersionInput(TESTKEY, "3.0", "Release 3.0 (Gamma)", RELEASE_TIME, false, true);
     private static final Version RELEASED_VERSION = new Version(null, null, "3.0", "Release 3.0 (Gamma)", false, true, RELEASE_TIME);
 
 	
