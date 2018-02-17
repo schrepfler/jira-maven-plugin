@@ -44,10 +44,10 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
         </plugins>
     </build>
 
-##Goals
+## Goals
 
 
-###`release-jira-version`
+### `release-jira-version`
 
 Add the following profile to be performed when the `deploy` phase is executed:
 
@@ -110,7 +110,7 @@ Place it on your pom.xml:
 
 ### `generate-release-notes`
 
-##Configuration Options
+## Configuration Options
 
 The following options can be specified in the `<configuration> ... </configuration>` section:
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 import com.atlassian.jira.rest.client.IssueRestClient;
@@ -89,13 +90,18 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     String afterText;
 
     @Override
-    public void doExecute(JiraRestClient jiraRestClient) throws Exception {
+    public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
         log.info("Generating release note");
         
         Iterable<BasicIssue> issues = getIssues(jiraRestClient);
         log.debug("Found " + Iterables.size(issues) + " issues.");
 
-        output(jiraRestClient, issues);
+        try {
+            output(jiraRestClient, issues);
+        }
+        catch ( IOException e ) {
+            throw new MojoFailureException("Unable to generate release notes", e);
+        }
     }
 
     /**
@@ -127,7 +133,8 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             return;
         }
 
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, true), "UTF8");
+        // Creates a new file - DOES NOT APPEND
+        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
         PrintWriter ps = new PrintWriter(writer);
 
         try {

@@ -1,5 +1,6 @@
 package net.sigmalab.maven.plugin.jira;
 
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 import com.atlassian.jira.rest.client.JiraRestClient;
@@ -48,7 +49,7 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
     private String versionDescription;
 
     @Override
-    public void doExecute(JiraRestClient restClient) {
+    public void doExecute(JiraRestClient restClient) throws MojoFailureException {
         Log log = getLog();
 
         String newVersionName = computeVersionName();

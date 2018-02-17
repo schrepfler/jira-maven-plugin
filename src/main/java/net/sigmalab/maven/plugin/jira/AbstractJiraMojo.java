@@ -112,7 +112,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      */
     protected String scope;
 
-    private transient JiraRestClient jiraRestClient;
+    private JiraRestClient jiraRestClient;
 
     /**
      * Load username password from settings if user has not set them in JVM
@@ -195,7 +195,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         }
         catch ( Exception e ) {
             log.error("Error when executing mojo", e);
-            // XXX: Por enquanto nao faz nada.
+            // Nothing further to do - perhaps print some more useful error message?
         }
     }
 
@@ -217,7 +217,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         }
     }
 
-    public abstract void doExecute(JiraRestClient restClient) throws Exception;
+    public abstract void doExecute(JiraRestClient restClient) throws MojoFailureException;
 
     private String decrypt(String str, String server) {
         try {
