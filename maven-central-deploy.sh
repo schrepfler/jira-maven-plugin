@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/zsh
 # Deploy maven artefact in current directory into Maven central repository 
 # using maven-release-plugin goals
+source ~/.zshrc
 
 read -p "Really deploy to maven cetral repository  (yes/no)? "
 
