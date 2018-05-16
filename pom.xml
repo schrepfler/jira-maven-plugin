@@ -28,7 +28,7 @@
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-        <license.maven.plugin.version>1.9</license.maven.plugin.version>
+        <license.maven.plugin.version>1.16</license.maven.plugin.version>
         <versions.maven.plugin.version>2.3</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
         <jira.server.version>7.4.3</jira.server.version>
