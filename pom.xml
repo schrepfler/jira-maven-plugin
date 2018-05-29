@@ -24,7 +24,7 @@
     </issueManagement>
 
     <properties>
-        <maven.plugin.testing.annotation.version>3.5.1</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.5.2</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
