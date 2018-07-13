@@ -168,4 +168,94 @@ If the password in the `<server>` section uses Maven's standard encryption mecha
 | `<beforeText>` | |
 | `<afterText>` | |
 
+### Usage with the maven-release-plugin
 
+One of the more useful automation functions that can be achieved with the jira-maven-plugin is the automation
+of the creation of new unreleased versions and the releasing of existing versions of a jira project when used
+in conjunction with the maven-release-plugin.
+
+Using the settings below, the version of a jira project will be specified by ${project.artifactId}-${project.version}
+from your pom.xml.
+
+When run in conjunction with the maven-release-plugin to automate your release processes, the version of your
+jira project will be released, and a new version will be created.
+
+NOTE: Standard jira (without possible additional jira plugins) does not support versions per component within
+a project. Therefore to keep the versioning relatively easy to follow, I only ever use this plugin on one component
+within a jira project. If however, you only have one component per jira project, then you will not run into this 
+limitation.
+
+    <!-- Specify the build settings.                                                -->
+    <build>
+        <plugins>
+            <!-- Use the jira-maven-plugin to automate the releasing of existing    -->
+            <!-- versions in jira and the creation of the next, unreleased version  -->
+            <!-- of the project in jira when used in conjunction with the standard  -->
+            <!-- maven release process of 'mvn -B release:prepare release:perform'. -->
+            <plugin>
+                <groupId>net.sigmalab.maven.plugins</groupId>
+                <artifactId>jira-maven-plugin</artifactId>
+                <version>${jira-maven-plugin.version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <!-- <server> <id> entry in settings.xml                        -->
+                    <settingsKey>JIRA Server</settingsKey>
+                </configuration>
+                <!-- The sequence of these three executions is significant.         -->
+                <executions>
+                    <!-- Firstly, we release the currently existing latest version. -->
+                    <!-- Here we are relying upon 'mvn deploy' being forked from    -->
+                    <!-- mvn release:perform.                                       -->
+                    <execution>
+                        <id>deploy-release-jira-version</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>release-jira-version</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Because we are using finalNameUsedForVersion=true  -->
+                            <releaseVersion>${project.artifactId}-${project.version}</releaseVersion>
+                        </configuration>
+                    </execution>
+                    <!-- Then we create the release notes.                          -->
+                    <!-- By default creates: ./target/releaseNotes.txt              -->
+                    <!--
+                    And contains:
+                    [KEY-ID] maven-test-release: Create a dummy project for maven releases.
+                    -->
+                    <!-- If additional columns/output are needed, then the plugin   -->
+                    <!-- will need to be modified.                                  -->
+                    <execution>
+                        <id>deploy-generate-release-notes</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>generate-release-notes</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Add in Done as a completed status.                 -->
+                            <jqlTemplate>project = ''{0}'' AND status in (Resolved, Closed, Done) AND fixVersion = ''{1}''</jqlTemplate>
+                            <!-- Because we are using finalNameUsedForVersion=true  -->
+                            <releaseVersion>${project.artifactId}-${project.version}</releaseVersion>
+                        </configuration>
+                    </execution>
+                    <!-- Next we create a new version (based on ${project.version}).-->
+                    <!-- A bit of a hack, but recreating an existing version works. -->
+                    <!-- The plugin is smart enough to remove the '-SNAPSHOT' from 	-->
+                    <!-- ${project.version} so SNAPSHOT versions are not created.   -->
+                    <!-- If the version already exists in jira, then no harm done.  -->
+                    <execution>
+                        <id>deploy-create-new-jira-version</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>create-new-jira-version</goal>
+                        </goals>
+                        <!-- Change the Version from a default of ${pom.version} to -->
+                        <!-- ${project.artifactId}-${project.version}               -->
+                        <configuration>
+                            <finalNameUsedForVersion>true</finalNameUsedForVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
