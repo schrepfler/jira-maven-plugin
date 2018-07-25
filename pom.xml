@@ -45,7 +45,7 @@
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
-        <mockito.version>2.19.1</mockito.version>
+        <mockito.version>2.20.0</mockito.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
