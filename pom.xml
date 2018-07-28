@@ -32,7 +32,7 @@
         <versions.maven.plugin.version>2.5</versions.maven.plugin.version>
         <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
         <jira.server.version>7.4.3</jira.server.version>
-        <maven.version>3.5.3</maven.version>
+        <maven.version>3.5.4</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
