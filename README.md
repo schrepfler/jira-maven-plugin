@@ -64,7 +64,7 @@ Add the following profile to be performed when the `deploy` phase is executed:
 			    <plugin>
 				    <groupId>net.sigmalab.maven.plugins</groupId>
 				    <artifactId>jira-maven-plugin</artifactId>
-				    <version>0.5</version>
+				    <version>0.7</version>
 				    <inherited>false</inherited>
 				    <configuration>
 					    <!- <server> entry in settings.xml -->
@@ -240,7 +240,7 @@ limitation.
                     </execution>
                     <!-- Next we create a new version (based on ${project.version}).-->
                     <!-- A bit of a hack, but recreating an existing version works. -->
-                    <!-- The plugin is smart enough to remove the '-SNAPSHOT' from 	-->
+                    <!-- The plugin is smart enough to remove the '-SNAPSHOT' from -->
                     <!-- ${project.version} so SNAPSHOT versions are not created.   -->
                     <!-- If the version already exists in jira, then no harm done.  -->
                     <execution>
