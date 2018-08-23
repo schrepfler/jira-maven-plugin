@@ -114,7 +114,7 @@ Place it on your pom.xml:
 
 The following options can be specified in the `<configuration> ... </configuration>` section:
 
-| Paramter | Description |
+| Parameter | Description |
 |----------|-------------|
 | `<jiraProjectKey>` | The project key associated with the JIRA project -- if not specified this is computed from the jiraURL and/or the `<issuetracking>` component of your POM. | 
 | `<jiraURL>` | The root URL of the JIRA server - this can be used to override the `<issueTracking>` section of your POM. |
