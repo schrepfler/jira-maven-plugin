@@ -4,9 +4,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.domain.Version;
-import com.atlassian.jira.rest.client.domain.input.VersionInputBuilder;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.Version;
+import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
 
 /**
  * Goal that creates a version in a JIRA project . NOTE: API access must be
