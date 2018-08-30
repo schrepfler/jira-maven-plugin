@@ -11,10 +11,10 @@ import java.io.PrintWriter;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
-import com.atlassian.jira.rest.client.IssueRestClient;
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.domain.BasicIssue;
-import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.api.IssueRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.BasicIssue;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.google.common.collect.Iterables;
 
 /**
@@ -93,7 +93,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
         log.info("Generating release note");
         
-        Iterable<BasicIssue> issues = getIssues(jiraRestClient);
+        Iterable<Issue> issues = getIssues(jiraRestClient);
         log.debug("Found " + Iterables.size(issues) + " issues.");
 
         try {
@@ -107,12 +107,12 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     /**
      * Recover issues from JIRA based on JQL Filter
      */
-    private Iterable<BasicIssue> getIssues(JiraRestClient restClient) {
+    private Iterable<Issue> getIssues(JiraRestClient restClient) {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
         log.info("Searching for ");
         log.debug("JQL Query: " + jql);
 
-        return restClient.getSearchClient().searchJql(jql, maxIssues, 0).claim().getIssues();
+        return restClient.getSearchClient().searchJql(jql, maxIssues, 0, null).claim().getIssues();
     }
 
     /**
@@ -120,7 +120,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * 
      * @param issues
      */
-    private void output(JiraRestClient restClient, Iterable<BasicIssue> issues) throws IOException {
+    private void output(JiraRestClient restClient, Iterable<Issue> issues) throws IOException {
         IssueRestClient issueClient = restClient.getIssueClient();
 
         if ( targetFile == null ) {
