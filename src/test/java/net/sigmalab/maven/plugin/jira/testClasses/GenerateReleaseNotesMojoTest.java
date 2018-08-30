@@ -4,9 +4,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -16,12 +18,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import com.atlassian.jira.rest.client.IssueRestClient;
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.SearchRestClient;
-import com.atlassian.jira.rest.client.domain.BasicIssue;
-import com.atlassian.jira.rest.client.domain.Issue;
-import com.atlassian.jira.rest.client.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.IssueRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.SearchRestClient;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.util.concurrent.Promise;
 
 import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
@@ -30,18 +31,18 @@ import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
     private static final String NEWLINE = System.getProperty("line.separator");
 
-    private static final BasicIssue[] ISSUE_ARRAY = new BasicIssue[] { new BasicIssue(null, "DUMMY-1"),
-                                                                       new BasicIssue(null, "DUMMY-4"),
-                                                                       new BasicIssue(null, "DUMMY-3"),
-                                                                       new BasicIssue(null, "DUMMY-2") };
+    private static final Issue[] ISSUE_ARRAY = new Issue[] { new Issue("Dummy Issue", null, "DUMMY-1", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                                             new Issue("Dummy Issue", null, "DUMMY-4", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                                             new Issue("Dummy Issue", null, "DUMMY-3", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
+                                                             new Issue("Dummy Issue", null, "DUMMY-2", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null) };
 
-    private static final Iterable<BasicIssue> ISSUES = Arrays.asList(ISSUE_ARRAY);
+    private static final Iterable<Issue> ISSUES = Arrays.asList(ISSUE_ARRAY);
 
     private static final Issue DUMMY_ISSUE = new Issue("Dummy Issue", null, "ISSUE-1", null, null, null,
-                                                       "Dummy Issue Description", null, null, null, null,
+                                                       null, "Dummy Issue Description", null, null, null, null,
                                                        null, null, null, null, null, null, null, null,
                                                        null, null, null, null, null, null, null, null,
-                                                       null, null, null);
+                                                       null, null, null, null);
 
     private GenerateReleaseNotesMojo releaseNoteMojo;
 
@@ -74,7 +75,7 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 
         @SuppressWarnings("unchecked")
         Promise<SearchResult> mockSearchPromise = (Promise<SearchResult>) Mockito.mock(Promise.class);
-        Mockito.when(mockSearchClient.searchJql(anyString(), anyInt(), anyInt())).thenReturn(mockSearchPromise);
+        Mockito.when(mockSearchClient.searchJql(anyString(), anyInt(), anyInt(), (Set<String>) isNull())).thenReturn(mockSearchPromise);
 
         SearchResult mockSearchResult = Mockito.mock(SearchResult.class);
         Mockito.when(mockSearchPromise.claim()).thenReturn(mockSearchResult);

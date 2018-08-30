@@ -29,8 +29,7 @@
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <license.maven.plugin.version>1.16</license.maven.plugin.version>
         <versions.maven.plugin.version>2.5</versions.maven.plugin.version>
-        <jira.rest.java.client.version>2.0.0-m2</jira.rest.java.client.version>
-        <jira.server.version>7.4.3</jira.server.version>
+        <jira.rest.java.client.version>5.0.4</jira.rest.java.client.version>
         <maven.version>3.5.4</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
@@ -134,12 +133,12 @@
     <dependencies>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client</artifactId>
+            <artifactId>jira-rest-java-client-core</artifactId>
             <version>${jira.rest.java.client.version}</version>
             <exclusions>
                 <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -209,6 +208,14 @@
             <artifactId>maven-settings</artifactId>
             <version>${maven.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     
