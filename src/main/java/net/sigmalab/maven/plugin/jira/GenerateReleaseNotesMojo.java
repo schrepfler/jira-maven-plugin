@@ -63,7 +63,6 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * Released Version
      * 
      * @parameter default-value="${project.version}"
-     * @required
      */
     String releaseVersion;
 
@@ -71,7 +70,6 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * Target file
      * 
      * @parameter default-value="${project.build.directory}/releaseNotes.txt"
-     * @required
      */
     File targetFile;
 
@@ -88,6 +86,15 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * @parameter
      */
     String afterText;
+
+    /**
+     * Format of the generated release note.
+     * 
+     * Options are: text | markdown | html
+     * 
+     * @parameter default-value="text"
+     */
+    String format;
 
     @Override
     public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
@@ -106,6 +113,9 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
     /**
      * Recover issues from JIRA based on JQL Filter
+     * 
+     * @param restClient
+     * @return
      */
     private Iterable<Issue> getIssues(JiraRestClient restClient) {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
@@ -118,7 +128,9 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     /**
      * Writes issues to output
      * 
+     * @param restClient
      * @param issues
+     * @throws IOException
      */
     private void output(JiraRestClient restClient, Iterable<Issue> issues) throws IOException {
         IssueRestClient issueClient = restClient.getIssueClient();
@@ -130,29 +142,79 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             return;
         }
 
-        // Creates a new file - DOES NOT APPEND
+        // Creates a new file - DOES NOT APPEND - so warn if the file already exists.
+        
+        validateOutputFile(targetFile);
+        
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
         PrintWriter ps = new PrintWriter(writer);
 
         try {
-            if ( beforeText != null ) {
-                ps.println(beforeText);
-            }
-
-            for ( BasicIssue basicIssue : issues ) {
-                Issue fullIssue = issueClient.getIssue(basicIssue.getKey()).claim();
-                String issueDesc = format(issueTemplate, basicIssue.getKey(), fullIssue.getSummary());
-
-                ps.println(issueDesc);
-            }
-
-            if ( afterText != null ) {
-                ps.println(afterText);
+            switch ( format ) {
+            case "text":
+                log.debug("Generating plaintext release note");
+                plainTextOutput(issues, issueClient, ps);
+                break;
+            case "markdown":
+                log.debug("Generating markdown release note");
+                markdownOutput(issues, issueClient, ps);
+                break;
+            case "html":
+                log.debug("Generating HTML release note");
+                htmlOutput(issues, issueClient, ps);
+                break;
+            default:
+                log.error("Unknown format requested [" + format + "]");
+                break;
             }
         }
         finally {
             ps.flush();
             ps.close();
+        }
+    }
+
+    private void htmlOutput(Iterable<Issue> issues, IssueRestClient issueClient, PrintWriter ps) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    private void markdownOutput(Iterable<Issue> issues, IssueRestClient issueClient, PrintWriter ps) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @param issues
+     * @param issueClient
+     * @param ps
+     */
+    private void plainTextOutput(Iterable<Issue> issues, IssueRestClient issueClient, PrintWriter ps) {
+        if ( beforeText != null ) {
+            ps.println(beforeText);
+        }
+
+        for ( BasicIssue basicIssue : issues ) {
+            Issue fullIssue = issueClient.getIssue(basicIssue.getKey()).claim();
+            String issueDesc = format(issueTemplate, basicIssue.getKey(), fullIssue.getSummary());
+
+            ps.println(issueDesc);
+        }
+
+        if ( afterText != null ) {
+            ps.println(afterText);
+        }
+    }
+
+    private void validateOutputFile(File f) throws IOException {
+        if ( f.exists() && ! f.isDirectory() ) { 
+            log.warn("Target release notes file already exists - this will be overwritten!");
+        }
+        else if ( f.isDirectory() ) {
+            String errorString = "Target release note file already exists and is a directory";
+            log.error(errorString + " - exiting!");
+            
+            throw new IOException(errorString);
         }
     }
 
@@ -210,5 +272,14 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
     public void setAfterText(String afterText) {
         this.afterText = afterText;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+    
+    public void setFormat(String format) {
+        this.format = format;
+        
     }
 }

@@ -123,16 +123,33 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
      */
     @Test
     public void testDefaultFileName() throws Exception {
-        final String fileName = "target/" + RELEASE_VERSION + "-releaseNotes.txt";
+        final String expectedFileName = "target/" + RELEASE_VERSION + "-releaseNotes.txt";
         
-        File targetFile = new File(fileName);
+        File targetFile = new File(expectedFileName);
         File staticFile = new File("src/test/resources/expectedReleaseNotes.txt");
 
-        releaseNoteMojo.setTargetFile(targetFile);
         releaseNoteMojo.execute();
 
         assertThat(targetFile.exists(), is(true));
         assertThat(FileUtils.contentEqualsIgnoreEOL(targetFile, staticFile, null), is(true));
 
+    }
+    
+    /**
+     * Test that a release note can be generated in Markdown format
+     */
+    @Test
+    public void testMarkdown() throws Exception {
+        releaseNoteMojo.setFormat("markdown");
+        
+        fail("Not yet implemented.");
+    }
+    
+    /**
+     * Test that a release note can be generated in HTML format 
+     */
+    @Test
+    public void testHTML() throws Exception {
+        fail("Not yet implemented.");
     }
 }
