@@ -54,15 +54,14 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         
         releaseNoteMojo.setJiraUser("user");
         releaseNoteMojo.setJiraPassword("password");
-        releaseNoteMojo.setJiraProjectKey("DUMMY");
+        releaseNoteMojo.setSettingsKey("jira");
+        /* releaseNoteMojo.setJiraProjectKey("DUMMY");
         releaseNoteMojo.setBeforeText("This is BEFORE TEXT" + NEWLINE + "==============================");
         releaseNoteMojo.setAfterText("==============================" + NEWLINE + "This is AFTER TEXT");
-        releaseNoteMojo.setJiraProjectKey("KEY");
-        releaseNoteMojo.setSettingsKey("jira");
         releaseNoteMojo.setReleaseVersion("3.3.2.SR1");
         releaseNoteMojo.setTargetFile(new File("target/releaseNotes.txt"));
         releaseNoteMojo.setJqlTemplate("project = ''{0}'' AND fixVersion = ''{1}''");
-        releaseNoteMojo.setIssueTemplate("[{0}] {1}");
+        releaseNoteMojo.setIssueTemplate("[{0}] {1}"); */
         
 
         JiraRestClient mockJiraRestClient = Mockito.mock(JiraRestClient.class);
