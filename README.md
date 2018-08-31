@@ -9,6 +9,11 @@ The internals of it were changed so that it uses the JIRA REST API rather the SO
 
 This Maven plugin allows the manipulation of JIRA fixVersions within the project associated with the built component.
 
+<aside class="notice">
+
+**The latest version of Atlassian's Jira REST client only supports Java versions greater than Java 8; therefore this plugin also only supports Java 8 and beyond.**
+
+</aside>
 
 # Usage
 
