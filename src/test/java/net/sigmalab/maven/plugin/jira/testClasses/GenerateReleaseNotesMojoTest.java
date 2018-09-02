@@ -29,8 +29,6 @@ import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 
 @RunWith(JUnit4.class)
 public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
-    private static final String NEWLINE = System.getProperty("line.separator");
-
     private static final Issue[] ISSUE_ARRAY = new Issue[] { new Issue("Dummy Issue", null, "DUMMY-1", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
                                                              new Issue("Dummy Issue", null, "DUMMY-4", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
                                                              new Issue("Dummy Issue", null, "DUMMY-3", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
@@ -46,6 +44,7 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
 
     private GenerateReleaseNotesMojo releaseNoteMojo;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -72,7 +71,6 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         SearchRestClient mockSearchClient = Mockito.mock(SearchRestClient.class);
         Mockito.when(mockJiraRestClient.getSearchClient()).thenReturn(mockSearchClient);
 
-        @SuppressWarnings("unchecked")
         Promise<SearchResult> mockSearchPromise = (Promise<SearchResult>) Mockito.mock(Promise.class);
         Mockito.when(mockSearchClient.searchJql(anyString(), anyInt(), anyInt(), (Set<String>) isNull())).thenReturn(mockSearchPromise);
 
@@ -86,7 +84,6 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         IssueRestClient mockIssueClient = Mockito.mock(IssueRestClient.class);
         Mockito.when(mockJiraRestClient.getIssueClient()).thenReturn(mockIssueClient);
 
-        @SuppressWarnings("unchecked")
         Promise<Issue> mockIssuePromise = (Promise<Issue>) Mockito.mock(Promise.class);
         Mockito.when(mockIssueClient.getIssue(anyString())).thenReturn(mockIssuePromise);
         Mockito.when(mockIssuePromise.claim()).thenReturn(DUMMY_ISSUE);
