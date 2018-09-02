@@ -92,7 +92,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      * 
      * @parameter
      */
-    private String jiraProjectKey;
+    protected String jiraProjectKey;
 
     /**
      * Returns if this plugin is enabled for this context

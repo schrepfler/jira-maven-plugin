@@ -144,6 +144,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
             for ( BasicIssue basicIssue : issues ) {
                 Issue fullIssue = issueClient.getIssue(basicIssue.getKey()).claim();
+                // TODO : Need a better way of doing this so that the fields which we retrieve are configurable within the pom.xml
                 String issueDesc = format(issueTemplate, basicIssue.getKey(), fullIssue.getSummary());
 
                 ps.println(issueDesc);
