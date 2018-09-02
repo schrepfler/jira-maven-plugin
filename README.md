@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin)
+[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin) [![Join the chat at https://gitter.im/jira-maven-plugin/Lobby](https://img.shields.io/badge/gitter-join%20chat-blue.svg)](https://gitter.im/jira-maven-plugin/Lobby)
 
 JIRA Maven Plugin
 =
