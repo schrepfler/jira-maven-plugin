@@ -30,7 +30,7 @@
         <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <license.maven.plugin.version>1.16</license.maven.plugin.version>
-        <versions.maven.plugin.version>2.6</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.7</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.0.4</jira.rest.java.client.version>
         <maven.version>3.5.4</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
@@ -45,7 +45,7 @@
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
-        <mockito.version>2.21.0</mockito.version>
+        <mockito.version>2.22.0</mockito.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -383,8 +383,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
