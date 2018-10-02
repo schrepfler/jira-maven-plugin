@@ -17,6 +17,11 @@ import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.google.common.collect.Iterables;
 
+import net.sigmalab.maven.plugin.jira.formats.Generator;
+import net.sigmalab.maven.plugin.jira.formats.HtmlGenerator;
+import net.sigmalab.maven.plugin.jira.formats.MarkDownGenerator;
+import net.sigmalab.maven.plugin.jira.formats.PlainTextGenerator;
+
 /**
  * Goal that generates release notes based on a version in a JIRA project.
  * 
@@ -133,13 +138,10 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * @throws IOException
      */
     private void output(JiraRestClient restClient, Iterable<Issue> issues) throws IOException {
-        IssueRestClient issueClient = restClient.getIssueClient();
-
         log.debug("Target file == [" + targetFile + "]");
 
         if ( issues == null ) {
-            log.warn("No issues found. File will not be generated.");
-            return;
+            log.warn("No Jira issues found.");
         }
 
         // Creates a new file - DOES NOT APPEND - so warn if the file already exists.
@@ -147,62 +149,30 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
         validateOutputFile(targetFile);
         
         OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
-        PrintWriter ps = new PrintWriter(writer);
-
-        try {
+        
+        try ( PrintWriter ps = new PrintWriter(writer) ) {
+            Generator generator = null;
+            
             switch ( format ) {
             case "text":
                 log.debug("Generating plaintext release note");
-                plainTextOutput(issues, issueClient, ps);
+                generator = new PlainTextGenerator(restClient, issues, issueTemplate, beforeText, afterText);
                 break;
             case "markdown":
                 log.debug("Generating markdown release note");
-                markdownOutput(issues, issueClient, ps);
+                generator = new MarkDownGenerator(restClient, issues, issueTemplate, beforeText, afterText);
                 break;
             case "html":
                 log.debug("Generating HTML release note");
-                htmlOutput(issues, issueClient, ps);
+                generator = new HtmlGenerator(restClient, issues, issueTemplate, beforeText, afterText);
                 break;
             default:
-                log.error("Unknown format requested [" + format + "]");
-                break;
+                String msg = "Unknown format requested [" + format + "]"; 
+                log.error(msg);
+                throw new IOException(msg);
             }
-        }
-        finally {
-            ps.flush();
-            ps.close();
-        }
-    }
-
-    private void htmlOutput(Iterable<Issue> issues, IssueRestClient issueClient, PrintWriter ps) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    private void markdownOutput(Iterable<Issue> issues, IssueRestClient issueClient, PrintWriter ps) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * @param issues
-     * @param issueClient
-     * @param ps
-     */
-    private void plainTextOutput(Iterable<Issue> issues, IssueRestClient issueClient, PrintWriter ps) {
-        if ( beforeText != null ) {
-            ps.println(beforeText);
-        }
-
-        for ( BasicIssue basicIssue : issues ) {
-            Issue fullIssue = issueClient.getIssue(basicIssue.getKey()).claim();
-            String issueDesc = format(issueTemplate, basicIssue.getKey(), fullIssue.getSummary());
-
-            ps.println(issueDesc);
-        }
-
-        if ( afterText != null ) {
-            ps.println(afterText);
+            
+            generator.output(ps);
         }
     }
 
