@@ -111,7 +111,10 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         File staticFile = new File("src/test/resources/expectedReleaseNotes.txt");
 
         releaseNoteMojo.setTargetFile(targetFile);
-        releaseNoteMojo.setFormat("text");
+        releaseNoteMojo.setFormat("PlainTextGenerator");
+        // releaseNoteMojo.setFormat("MarkDownGenerator");
+        // releaseNoteMojo.setFormat("HtmlGenerator");
+
         releaseNoteMojo.execute();
 
         assertThat(targetFile.exists(), is(true));

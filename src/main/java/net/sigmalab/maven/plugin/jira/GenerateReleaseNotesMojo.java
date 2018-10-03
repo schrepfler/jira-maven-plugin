@@ -7,20 +7,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
-import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.google.common.collect.Iterables;
 
 import net.sigmalab.maven.plugin.jira.formats.Generator;
-import net.sigmalab.maven.plugin.jira.formats.HtmlGenerator;
-import net.sigmalab.maven.plugin.jira.formats.MarkDownGenerator;
-import net.sigmalab.maven.plugin.jira.formats.PlainTextGenerator;
 
 /**
  * Goal that generates release notes based on a version in a JIRA project.
@@ -95,9 +92,9 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     /**
      * Format of the generated release note.
      * 
-     * Options are: text | markdown | html
+     * Options are: PlainTextGenerator | MarkDownGenerator | HtmlGenerator
      * 
-     * @parameter default-value="text"
+     * @parameter default-value="PlainTextGenerator"
      */
     String format;
 
@@ -144,34 +141,42 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             log.warn("No Jira issues found.");
         }
 
-        // Creates a new file - DOES NOT APPEND - so warn if the file already exists.
-        
+        // Creates a new file - DOES NOT APPEND - so warn if the file already
+        // exists.
+
         validateOutputFile(targetFile);
         
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
-        
-        try ( PrintWriter ps = new PrintWriter(writer) ) {
+        try ( OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
+                PrintWriter ps = new PrintWriter(writer) ) {
+
             Generator generator = null;
-            
-            switch ( format ) {
-            case "text":
-                log.debug("Generating plaintext release note");
-                generator = new PlainTextGenerator(restClient, issues, issueTemplate, beforeText, afterText);
-                break;
-            case "markdown":
-                log.debug("Generating markdown release note");
-                generator = new MarkDownGenerator(restClient, issues, issueTemplate, beforeText, afterText);
-                break;
-            case "html":
-                log.debug("Generating HTML release note");
-                generator = new HtmlGenerator(restClient, issues, issueTemplate, beforeText, afterText);
-                break;
-            default:
-                String msg = "Unknown format requested [" + format + "]"; 
+            try {
+                Class<?> clazz = Class.forName("net.sigmalab.maven.plugin.jira.formats." + format);
+                Constructor<?> constructor = clazz.getConstructor(JiraRestClient.class, Iterable.class, String.class,
+                                                                  String.class, String.class);
+                generator = (Generator) constructor.newInstance(restClient, issues, issueTemplate, beforeText,
+                                                                afterText);
+            }
+            catch ( ClassNotFoundException | NoSuchMethodException e ) {
+                String msg = "Could not find class [" + format + "] to generate the release note.";
+                log.error(msg);
+                throw new IOException(msg, e);
+            }
+            catch ( InstantiationException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e ) {
+                String msg = "Could not instantiate an instance of [" + format + "].";
+                log.error(msg);
+                throw new IOException(msg, e);
+            }
+
+            // We must have a generator object by this point otherwise we can go
+            // no further, so double check and throw an exception if necessary.
+            if ( generator == null ) {
+                String msg = "No release note generator object created - exiting!";
                 log.error(msg);
                 throw new IOException(msg);
             }
-            
+
             generator.output(ps);
         }
     }
