@@ -141,9 +141,6 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             log.warn("No Jira issues found.");
         }
 
-        // Creates a new file - DOES NOT APPEND - so warn if the file already
-        // exists.
-
         validateOutputFile(targetFile);
         
         try ( OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
@@ -186,11 +183,12 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     }
 
     private void validateOutputFile(File f) throws IOException {
+        // Creates a new file - DOES NOT APPEND - so warn if the file already exists.
         if ( f.exists() && ! f.isDirectory() ) { 
             log.warn("Target release notes file already exists - this will be overwritten!");
         }
         else if ( f.isDirectory() ) {
-            String errorString = "Target release note file already exists and is a directory";
+            String errorString = "Target release note filename already exists and is a directory";
             log.error(errorString + " - exiting!");
             
             throw new IOException(errorString);
