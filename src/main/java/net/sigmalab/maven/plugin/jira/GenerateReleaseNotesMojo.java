@@ -43,17 +43,6 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     String jqlTemplate;
 
     /**
-     * Template used on each issue found by JQL Template.
-     * 
-     * Parameter 0 = Issue Key
-     * Parameter 1 = Issue Summary
-     * 
-     * @parameter default-value="[{0}] {1}"
-     * @required
-     */
-    String issueTemplate;
-
-    /**
      * Max number of issues to return
      * 
      * @parameter default-value="500"
@@ -154,9 +143,8 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
                 
                 Class<?> clazz = Class.forName(formatPackage + "." + format);
                 Constructor<?> constructor = clazz.getConstructor(JiraRestClient.class, Iterable.class, String.class,
-                                                                  String.class, String.class);
-                generator = (Generator) constructor.newInstance(restClient, issues, issueTemplate, beforeText,
-                                                                afterText);
+                                                                  String.class);
+                generator = (Generator) constructor.newInstance(restClient, issues, beforeText, afterText);
             }
             catch ( ClassNotFoundException | NoSuchMethodException e ) {
                 String msg = "Could not find class [" + format + "] to generate the release note.";
@@ -201,14 +189,6 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
     public void setJqlTemplate(String jqlTemplate) {
         this.jqlTemplate = jqlTemplate;
-    }
-
-    public String getIssueTemplate() {
-        return issueTemplate;
-    }
-
-    public void setIssueTemplate(String issueTemplate) {
-        this.issueTemplate = issueTemplate;
     }
 
     public int getMaxIssues() {

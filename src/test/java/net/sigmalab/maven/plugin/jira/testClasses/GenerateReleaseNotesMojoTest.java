@@ -34,8 +34,6 @@ import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
     private static final String RELEASE_VERSION = "3.3.2.SR1";
 
-    private static final String NEWLINE = System.getProperty("line.separator");
-
     private static final Issue[] ISSUE_ARRAY = new Issue[] { new Issue("Dummy Issue", null, "DUMMY-1", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
                                                              new Issue("Dummy Issue", null, "DUMMY-4", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
                                                              new Issue("Dummy Issue", null, "DUMMY-3", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
@@ -61,13 +59,12 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         releaseNoteMojo.setJiraUser("user");
         releaseNoteMojo.setJiraPassword("password");
         releaseNoteMojo.setJiraProjectKey("DUMMY");
-        releaseNoteMojo.setBeforeText("This is BEFORE TEXT" + NEWLINE + "==============================");
-        releaseNoteMojo.setAfterText("==============================" + NEWLINE + "This is AFTER TEXT");
+        releaseNoteMojo.setBeforeText("This is BEFORE TEXT");
+        releaseNoteMojo.setAfterText("This is AFTER TEXT");
         releaseNoteMojo.setJiraProjectKey("KEY");
         releaseNoteMojo.setSettingsKey("jira");
         releaseNoteMojo.setReleaseVersion(RELEASE_VERSION);
         releaseNoteMojo.setJqlTemplate("project = ''{0}'' AND fixVersion = ''{1}''");
-        releaseNoteMojo.setIssueTemplate("[{0}] {1}");
         
 
         JiraRestClient mockJiraRestClient = Mockito.mock(JiraRestClient.class);
@@ -98,58 +95,40 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         releaseNoteMojo.setJiraRestClient(mockJiraRestClient);
     }
 
-    /**
-     * Test that a release note with a custom filename can be generated.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testCustomFileName() throws Exception {
-        final String fileName = "target/releaseNotes.txt";
+    
+    private void testGenerate(File staticFile) throws Exception {
+        final String fileName = "target/testFile";
         
         File targetFile = new File(fileName);
-        File staticFile = new File("src/test/resources/expectedReleaseNotes.txt");
 
         releaseNoteMojo.setTargetFile(targetFile);
-        releaseNoteMojo.setFormat("PlainTextGenerator");
-        // releaseNoteMojo.setFormat("MarkDownGenerator");
-        // releaseNoteMojo.setFormat("HtmlGenerator");
-
         releaseNoteMojo.execute();
 
         assertThat(targetFile.exists(), is(true));
         assertThat(FileUtils.contentEqualsIgnoreEOL(targetFile, staticFile, null), is(true));
     }
 
+    
     /**
-     * Test that a release note with an auto-generated filename is correctly generated.
-     * 
-     * @throws Exception
+     * Test that a release note can be generated in PlainText format
      */
-    @Ignore
     @Test
-    public void testDefaultFileName() throws Exception {
-        final String expectedFileName = "target/" + RELEASE_VERSION + "-releaseNotes.txt";
-        
-        File targetFile = new File(expectedFileName);
-        File staticFile = new File("src/test/resources/expectedReleaseNotes.txt");
+    public void testPlainText() throws Exception {        
+        releaseNoteMojo.setFormat("PlainTextGenerator");
+        File expected = new File("src/test/resources/expectedReleaseNotes.txt");
 
-        releaseNoteMojo.execute();
-
-        assertThat(targetFile.exists(), is(true));
-        assertThat(FileUtils.contentEqualsIgnoreEOL(targetFile, staticFile, null), is(true));
-
+        testGenerate(expected);
     }
     
     /**
      * Test that a release note can be generated in Markdown format
      */
-    @Ignore
     @Test
     public void testMarkdown() throws Exception {
-        releaseNoteMojo.setFormat("markdown");
-        
-        fail("Not yet implemented.");
+        releaseNoteMojo.setFormat("MarkDownGenerator");
+        File expected = new File("src/test/resources/expectedReleaseNotes.md");
+
+        testGenerate(expected);
     }
     
     /**
@@ -158,6 +137,8 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
     @Ignore
     @Test
     public void testHTML() throws Exception {
+        releaseNoteMojo.setFormat("HtmlGenerator");
+
         fail("Not yet implemented.");
     }
 }

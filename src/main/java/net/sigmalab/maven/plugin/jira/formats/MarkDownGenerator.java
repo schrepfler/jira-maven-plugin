@@ -1,43 +1,57 @@
 package net.sigmalab.maven.plugin.jira.formats;
 
+import static java.text.MessageFormat.format;
+
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
 public class MarkDownGenerator extends Generator {
-
-    public MarkDownGenerator(JiraRestClient r, Iterable<Issue> i, String t, String b, String a) {
-        super(r, i, t, b, a);
-        // TODO Auto-generated constructor stub
+    static final String ISSUETEMPLATE = "| [{0}]({1}) | {2} |";
+    static final String HORIZONTAL_RULE = "---";
+    
+    public MarkDownGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
+        super(r, i, b, a);
     }
 
     @Override
     public String addHeader() {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     @Override
     public String addRow(Issue i) {
-        // TODO Auto-generated method stub
-        return null;
+        return format(ISSUETEMPLATE, i.getKey(), i.getSelf(), i.getSummary());
     }
 
     @Override
     public String addBeforeText() {
-        // TODO Auto-generated method stub
-        return null;
+        return getBeforeText();
     }
 
     @Override
     public String addAfterText() {
-        // TODO Auto-generated method stub
-        return null;
+        return getAfterText();
     }
 
     @Override
     public String addFooter() {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
+    }
+
+    @Override
+    public String addHorizontalRule() {
+        return HORIZONTAL_RULE;
+    }
+
+    @Override
+    public String addTableHeader() {
+        return "| ISSUE KEY | SUMMARY |\n" + 
+               "|-----------|---------|\n";
+    }
+
+    @Override
+    public String addTableFooter() {
+        return "";
     }
 
 }

@@ -5,8 +5,8 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 
 public class HtmlGenerator extends Generator {
 
-    public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String t, String b, String a) {
-        super(r, i, t, b, a);
+    public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
+        super(r, i, b, a);
         // TODO Auto-generated constructor stub
     }
 
@@ -36,6 +36,24 @@ public class HtmlGenerator extends Generator {
 
     @Override
     public String addFooter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String addHorizontalRule() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String addTableHeader() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String addTableFooter() {
         // TODO Auto-generated method stub
         return null;
     }

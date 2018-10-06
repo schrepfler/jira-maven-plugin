@@ -6,9 +6,12 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
 public class PlainTextGenerator extends Generator {
+    static final String ISSUETEMPLATE = "[{0}]\t{1}";
+    static final String HORIZONTAL_RULE = "==============================";
 
-    public PlainTextGenerator(JiraRestClient r, Iterable<Issue> i, String t, String b, String a) {
-        super(r, i, t, b, a);
+    
+    public PlainTextGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
+        super(r, i, b, a);
     }
 
     @Override
@@ -17,8 +20,13 @@ public class PlainTextGenerator extends Generator {
     }
 
     @Override
+    public String addHorizontalRule() {
+        return HORIZONTAL_RULE;
+    }
+
+    @Override
     public String addRow(Issue i) {
-        return format(getIssueTemplate(), i.getKey(), i.getSummary());
+        return format(ISSUETEMPLATE, i.getKey(), i.getSummary());
     }
 
     @Override
@@ -33,6 +41,17 @@ public class PlainTextGenerator extends Generator {
 
     @Override
     public String addFooter() {
+        return "";
+    }
+
+    @Override
+    public String addTableHeader() {
+        // Explicitly placing a newline at the end of the string.
+        return "ISSUE KEY\tSUMMARY" + System.getProperty("line.separator");
+    }
+
+    @Override
+    public String addTableFooter() {
         return "";
     }
 
