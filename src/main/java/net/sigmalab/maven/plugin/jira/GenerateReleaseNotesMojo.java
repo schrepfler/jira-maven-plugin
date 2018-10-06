@@ -92,7 +92,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
         log.info("Generating release note ...");
         
         Iterable<Issue> issues = getIssues(jiraRestClient);
-        log.debug("Found " + Iterables.size(issues) + " issues.");
+        log.info("Found " + Iterables.size(issues) + " issues.");
 
         try {
             output(jiraRestClient, issues);
@@ -110,8 +110,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      */
     private Iterable<Issue> getIssues(JiraRestClient restClient) {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
-        log.info("Searching for ");
-        log.debug("JQL Query: " + jql);
+        log.info("Searching for issues matching JQL Query: " + jql);
 
         return restClient.getSearchClient().searchJql(jql, maxIssues, 0, null).claim().getIssues();
     }
@@ -124,7 +123,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * @throws IOException
      */
     private void output(JiraRestClient restClient, Iterable<Issue> issues) throws IOException {
-        log.debug("Target file == [" + targetFile + "]");
+        log.info("Release notes will be found in: " + targetFile);
 
         if ( issues == null ) {
             log.warn("No Jira issues found.");
@@ -145,6 +144,8 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
                 Constructor<?> constructor = clazz.getConstructor(JiraRestClient.class, Iterable.class, String.class,
                                                                   String.class);
                 generator = (Generator) constructor.newInstance(restClient, issues, beforeText, afterText);
+                
+                log.info("Using " + format + " format for release notes.");
             }
             catch ( ClassNotFoundException | NoSuchMethodException e ) {
                 String msg = "Could not find class [" + format + "] to generate the release note.";
@@ -167,6 +168,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             }
 
             generator.output(ps);
+            log.info("Release notes generated.");
         }
     }
 
