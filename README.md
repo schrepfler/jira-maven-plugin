@@ -227,7 +227,7 @@ any method bodies within these and simply return an empty String.
 The `Generator.output(PrintWriter ps)` method uses these methods - if you wish to override the default structure - e.g.
 to add your own release note components, you can do this by also overriding this method. 
 
-### Usage with the maven-release-plugin
+# Usage with the maven-release-plugin
 
 One of the more useful automation functions that can be achieved with the jira-maven-plugin is the automation
 of the creation of new unreleased versions and the releasing of existing versions of a jira project when used
