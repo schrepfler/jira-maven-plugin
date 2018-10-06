@@ -1,61 +1,64 @@
 package net.sigmalab.maven.plugin.jira.formats;
 
+import static java.text.MessageFormat.format;
+
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
-public class HtmlGenerator extends Generator {
+import net.steppschuh.markdowngenerator.rule.HorizontalRule;
 
+public class HtmlGenerator extends Generator {
+    static final String ISSUETEMPLATE = "<td>[<a href=\"{0}\">{1}</a>]</td><td>{2}</td>";
+    static final String HORIZONTAL_RULE = "<hr/>";
+    
     public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
         super(r, i, b, a);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public String addHeader() {
-        // TODO Auto-generated method stub
-        return null;
+        return "<html><body>";
     }
 
     @Override
     public String addRow(Issue i) {
-        // TODO Auto-generated method stub
-        return null;
+        return "<tr>" + 
+               format(ISSUETEMPLATE, i.getSelf(), i.getKey(), i.getSummary()) +
+               "</tr>";       
     }
 
     @Override
     public String addBeforeText() {
-        // TODO Auto-generated method stub
-        return null;
+        return "<p>" + getBeforeText() + "</p>";
     }
 
     @Override
     public String addAfterText() {
-        // TODO Auto-generated method stub
-        return null;
+        return "<p>" + getAfterText() + "</p>";
     }
 
     @Override
     public String addFooter() {
-        // TODO Auto-generated method stub
-        return null;
+        return "</body></html>";
     }
 
     @Override
     public String addHorizontalRule() {
-        // TODO Auto-generated method stub
-        return null;
+        return HORIZONTAL_RULE;
     }
 
     @Override
     public String addTableHeader() {
-        // TODO Auto-generated method stub
-        return null;
+        return "<table><thead>\n" + 
+               "<tr><th>Key</th><th>Summary</th></tr>\n" + 
+               "</thead>\n" +
+               "<tbody>\n";
     }
 
     @Override
     public String addTableFooter() {
-        // TODO Auto-generated method stub
-        return null;
+        return "</tbody>\n" +
+               "</table>\n";
     }
 
 }

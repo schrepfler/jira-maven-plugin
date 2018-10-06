@@ -134,11 +134,11 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
     /**
      * Test that a release note can be generated in HTML format 
      */
-    @Ignore
     @Test
     public void testHTML() throws Exception {
         releaseNoteMojo.setFormat("HtmlGenerator");
+        File expected = new File("src/test/resources/expectedReleaseNotes.html");
 
-        fail("Not yet implemented.");
+        testGenerate(expected);
     }
 }
