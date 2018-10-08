@@ -34,7 +34,7 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
         <plugin>
           <groupId>net.sigmalab.maven.plugins</groupId>
           <artifactId>jira-maven-plugin</artifactId>
-          <version>0.7</version>
+          <version>0.8</version>
           
           <dependencies>
             <dependency>
