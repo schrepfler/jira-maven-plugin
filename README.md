@@ -35,9 +35,19 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
           <groupId>net.sigmalab.maven.plugins</groupId>
           <artifactId>jira-maven-plugin</artifactId>
           <version>0.7</version>
+          
+          <dependencies>
+            <dependency>
+              <groupId>com.atlassian.fugue</groupId>
+              <artifactId>fugue</artifactId>
+              <version>2.2.0</version>
+            </dependency>
+          </dependencies>
+          
           <configuration>
               <!-- Particular configuration options -->
           </configuration>
+          
           <executions>
             <execution>
               <phase>deploy</phase>
@@ -49,6 +59,8 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
         </plugin>
       </plugins>
     </build>
+    
+**NOTE: THERE IS NOW A DEPENDENCY UPON THE com.atlassian.fugue:fugue:2.2.0 PLUGIN.**
 
 ## Goals
 

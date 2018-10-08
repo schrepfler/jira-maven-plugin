@@ -5,8 +5,6 @@ import static java.text.MessageFormat.format;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
-import net.steppschuh.markdowngenerator.rule.HorizontalRule;
-
 public class HtmlGenerator extends Generator {
     static final String ISSUETEMPLATE = "<td>[<a href=\"{0}\">{1}</a>]</td><td>{2}</td>";
     static final String HORIZONTAL_RULE = "<hr/>";
