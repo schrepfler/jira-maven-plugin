@@ -82,7 +82,7 @@ Add the following profile to be performed when the `deploy` phase is executed:
           <plugin>
             <groupId>net.sigmalab.maven.plugins</groupId>
             <artifactId>jira-maven-plugin</artifactId>
-            <version>0.7</version>
+            <version>0.8</version>
             <inherited>false</inherited>
             <configuration>
               <!- <server> entry in settings.xml -->
@@ -110,7 +110,7 @@ Place it on your pom.xml:
     <plugin>
       <groupId>net.sigmalab.maven.plugins</groupId>
       <artifactId>jira-maven-plugin</artifactId>
-      <version>0.7</version>
+      <version>0.8</version>
       <inherited>false</inherited>
       <configuration>
         <!- <server> entry in settings.xml -->
