@@ -266,12 +266,23 @@ limitation.
         <plugin>
           <groupId>net.sigmalab.maven.plugins</groupId>
           <artifactId>jira-maven-plugin</artifactId>
-          <version>0.7</version>
+          <version>0.8</version>
+          
+          <dependencies>
+            <dependency>
+              <groupId>com.atlassian.fugue</groupId>
+              <artifactId>fugue</artifactId>
+              <version>2.2.0</version>
+            </dependency>
+          </dependencies>
+          
           <inherited>false</inherited>
+          
           <configuration>
             <!-- <server> <id> entry in settings.xml                            -->
             <settingsKey>JIRA Server</settingsKey>
           </configuration>
+          
           <!-- The sequence of these three executions is significant.           -->
           <executions>
             <!-- Firstly, we release the currently existing latest version.     -->
@@ -288,6 +299,7 @@ limitation.
                 <releaseVersion>${project.artifactId}-${project.version}</releaseVersion>
               </configuration>
             </execution>
+            
             <!-- Then we create the release notes.                              -->
             <!-- By default creates: ./target/releaseNotes.txt                  -->
             <!--
@@ -314,6 +326,7 @@ limitation.
                 <format>HtmlGenerator</format>
               </configuration>
             </execution>
+            
             <!-- Next we create a new version (based on ${project.version}).    -->
             <!-- A bit of a hack, but recreating an existing version works.     -->
             <!-- The plugin is smart enough to remove the '-SNAPSHOT' from      -->
