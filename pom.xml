@@ -11,7 +11,7 @@
     <artifactId>jira-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Maven JIRA Plugin</name>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.9-SNAPSHOT</version>
     <description>This maven plugin contains MOJOs to ease integration with JIRA</description>
     <url>https://github.com/schrepfler/jira-maven-plugin</url>
 
@@ -28,7 +28,7 @@
         <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <license.maven.plugin.version>1.16</license.maven.plugin.version>
-        <versions.maven.plugin.version>2.6</versions.maven.plugin.version>
+        <versions.maven.plugin.version>2.7</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.0.4</jira.rest.java.client.version>
         <maven.version>3.5.4</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
@@ -40,10 +40,10 @@
         <maven.plugin.plugin.version>3.5.2</maven.plugin.plugin.version>
         <maven.resources.plugin.version>3.1.0</maven.resources.plugin.version>
         <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
-        <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
-        <mockito.version>2.21.0</mockito.version>
+        <mockito.version>2.23.0</mockito.version>
         <junit.version>4.12</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -131,6 +131,7 @@
     </licenses>
 
     <dependencies>
+
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-core</artifactId>
@@ -211,13 +212,13 @@
         </dependency>
 
     </dependencies>
-    
+
     <scm>
         <connection>scm:git:git@github.com:schrepfler/jira-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:schrepfler/jira-maven-plugin.git</developerConnection>
         <url>https://github.com/schrepfler/jira-maven-plugin</url>
     </scm>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -226,19 +227,19 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${license.maven.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>${versions.maven.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>external.atlassian.jgitflow</groupId>
                     <artifactId>jgitflow-maven-plugin</artifactId>
@@ -250,7 +251,7 @@
                         <pushHotfixes>true</pushHotfixes>
                     </configuration>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -309,49 +310,49 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven.deploy.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven.install.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven.jar.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
                     <version>${maven.plugin.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven.resources.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${maven.site.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.plugin.version}</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -362,7 +363,7 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -372,22 +373,22 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -398,7 +399,7 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -406,7 +407,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>

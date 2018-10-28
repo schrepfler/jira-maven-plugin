@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin)
+[![Build Status](https://travis-ci.org/schrepfler/jira-maven-plugin.svg?branch=develop)](https://travis-ci.org/schrepfler/jira-maven-plugin) [![Join the chat at https://gitter.im/jira-maven-plugin/Lobby](https://img.shields.io/badge/gitter-join%20chat-blue.svg)](https://gitter.im/jira-maven-plugin/Lobby)
 
 JIRA Maven Plugin
 =
@@ -34,10 +34,20 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
         <plugin>
           <groupId>net.sigmalab.maven.plugins</groupId>
           <artifactId>jira-maven-plugin</artifactId>
-          <version>0.7</version>
+          <version>0.8</version>
+          
+          <dependencies>
+            <dependency>
+              <groupId>com.atlassian.fugue</groupId>
+              <artifactId>fugue</artifactId>
+              <version>2.2.0</version>
+            </dependency>
+          </dependencies>
+          
           <configuration>
               <!-- Particular configuration options -->
           </configuration>
+          
           <executions>
             <execution>
               <phase>deploy</phase>
@@ -49,6 +59,8 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
         </plugin>
       </plugins>
     </build>
+    
+**NOTE: THERE IS NOW A DEPENDENCY UPON THE com.atlassian.fugue:fugue:2.2.0 PLUGIN.**
 
 ## Goals
 
@@ -70,7 +82,7 @@ Add the following profile to be performed when the `deploy` phase is executed:
           <plugin>
             <groupId>net.sigmalab.maven.plugins</groupId>
             <artifactId>jira-maven-plugin</artifactId>
-            <version>0.7</version>
+            <version>0.8</version>
             <inherited>false</inherited>
             <configuration>
               <!- <server> entry in settings.xml -->
@@ -98,7 +110,7 @@ Place it on your pom.xml:
     <plugin>
       <groupId>net.sigmalab.maven.plugins</groupId>
       <artifactId>jira-maven-plugin</artifactId>
-      <version>0.7</version>
+      <version>0.8</version>
       <inherited>false</inherited>
       <configuration>
         <!- <server> entry in settings.xml -->
@@ -120,7 +132,7 @@ Place it on your pom.xml:
 
 The following options can be specified in the `<configuration> ... </configuration>` section:
 
-| Paramter | Description |
+| Parameter | Description |
 |----------|-------------|
 | `<jiraProjectKey>` | The project key associated with the JIRA project -- if not specified this is computed from the jiraURL and/or the `<issuetracking>` component of your POM. | 
 | `<jiraURL>` | The root URL of the JIRA server - this can be used to override the `<issueTracking>` section of your POM. |
@@ -167,14 +179,67 @@ If the password in the `<server>` section uses Maven's standard encryption mecha
 | Paramter | Description |
 |----------|-------------|
 | `<jqlTemplate>` | JQL query template which will be used to identify the issues for the release note. |
-| `<issueTemplate>` | |
 | `<maxIssues>` | Maximum number of issues to be returned by the query to Jira (**default: 500**). |
 | `<releaseVersion>` | Version to have the release notes generated for (**default: <maven-project-version>**). |
 | `<targetFile>` | Name of the output file which will be generated (**default: <build-directory>/releaseNotes.txt**). |
 | `<beforeText>` | Text inserted before the table of issues being released. |
 | `<afterText>` | Text appended after the table of issues being released. |
+| `<format>` | Class to be used to generate the release notes -- see below. |
 
-### Usage with the maven-release-plugin
+#### Release Note Formats
+
+The plugin now supports the generation of release notes using different formats. Three formats are distributed
+with the plugin, but other formats can be authored and injected by end-users of the plugin.
+
+The formats which are provided are:
+* Plain Text : `PlainTextGenerator`
+* Markdown Text : `MarkDownGenerator`
+* HTML Text : `HtmlGenerator`
+
+##### Writing your own formatting classes
+
+Formatting classes can now be authored by you in order to generate release notes which contain the information appropriate to
+your organisation's needs.
+
+Formatting classes should be derived from the `Generator` abstract class located within the `net.sigmalab.maven.plugin.jira.formats`
+package. This abstract class has the following structure:
+
+**Constructors**
+
+The following constructor *MUST* be defined in your inherited class for your class to be instantiated by the plugin:
+
+    public Generator(JiraRestClient client, Iterable<Issue> issues, String beforeText, String afterText);
+
+**Inheritable Fields**
+
+The following fields can be accessed from within your inherited class.
+ 
+     protected IssueRestClient issueClient;
+ 
+**Concrete Methods within the `Generator` class**
+ 
+The following method is called by the plugin upon the instantiated `Generator` object -- you may choose to override this.
+ 
+    public void output(PrintWriter ps);
+ 
+**Abstract Methods**
+ 
+The following methods are abstract within the `Generator` class and must be overridden. You may choose to not implement
+any method bodies within these and simply return an empty String.
+
+    public abstract String addHeader();
+    public abstract String addHorizontalRule();
+    public abstract String addTableHeader();
+    public abstract String addRow(Issue i);
+    public abstract String addTableFooter();
+    public abstract String addBeforeText();
+    public abstract String addAfterText();
+    public abstract String addFooter();  
+
+The `Generator.output(PrintWriter ps)` method uses these methods - if you wish to override the default structure - e.g.
+to add your own release note components, you can do this by also overriding this method. 
+
+# Usage with the maven-release-plugin
 
 One of the more useful automation functions that can be achieved with the jira-maven-plugin is the automation
 of the creation of new unreleased versions and the releasing of existing versions of a jira project when used
@@ -191,7 +256,7 @@ a project. Therefore to keep the versioning relatively easy to follow, I only ev
 within a jira project. If however, you only have one component per jira project, then you will not run into this 
 limitation.
 
-    <!-- Specify the build settings.                                                -->
+    <!-- Specify the build settings.                                            -->
     <build>
       <plugins>
         <!-- Use the jira-maven-plugin to automate the releasing of existing    -->
@@ -201,17 +266,28 @@ limitation.
         <plugin>
           <groupId>net.sigmalab.maven.plugins</groupId>
           <artifactId>jira-maven-plugin</artifactId>
-          <version>0.7</version>
+          <version>0.8</version>
+          
+          <dependencies>
+            <dependency>
+              <groupId>com.atlassian.fugue</groupId>
+              <artifactId>fugue</artifactId>
+              <version>2.2.0</version>
+            </dependency>
+          </dependencies>
+          
           <inherited>false</inherited>
+          
           <configuration>
-            <!-- <server> <id> entry in settings.xml                        -->
+            <!-- <server> <id> entry in settings.xml                            -->
             <settingsKey>JIRA Server</settingsKey>
           </configuration>
-          <!-- The sequence of these three executions is significant.         -->
+          
+          <!-- The sequence of these three executions is significant.           -->
           <executions>
-            <!-- Firstly, we release the currently existing latest version. -->
-            <!-- Here we are relying upon 'mvn deploy' being forked from    -->
-            <!-- mvn release:perform.                                       -->
+            <!-- Firstly, we release the currently existing latest version.     -->
+            <!-- Here we are relying upon 'mvn deploy' being forked from        -->
+            <!-- mvn release:perform.                                           -->
             <execution>
               <id>deploy-release-jira-version</id>
               <phase>deploy</phase>
@@ -219,18 +295,19 @@ limitation.
                 <goal>release-jira-version</goal>
               </goals>
               <configuration>
-                <!-- Because we are using finalNameUsedForVersion=true  -->
+                <!-- Because we are using finalNameUsedForVersion=true          -->
                 <releaseVersion>${project.artifactId}-${project.version}</releaseVersion>
               </configuration>
             </execution>
-            <!-- Then we create the release notes.                          -->
-            <!-- By default creates: ./target/releaseNotes.txt              -->
+            
+            <!-- Then we create the release notes.                              -->
+            <!-- By default creates: ./target/releaseNotes.txt                  -->
             <!--
               And contains:
                 [KEY-ID] maven-test-release: Create a dummy project for maven releases.
             -->
-            <!-- If additional columns/output are needed, then the plugin   -->
-            <!-- will need to be modified - see issue #48.                  -->
+            <!-- If additional columns/output are needed, then the plugin       -->
+            <!-- will need to be modified - see issue #48.                      -->
             <execution>
               <id>deploy-generate-release-notes</id>
               <phase>deploy</phase>
@@ -238,25 +315,31 @@ limitation.
                 <goal>generate-release-notes</goal>
               </goals>
               <configuration>
-                <!-- Add in Done as a completed status.                 -->
+                <!-- Add in Done as a completed status.                         -->
                 <jqlTemplate>project = ''{0}'' AND status in (Resolved, Closed, Done) AND fixVersion = ''{1}''</jqlTemplate>
-                <!-- Because we are using finalNameUsedForVersion=true  -->
+                
+                <!-- Because we are using finalNameUsedForVersion=true          -->
                 <releaseVersion>${project.artifactId}-${project.version}</releaseVersion>
+                
+                <!-- Generate our release notes in HTML format                  --> 
+                <targetFile>myReleaseNotes.html</targetFile>
+                <format>HtmlGenerator</format>
               </configuration>
             </execution>
-            <!-- Next we create a new version (based on ${project.version}).-->
-            <!-- A bit of a hack, but recreating an existing version works. -->
-            <!-- The plugin is smart enough to remove the '-SNAPSHOT' from -->
-            <!-- ${project.version} so SNAPSHOT versions are not created.   -->
-            <!-- If the version already exists in jira, then no harm done.  -->
+            
+            <!-- Next we create a new version (based on ${project.version}).    -->
+            <!-- A bit of a hack, but recreating an existing version works.     -->
+            <!-- The plugin is smart enough to remove the '-SNAPSHOT' from      -->
+            <!-- ${project.version} so SNAPSHOT versions are not created.       -->
+            <!-- If the version already exists in jira, then no harm done.      -->
             <execution>
               <id>deploy-create-new-jira-version</id>
               <phase>install</phase>
               <goals>
                 <goal>create-new-jira-version</goal>
               </goals>
-              <!-- Change the Version from a default of ${pom.version} to -->
-              <!-- ${project.artifactId}-${project.version}               -->
+              <!-- Change the Version from a default of ${pom.version} to       -->
+              <!-- ${project.artifactId}-${project.version}                     -->
               <configuration>
                 <finalNameUsedForVersion>true</finalNameUsedForVersion>
               </configuration>
