@@ -13,6 +13,8 @@ This Maven plugin allows the manipulation of JIRA fixVersions within the project
 
 **The latest version of Atlassian's Jira REST client only supports Java versions greater than Java 8; therefore this plugin also only supports Java 8 and beyond.**
 
+**NOTE: THERE IS NOW A DEPENDENCY UPON THE com.atlassian.fugue:fugue:2.2.0 PLUGIN - PLEASE ENSURE THAT THIS DEPENDENCY IS ADDED TO YOUR PLUGIN INCLUSION**
+
 </aside>
 
 
