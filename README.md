@@ -13,8 +13,6 @@ This Maven plugin allows the manipulation of JIRA fixVersions within the project
 
 **The latest version of Atlassian's Jira REST client only supports Java versions greater than Java 8; therefore this plugin also only supports Java 8 and beyond.**
 
-**NOTE: THERE IS NOW A DEPENDENCY UPON THE com.atlassian.fugue:fugue:2.2.0 PLUGIN - PLEASE ENSURE THAT THIS DEPENDENCY IS ADDED TO YOUR PLUGIN INCLUSION**
-
 </aside>
 
 
@@ -36,17 +34,9 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
         <plugin>
           <groupId>net.sigmalab.maven.plugins</groupId>
           <artifactId>jira-maven-plugin</artifactId>
-          <version>0.8</version>
+          <version>0.8.1</version>
           
-          <dependencies>
-            <dependency>
-              <groupId>com.atlassian.fugue</groupId>
-              <artifactId>fugue</artifactId>
-              <version>2.2.0</version>
-            </dependency>
-          </dependencies>
-          
-          <configuration>
+		  <configuration>
               <!-- Particular configuration options -->
           </configuration>
           
@@ -62,8 +52,6 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
       </plugins>
     </build>
     
-**NOTE: THERE IS NOW A DEPENDENCY UPON THE com.atlassian.fugue:fugue:2.2.0 PLUGIN.**
-
 ## Goals
 
 
