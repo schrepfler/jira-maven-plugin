@@ -36,7 +36,7 @@ To use the jira-maven-plugin you should include it in the appropriate `<plugins>
           <artifactId>jira-maven-plugin</artifactId>
           <version>0.8.1</version>
           
-		  <configuration>
+          <configuration>
               <!-- Particular configuration options -->
           </configuration>
           
