@@ -23,6 +23,9 @@
     </issueManagement>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!--  Dependency version properties below here. -->
         <maven.plugin.testing.annotation.version>3.5.2</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
@@ -45,7 +48,7 @@
         <plexus-component-metadata.version>1.7.1</plexus-component-metadata.version>
         <mockito.version>2.23.0</mockito.version>
         <junit.version>4.12</junit.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <fugue.version>2.2.0</fugue.version>
     </properties>
 
     <repositories>
@@ -145,6 +148,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <version>${fugue.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
@@ -176,12 +186,6 @@
             <version>${maven.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.maven.plugin-testing</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>${maven.plugin.testing.harness.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
@@ -215,7 +219,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>1.3</version>
+            <version>${maven.plugin.testing.harness.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
