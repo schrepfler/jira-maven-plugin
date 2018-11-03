@@ -17,3 +17,6 @@ jira-maven-plugin.iml
 .Trashes
 ehthumbs.db
 Thumbs.db
+release.properties
+pom.xml.releaseBackup
+.AppleDouble
