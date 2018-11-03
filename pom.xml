@@ -33,7 +33,7 @@
         <license.maven.plugin.version>1.16</license.maven.plugin.version>
         <versions.maven.plugin.version>2.7</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.0.4</jira.rest.java.client.version>
-        <maven.version>3.5.4</maven.version>
+        <maven.version>3.6.0</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
@@ -49,6 +49,7 @@
         <mockito.version>2.23.0</mockito.version>
         <junit.version>4.12</junit.version>
         <fugue.version>2.2.0</fugue.version>
+        <guava.version>20.0</guava.version>
     </properties>
 
     <repositories>
@@ -145,6 +146,12 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+          <version>${guava.version}</version>
         </dependency>
 
         <dependency>
