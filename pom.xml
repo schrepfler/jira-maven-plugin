@@ -49,7 +49,7 @@
         <mockito.version>2.27.0</mockito.version>
         <junit.version>4.12</junit.version>
         <fugue.version>2.7.0</fugue.version>
-        <guava.version>20.0</guava.version>
+        <guava.version>23.0</guava.version>
     </properties>
 
     <repositories>
