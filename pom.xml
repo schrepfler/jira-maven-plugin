@@ -43,7 +43,7 @@
         <maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
         <maven.resources.plugin.version>3.1.0</maven.resources.plugin.version>
         <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
-        <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.1.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.0.0</plexus-component-metadata.version>
         <mockito.version>2.27.0</mockito.version>
