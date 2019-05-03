@@ -28,7 +28,7 @@
         <!--  Dependency version properties below here. -->
         <maven.plugin.testing.annotation.version>3.6.0</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
-        <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <license.maven.plugin.version>1.20</license.maven.plugin.version>
         <versions.maven.plugin.version>2.7</versions.maven.plugin.version>
