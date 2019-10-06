@@ -15,22 +15,23 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import io.atlassian.util.concurrent.Promise;
+
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
 import com.atlassian.jira.rest.client.api.VersionRestClient;
 import com.atlassian.jira.rest.client.api.domain.Project;
 import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.VersionInput;
-import com.atlassian.util.concurrent.Promise;
 
 import net.sigmalab.maven.plugin.jira.CreateNewVersionMojo;
 
 /**
  * JUnit test case for CreateNewVersionMojo
- * 
+ *
  * @author george
  * @author dgrierso
- * 
+ *
  */
 @RunWith(JUnit4.class)
 public class CreateNewVersionMojoTest  {
@@ -42,52 +43,52 @@ public class CreateNewVersionMojoTest  {
     private static final Iterable<Version> VERSIONS = Arrays.asList(VERSION_ARRAY);
 
 	private CreateNewVersionMojo jiraVersionMojo;
-	
+
 	private JiraRestClient mockJiraRestClient;
 
 	@Before
 	public void setUp() {
 		jiraVersionMojo = new CreateNewVersionMojo();
-		
+
 		jiraVersionMojo.setJiraUser("user");
 		jiraVersionMojo.setJiraPassword("password");
 		jiraVersionMojo.setJiraProjectKey("KEY");
         jiraVersionMojo.setJiraURL("http://localhost/jira/browse/" + jiraVersionMojo.getJiraProjectKey());
-        
-		mockJiraRestClient = Mockito.mock(JiraRestClient.class);        
-        
+
+		mockJiraRestClient = Mockito.mock(JiraRestClient.class);
+
         // Mocking the Project REST handling
 		// First the ProjectRestClient
         ProjectRestClient mockProjectClient = Mockito.mock(ProjectRestClient.class);
         Mockito.when(mockJiraRestClient.getProjectClient()).thenReturn(mockProjectClient);
-        
+
         // Next the retrieval of project information from that REST client.
         @SuppressWarnings("unchecked")
         Promise<Project> mockProjectPromise = (Promise<Project>) Mockito.mock(Promise.class);
         Mockito.when(mockProjectClient.getProject(jiraVersionMojo.getJiraProjectKey())).thenReturn(mockProjectPromise);
-        
+
         Project mockProject = Mockito.mock(Project.class);
         Mockito.when(mockProjectPromise.claim()).thenReturn(mockProject);
         Mockito.when(mockProject.getVersions()).thenReturn(VERSIONS);
-        
+
         // Mocking the Version REST handling
         VersionRestClient mockVersionClient = Mockito.mock(VersionRestClient.class);
         Mockito.when(mockJiraRestClient.getVersionRestClient()).thenReturn(mockVersionClient);
-        
+
         @SuppressWarnings("unchecked")
         Promise<Version> mockVersionPromise = (Promise<Version>) Mockito.mock(Promise.class);
         Mockito.when(mockVersionClient.createVersion(any(VersionInput.class))).thenReturn(mockVersionPromise);
-        
+
         Version mockVersion = Mockito.mock(Version.class);
         Mockito.when(mockVersionPromise.claim()).thenReturn(mockVersion);
-                
+
         jiraVersionMojo.setJiraRestClient(mockJiraRestClient);
 	}
 
 	/**
 	 * Test method for {@link CreateNewVersionMojo#execute()}
-	 * @throws MojoFailureException 
-	 * @throws MojoExecutionException 
+	 * @throws MojoFailureException
+	 * @throws MojoExecutionException
 	 */
 	@Test
 	public void testExecuteWithNewDevVersion() throws MojoExecutionException, MojoFailureException {
@@ -115,7 +116,7 @@ public class CreateNewVersionMojoTest  {
 	@Test
 	public void testExecuteWithExistentDevVersion() throws MojoExecutionException, MojoFailureException  {
 		jiraVersionMojo.setDevelopmentVersion("2.0");
-		
+
 		jiraVersionMojo.execute();
 	}
 
