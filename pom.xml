@@ -48,8 +48,6 @@
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <mockito.version>3.3.3</mockito.version>
         <junit.version>4.13</junit.version>
-        <fugue.version>2.7.0</fugue.version>
-        <guava.version>20.0</guava.version>
     </properties>
 
     <repositories>
@@ -140,25 +138,6 @@
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-core</artifactId>
             <version>${jira.rest.java.client.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-          <version>${guava.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.fugue</groupId>
-            <artifactId>fugue</artifactId>
-            <version>${fugue.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
