@@ -15,8 +15,8 @@ import org.apache.maven.settings.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.JiraRestClientFactory;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 
 /**
@@ -36,7 +36,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     /**
      * @parameter default-value = "${settings}", readonly = true
      */
-    Settings settings;
+    private Settings settings;
 
     /**
      * @component role-hint="mng-4384"
@@ -112,13 +112,13 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
      */
     protected String scope;
 
-    private transient JiraRestClient jiraRestClient;
+    private JiraRestClient jiraRestClient;
 
     /**
      * Load username password from settings if user has not set them in JVM
      * properties
      */
-    void loadUserInfoFromSettings() {
+    private void loadUserInfoFromSettings() {
         if ( settingsKey == null ) {
             settingsKey = jiraURL;
         }
@@ -159,12 +159,12 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         }
 
         // Scope property
-        if (SCOPE_SESSION.equals(this.scope)) {
+        if ( SCOPE_SESSION.equals(this.scope) ) {
             List<MavenProject> projects = this.mavenSession.getProjects();
 
             MavenProject lastProject = projects.get(projects.size() - 1);
 
-            if (lastProject != this.project) {
+            if ( lastProject != this.project ) {
                 log.info("Skipping waiting for the last Maven session project.");
 
                 return;
@@ -195,25 +195,29 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         }
         catch ( Exception e ) {
             log.error("Error when executing mojo", e);
-            // XXX: Por enquanto nao faz nada.
+            // Nothing further to do - perhaps print some more useful error message?
         }
     }
 
     private URI computeRootURI(String url) throws URISyntaxException {
-        // Test whether the JIRA_ISSUE_URL_PREFIX is missing from the specified URL
-        // - in which case just return the URL we've been passed.
+        /*
+         *  Test whether the JIRA_ISSUE_URL_PREFIX is missing from the specified URL
+         *  in which case just return the URL we've been passed.
+         */
         if ( url.lastIndexOf(JIRA_ISSUE_URL_PREFIX) < 0 ) {
             return new URI(url);
         }
         else {
-            // Otherwise, compute the part of the URL in front of the prefix and return that.
+            /*
+             * Otherwise, compute the part of the URL in front of the prefix and return that.
+             */
             String rootURL = url.substring(0, Math.min(url.length(), url.lastIndexOf(JIRA_ISSUE_URL_PREFIX)));
         
             return new URI(rootURL);
         }
     }
 
-    public abstract void doExecute(JiraRestClient restClient) throws Exception;
+    public abstract void doExecute(JiraRestClient restClient) throws MojoFailureException;
 
     private String decrypt(String str, String server) {
         try {

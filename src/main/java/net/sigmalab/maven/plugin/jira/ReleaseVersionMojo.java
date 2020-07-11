@@ -1,13 +1,12 @@
 package net.sigmalab.maven.plugin.jira;
 
-import java.util.Comparator;
-
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
-import com.atlassian.jira.rest.client.JiraRestClient;
-import com.atlassian.jira.rest.client.domain.Version;
-import com.atlassian.jira.rest.client.domain.input.VersionInputBuilder;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.Version;
+import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
 
 /**
  * Goal that creates a version in a JIRA project . NOTE: API access must be
@@ -34,20 +33,13 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      * 
      * @parameter default-value="false"
      */
-    boolean autoDiscoverLatestRelease;
-
-    /**
-     * Comparator for discovering the latest release
-     * 
-     * @parameter implementation="com.github.gastaldi.jira.VersionComparator"
-     */
-    Comparator<Version> versionComparator = new VersionComparator();
+    private boolean autoDiscoverLatestRelease;
 
     @Override
-    public void doExecute(JiraRestClient jiraRestClient) {
+    public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
         Iterable<Version> versions = getProjectVersions(jiraRestClient);
-        Version thisReleaseVersion = (autoDiscoverLatestRelease) ? calculateLatestReleaseVersion(versions)
-                                                                 : getVersion(jiraRestClient, getReleaseVersion());
+        Version thisReleaseVersion = ( autoDiscoverLatestRelease ? calculateLatestReleaseVersion(versions)
+                                                                 : getVersion(jiraRestClient, getReleaseVersion()) );
 
         if ( thisReleaseVersion != null ) {
             log.debug("Releasing Version " + thisReleaseVersion.getName());

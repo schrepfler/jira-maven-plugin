@@ -1,3 +1,5 @@
+*.swp
+*~
 .settings/
 .classpath
 .project
@@ -6,3 +8,15 @@
 target/
 atlassian-ide-plugin.xml
 jira-maven-plugin.iml
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+release.properties
+pom.xml.releaseBackup
+.AppleDouble
