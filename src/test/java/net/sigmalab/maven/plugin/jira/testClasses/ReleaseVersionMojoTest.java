@@ -2,7 +2,8 @@ package net.sigmalab.maven.plugin.jira.testClasses;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.net.URI;
@@ -29,7 +30,7 @@ import com.atlassian.jira.rest.client.api.domain.input.VersionInput;
 import net.sigmalab.maven.plugin.jira.ReleaseVersionMojo;
 
 /**
- * JUnit test case for ReleaseVersionMojo
+ * JUnit test cases for ReleaseVersionMojo
  * 
  * @author george
  * @author dgrierso
@@ -58,7 +59,7 @@ public class ReleaseVersionMojoTest {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		this.jiraVersionMojo = new ReleaseVersionMojo();
 		
 		jiraVersionMojo.setJiraUser("user");
@@ -91,18 +92,22 @@ public class ReleaseVersionMojoTest {
 	}
 
 	@Test
-	public void testLatestVersionInfo() throws Exception {
+	public void testLatestVersionInfo() {
 		final String expected = "3.0";
-		
+
 		Version actual = jiraVersionMojo.calculateLatestReleaseVersion(VERSIONS);
-		
 		assertThat(actual.getName(), is(equalTo(expected)));
 	}
 
 	@Test
-	public void testExecuteWithReleaseVersion() throws MojoExecutionException, MojoFailureException {
-		jiraVersionMojo.setReleaseVersion("3.0");
+	public void testExecuteWithReleaseVersion() {
+		try {
+			jiraVersionMojo.setReleaseVersion("3.0");
 
-		jiraVersionMojo.execute();
+			jiraVersionMojo.execute();
+		}
+		catch ( MojoFailureException | MojoExecutionException e) {
+			fail("Exception occurred");
+		}
 	}
 }
