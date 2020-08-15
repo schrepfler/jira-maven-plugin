@@ -46,6 +46,7 @@
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <mockito.version>3.4.6</mockito.version>
         <junit.version>4.13</junit.version>
     </properties>
@@ -402,6 +403,19 @@
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven.clean.plugin.version}</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -445,6 +459,13 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <!-- Prevent gpg from using pinentry programs -->
+                                    <gpgArguments>
+                                      <arg>--pinentry-mode</arg>
+                                      <arg>loopback</arg>
+                                    </gpgArguments>
+                                  </configuration>
                             </execution>
                         </executions>
                     </plugin>
