@@ -25,6 +25,12 @@ jobs:
         gpg-passphrase: MAVEN_GPG_PASSPHRASE                  # env variable for GPG private key passphrase
 #         settings-path: ${{ github.workspace }}              # location for the settings.xml file
 
+    - id: install-secret-key
+      name: Install gpg secret key
+      run: |
+        cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+        gpg --list-secret-keys --keyid-format LONG
+
     - name: Publish package
       run: mvn --no-transfer-progress --batch-mode clean deploy
       env:
