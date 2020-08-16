@@ -20,3 +20,4 @@ Thumbs.db
 release.properties
 pom.xml.releaseBackup
 .AppleDouble
+.vscode/
