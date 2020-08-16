@@ -47,8 +47,10 @@
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <mockito.version>3.4.6</mockito.version>
+        <mockito.version>3.5.0</mockito.version>
         <junit.version>4.13</junit.version>
+        <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
+        <m2e.lifecycle-mapping.version>1.0.0</m2e.lifecycle-mapping.version>
     </properties>
 
     <repositories>
@@ -184,7 +186,7 @@
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-sec-dispatcher</artifactId>
-            <version>1.4</version>
+            <version>${plexus-sec-dispatcher.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -281,7 +283,7 @@
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
+                    <version>${m2e.lifecycle-mapping.version}</version>
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
@@ -355,9 +357,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven.javadoc.plugin.version}</version>
-                    <configuration>
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                    </configuration>
+<!--                    <configuration>-->
+<!--                        <additionalparam>-Xdoclint:none</additionalparam>-->
+<!--                    </configuration>-->
                 </plugin>
             </plugins>
         </pluginManagement>
