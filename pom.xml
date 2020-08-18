@@ -46,8 +46,11 @@
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
-        <mockito.version>3.4.6</mockito.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <mockito.version>3.5.0</mockito.version>
         <junit.version>4.13</junit.version>
+        <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
+        <m2e.lifecycle-mapping.version>1.0.0</m2e.lifecycle-mapping.version>
     </properties>
 
     <repositories>
@@ -73,7 +76,7 @@
     </pluginRepositories>
 
     <prerequisites>
-        <maven>3.0.4</maven>
+        <maven>3.5.4</maven>
     </prerequisites>
 
     <developers>
@@ -183,7 +186,7 @@
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-sec-dispatcher</artifactId>
-            <version>1.4</version>
+            <version>${plexus-sec-dispatcher.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -249,11 +252,11 @@
                     </configuration>
                 </plugin>
 
-<!--                <plugin>-->
-<!--                    <groupId>org.sonatype.plugins</groupId>-->
-<!--                    <artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--                    <version>${nexus.staging.maven.plugin.version}</version>-->
-<!--                </plugin>-->
+               <plugin>
+                   <groupId>org.sonatype.plugins</groupId>
+                   <artifactId>nexus-staging-maven-plugin</artifactId>
+                   <version>${nexus.staging.maven.plugin.version}</version>
+               </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.plexus</groupId>
@@ -280,7 +283,7 @@
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
+                    <version>${m2e.lifecycle-mapping.version}</version>
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
@@ -354,9 +357,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven.javadoc.plugin.version}</version>
-                    <configuration>
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                    </configuration>
+<!--                    <configuration>-->
+<!--                        <additionalparam>-Xdoclint:none</additionalparam>-->
+<!--                    </configuration>-->
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -386,22 +389,57 @@
                 <artifactId>jgitflow-maven-plugin</artifactId>
             </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>org.sonatype.plugins</groupId>-->
-<!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--                <extensions>true</extensions>-->
-<!--                <configuration>-->
-<!--                    <serverId>ossrh</serverId>-->
-<!--                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-<!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+           <plugin>
+               <groupId>org.sonatype.plugins</groupId>
+               <artifactId>nexus-staging-maven-plugin</artifactId>
+               <extensions>true</extensions>
+               <configuration>
+                   <serverId>ossrh</serverId>
+                   <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                   <autoReleaseAfterClose>true</autoReleaseAfterClose>
+               </configuration>
+           </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven.clean.plugin.version}</version>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.gpg.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Prevent gpg from using pinentry programs, needed for GitHub Actions -->
+                            <gpgArguments>
+                              <arg>--pinentry-mode</arg>
+                              <arg>loopback</arg>
+                            </gpgArguments>
+                          </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -422,35 +460,5 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <profiles>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven.gpg.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

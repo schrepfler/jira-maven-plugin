@@ -1,4 +1,7 @@
 language: java
+
+install: ./mvnw install -Dgpg.skip=true
+
 jdk:
   - openjdk8
   - openjdk11
