@@ -56,7 +56,7 @@
     <repositories>
         <repository>
             <id>atlassian-public</id>
-            <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+            <url>https://packages.atlassian.com/maven-public/</url>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
