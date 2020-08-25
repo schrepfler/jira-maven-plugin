@@ -47,7 +47,7 @@
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <mockito.version>3.5.5</mockito.version>
+        <mockito.version>3.5.6</mockito.version>
         <junit.version>4.13</junit.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
         <m2e.lifecycle-mapping.version>1.0.0</m2e.lifecycle-mapping.version>
