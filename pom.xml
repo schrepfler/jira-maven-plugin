@@ -144,6 +144,7 @@
             <version>${jira.rest.java.client.version}</version>
         </dependency>
 
+        <!-- required https://github.com/schrepfler/jira-maven-plugin/issues/59 -->
         <dependency>
             <groupId>com.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
@@ -182,7 +183,6 @@
             <artifactId>maven-compat</artifactId>
             <version>${maven.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
