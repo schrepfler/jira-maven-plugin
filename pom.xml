@@ -33,6 +33,7 @@
         <license.maven.plugin.version>2.0.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.8.1</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.2.1</jira.rest.java.client.version>
+        <fugue.version>2.7.0</fugue.version>
         <maven.version>3.6.3</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
@@ -143,6 +144,13 @@
             <version>${jira.rest.java.client.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <version>${fugue.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
