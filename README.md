@@ -5,6 +5,8 @@
 JIRA Maven Plugin
 =
 
-This plugins started as a fork of George Gastaldi's jira-maven-plugin available here: https://github.com/gastaldi/jira-maven-plugin but moved on.
+This Maven plugin allows the manipulation of Atlassian Jira project fixVersions within the project associated with the built component.
+
+**This Maven plugin makes use of Atlassian's Jira REST client libraries. These libraries only support Java versions greater than Java 8; therefore this plugin also only supports Java 8 and beyond.**
 
 **_Documentation concerning this plugin has now moved to the [project wiki](https://github.com/schrepfler/jira-maven-plugin/wiki)._**
