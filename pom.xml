@@ -32,7 +32,7 @@
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <license.maven.plugin.version>2.0.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.8.1</versions.maven.plugin.version>
-        <jira.rest.java.client.version>5.2.1</jira.rest.java.client.version>
+        <jira.rest.java.client.version>5.2.2</jira.rest.java.client.version>
         <fugue.version>4.7.2</fugue.version>
         <maven.version>3.6.3</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
@@ -48,8 +48,8 @@
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <mockito.version>3.5.11</mockito.version>
-        <junit.version>4.13</junit.version>
+        <mockito.version>3.6.28</mockito.version>
+        <junit.version>4.13.1</junit.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
     </properties>
 
