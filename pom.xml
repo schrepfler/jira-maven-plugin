@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <!--  Dependency version properties below here. -->
-        <maven.plugin.testing.annotation.version>3.6.0</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.6.1</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
