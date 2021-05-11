@@ -117,12 +117,21 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     /**
      * Load username password from settings if user has not set them in JVM
      * properties
+     * @throws MojoFailureException 
      */
-    private void loadUserInfoFromSettings() {
+    private void loadUserInfoFromSettings() throws MojoFailureException {
         if ( settingsKey == null ) {
             settingsKey = jiraURL;
         }
 
+        /*
+         * If the Jira URL doesn't contain the correct prefix (i.e. /browse/) then
+         * it's possible that it's been copied using the new Jira7+ format of
+         * ($JIRAROOT/projects/$PROJECTKEY/summary). So we should do some
+         * defensive coding to reconstruct the URL if possible. 
+         */
+        validateJiraURL();
+        
         /*
          * If we haven't been supplied with a <jiraProjectKey> configuration
          * parameter then use the settingsKey parameter to figure out the key
@@ -228,21 +237,45 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             return str;
         }
     }
+    
+    private void validateJiraURL() throws MojoFailureException {
+        // If we can't find /browse/ in the URL
+        if ( getJiraURL().lastIndexOf(JIRA_ISSUE_URL_PREFIX) < 0 ) {
+            
+            // Search for "/projects/" in the URL.
+            int p = getJiraURL().lastIndexOf("/projects/");
+            
+            // Grab the base of the URL.
+            String base = getJiraURL().substring(0, p);
+            
+            // If we've found /projects/ in the URL.
+            if ( p > 0 ) {
+                // Grab the key from the URL.
+                String key = getJiraURL().substring(p + "/projects/".length(), getJiraURL().length());
+                
+                // If the key has "/summary" in it then we need to strip that off as well.
+                int s = key.lastIndexOf("/summary");
+                if ( s > 0 ) {
+                    setJiraURL(base + JIRA_ISSUE_URL_PREFIX + key.substring(0, s));
+                }
+                else {
+                    setJiraURL(base + JIRA_ISSUE_URL_PREFIX + key);
+                }
+            }
+            else {
+                throw new MojoFailureException("Could not compute a valid Jira URL");
+            }
+        }
+    }
 
     public boolean isSkip() {
         return skip;
     }
 
-    /**
-     * @return the jiraProjectKey
-     */
     public String getJiraProjectKey() {
         return jiraProjectKey;
     }
 
-    /**
-     * @return the settingsKey
-     */
     public String getSettingsKey() {
         return settingsKey;
     }
