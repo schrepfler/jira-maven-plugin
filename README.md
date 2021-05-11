@@ -2,7 +2,7 @@
 
 ![Java CI with Maven](https://github.com/schrepfler/jira-maven-plugin/workflows/Java%20CI%20with%20Maven/badge.svg) ![Maven Package](https://github.com/schrepfler/jira-maven-plugin/workflows/Maven%20Package/badge.svg)
 
-JIRA Maven Plugin
+Jira Maven Plugin
 =
 
 This Maven plugin allows the manipulation of Atlassian Jira project fixVersions within the project associated with the built component.

@@ -11,8 +11,8 @@
     <artifactId>jira-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Maven JIRA Plugin</name>
-    <version>0.9.2</version>
-    <description>This maven plugin contains MOJOs to ease integration with JIRA</description>
+    <version>0.9.3-SNAPSHOT</version>
+    <description>This maven plugin contains MOJOs to ease integration with Jira</description>
     <url>https://github.com/schrepfler/jira-maven-plugin</url>
 
     <inceptionYear>2014</inceptionYear>
@@ -400,7 +400,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
