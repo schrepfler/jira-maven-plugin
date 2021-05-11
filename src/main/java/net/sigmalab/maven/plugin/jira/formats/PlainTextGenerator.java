@@ -10,8 +10,8 @@ public class PlainTextGenerator extends Generator {
     static final String HORIZONTAL_RULE = "==============================";
 
     
-    public PlainTextGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
-        super(r, i, b, a);
+    public PlainTextGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
+        super(r, i, u, b, a);
     }
 
     @Override

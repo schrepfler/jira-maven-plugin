@@ -9,19 +9,19 @@ public class HtmlGenerator extends Generator {
     static final String ISSUETEMPLATE = "<td>[<a href=\"{0}\">{1}</a>]</td><td>{2}</td>";
     static final String HORIZONTAL_RULE = "<hr/>";
     
-    public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
-        super(r, i, b, a);
+    public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
+        super(r, i, u, b, a);
     }
 
     @Override
     public String addHeader() {
         return "<html><body>";
     }
-
+    
     @Override
     public String addRow(Issue i) {
         return "<tr>" + 
-               format(ISSUETEMPLATE, i.getSelf(), i.getKey(), i.getSummary()) +
+               format(ISSUETEMPLATE, this.computeIssueUrl(i), i.getKey(), i.getSummary()) +
                "</tr>";       
     }
 

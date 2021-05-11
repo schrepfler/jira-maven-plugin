@@ -10,15 +10,17 @@ public abstract class Generator {
     private JiraRestClient restClient;
     protected IssueRestClient issueClient;
     private Iterable<Issue> issues;
+    private String jiraUrl;
     private String beforeText;
     private String afterText;
     
-    public Generator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
+    public Generator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
         this.restClient = r;
         this.issues = i;
         this.issueClient = restClient.getIssueClient();
-        this.setBeforeText(b);
-        this.setAfterText(a);
+        this.jiraUrl = u;
+        this.beforeText = b;
+        this.afterText = a;
     }
     
     public abstract String addHeader();
@@ -32,10 +34,14 @@ public abstract class Generator {
     
     public void output(PrintWriter ps) {
         ps.print(this.addHeader());
-        ps.println(this.addBeforeText());
-        ps.println(this.addHorizontalRule());
-
-        // Deliberately *not* using prinln() on the table header and footer as
+        
+        // Only print the beforeText if it's been specified.
+        if ( this.getBeforeText() != null ) {
+            ps.println(this.addBeforeText());
+            ps.println(this.addHorizontalRule());
+        }
+        
+        // Deliberately *not* using println() on the table header and footer as
         // this may sometimes be empty.
         ps.print(this.addTableHeader());
         for ( Issue issue : issues ) {
@@ -43,8 +49,12 @@ public abstract class Generator {
         }
         ps.print(this.addTableFooter());
         
-        ps.println(this.addHorizontalRule());
-        ps.println(this.addAfterText());
+        // Only print the afterText if it's been specified.
+        if ( this.getAfterText() != null ) {
+            ps.println(this.addHorizontalRule());
+            ps.println(this.addAfterText());
+        }
+        
         ps.print(this.addFooter());
     }
 
@@ -52,15 +62,22 @@ public abstract class Generator {
         return beforeText;
     }
 
-    public void setBeforeText(String beforeText) {
-        this.beforeText = beforeText;
-    }
-
     public String getAfterText() {
         return afterText;
     }
-
-    public void setAfterText(String afterText) {
-        this.afterText = afterText;
+    
+    protected String computeIssueUrl(Issue i) {
+        // Use the jiraUrl as the basis for the URL of the issue passed to the method.
+        // Do this by stripping back the URL to just .../browse/ ending and then append
+        // the issue key.
+        int position = jiraUrl.lastIndexOf("/browse/");
+        
+        // If we haven't found /browse/ in the Jira URL then just return the issue key.
+        if ( position < 0 ) {
+            return i.getKey();
+        }
+        
+        // Otherwise return the issue key appended to the substring of the Jira URL.
+        return jiraUrl.substring(0, position) + "/browse/" + i.getKey();
     }
 }

@@ -11,8 +11,8 @@
     <artifactId>jira-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Maven JIRA Plugin</name>
-    <version>0.9.2</version>
-    <description>This maven plugin contains MOJOs to ease integration with JIRA</description>
+    <version>0.9.3-SNAPSHOT</version>
+    <description>This maven plugin contains MOJOs to ease integration with Jira</description>
     <url>https://github.com/schrepfler/jira-maven-plugin</url>
 
     <inceptionYear>2014</inceptionYear>
@@ -26,31 +26,31 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <!--  Dependency version properties below here. -->
-        <maven.plugin.testing.annotation.version>3.6.0</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.6.1</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-        <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-        <maven.cyclonedx.plugin.version>2.2.0</maven.cyclonedx.plugin.version>
+        <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
+        <maven.cyclonedx.plugin.version>2.4.1</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.0.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.8.1</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.2.2</jira.rest.java.client.version>
         <fugue.version>4.7.2</fugue.version>
-        <maven.version>3.6.3</maven.version>
+        <maven.version>3.8.1</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
-        <maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
+        <maven.plugin.plugin.version>3.6.1</maven.plugin.plugin.version>
         <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
         <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <mockito.version>3.6.28</mockito.version>
-        <junit.version>4.13.1</junit.version>
+        <mockito.version>3.9.0</mockito.version>
+        <junit.version>4.13.2</junit.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
     </properties>
 
@@ -400,7 +400,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>

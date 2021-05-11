@@ -141,9 +141,9 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
                 String formatPackage = ( format.contains(".") ? "" : "net.sigmalab.maven.plugin.jira.formats" );
                 
                 Class<?> clazz = Class.forName(formatPackage + "." + format);
-                Constructor<?> constructor = clazz.getConstructor(JiraRestClient.class, Iterable.class, String.class,
-                                                                  String.class);
-                generator = (Generator) constructor.newInstance(restClient, issues, beforeText, afterText);
+                Constructor<?> constructor = clazz.getConstructor(JiraRestClient.class, Iterable.class, String.class, 
+                                                                  String.class, String.class);
+                generator = (Generator) constructor.newInstance(restClient, issues, this.getJiraURL(), beforeText, afterText);
                 
                 log.info("Using " + format + " format for release notes.");
             }
