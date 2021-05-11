@@ -59,6 +59,7 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
         releaseNoteMojo.setJiraUser("user");
         releaseNoteMojo.setJiraPassword("password");
         releaseNoteMojo.setJiraProjectKey("DUMMY");
+        releaseNoteMojo.setJiraURL("https://dummy.jira.server/browse/KEY");
         releaseNoteMojo.setBeforeText("This is BEFORE TEXT");
         releaseNoteMojo.setAfterText("This is AFTER TEXT");
         releaseNoteMojo.setJiraProjectKey("KEY");

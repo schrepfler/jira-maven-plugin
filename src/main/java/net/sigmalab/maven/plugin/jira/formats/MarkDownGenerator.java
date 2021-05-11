@@ -9,8 +9,8 @@ public class MarkDownGenerator extends Generator {
     static final String ISSUETEMPLATE = "| [{0}]({1}) | {2} |";
     static final String HORIZONTAL_RULE = "---";
     
-    public MarkDownGenerator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
-        super(r, i, b, a);
+    public MarkDownGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
+        super(r, i, u, b, a);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class MarkDownGenerator extends Generator {
 
     @Override
     public String addRow(Issue i) {
-        return format(ISSUETEMPLATE, i.getKey(), i.getSelf(), i.getSummary());
+        return format(ISSUETEMPLATE, i.getKey(), this.computeIssueUrl(i), i.getSummary());
     }
 
     @Override

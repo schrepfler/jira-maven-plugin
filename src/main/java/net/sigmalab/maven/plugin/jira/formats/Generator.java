@@ -10,15 +10,17 @@ public abstract class Generator {
     private JiraRestClient restClient;
     protected IssueRestClient issueClient;
     private Iterable<Issue> issues;
+    private String jiraUrl;
     private String beforeText;
     private String afterText;
     
-    public Generator(JiraRestClient r, Iterable<Issue> i, String b, String a) {
+    public Generator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
         this.restClient = r;
         this.issues = i;
         this.issueClient = restClient.getIssueClient();
-        this.setBeforeText(b);
-        this.setAfterText(a);
+        this.jiraUrl = u;
+        this.beforeText = b;
+        this.afterText = a;
     }
     
     public abstract String addHeader();
@@ -60,15 +62,22 @@ public abstract class Generator {
         return beforeText;
     }
 
-    public void setBeforeText(String beforeText) {
-        this.beforeText = beforeText;
-    }
-
     public String getAfterText() {
         return afterText;
     }
-
-    public void setAfterText(String afterText) {
-        this.afterText = afterText;
+    
+    protected String computeIssueUrl(Issue i) {
+        // Use the jiraUrl as the basis for the URL of the issue passed to the method.
+        // Do this by stripping back the URL to just .../browse/ ending and then append
+        // the issue key.
+        int position = jiraUrl.lastIndexOf("/browse/");
+        
+        // If we haven't found /browse/ in the Jira URL then just return the issue key.
+        if ( position < 0 ) {
+            return i.getKey();
+        }
+        
+        // Otherwise return the issue key appended to the substring of the Jira URL.
+        return jiraUrl.substring(0, position) + "/browse/" + i.getKey();
     }
 }
