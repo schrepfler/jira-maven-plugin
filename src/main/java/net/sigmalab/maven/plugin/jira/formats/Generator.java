@@ -32,10 +32,14 @@ public abstract class Generator {
     
     public void output(PrintWriter ps) {
         ps.print(this.addHeader());
-        ps.println(this.addBeforeText());
-        ps.println(this.addHorizontalRule());
-
-        // Deliberately *not* using prinln() on the table header and footer as
+        
+        // Only print the beforeText if it's been specified.
+        if ( this.getBeforeText() != null ) {
+            ps.println(this.addBeforeText());
+            ps.println(this.addHorizontalRule());
+        }
+        
+        // Deliberately *not* using println() on the table header and footer as
         // this may sometimes be empty.
         ps.print(this.addTableHeader());
         for ( Issue issue : issues ) {
@@ -43,8 +47,12 @@ public abstract class Generator {
         }
         ps.print(this.addTableFooter());
         
-        ps.println(this.addHorizontalRule());
-        ps.println(this.addAfterText());
+        // Only print the afterText if it's been specified.
+        if ( this.getAfterText() != null ) {
+            ps.println(this.addHorizontalRule());
+            ps.println(this.addAfterText());
+        }
+        
         ps.print(this.addFooter());
     }
 
