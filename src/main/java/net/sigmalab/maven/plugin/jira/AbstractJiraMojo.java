@@ -247,6 +247,10 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
         return settingsKey;
     }
 
+    public String getJiraURL() {
+        return jiraURL;
+    }
+
     public void setJiraProjectKey(String jiraProjectKey) {
         this.jiraProjectKey = jiraProjectKey;
     }
