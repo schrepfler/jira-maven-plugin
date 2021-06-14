@@ -49,7 +49,7 @@
         <maven.javadoc.plugin.version>3.3.0</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <mockito.version>3.11.0</mockito.version>
+        <mockito.version>3.11.1</mockito.version>
         <junit.version>4.13.2</junit.version>
         <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
     </properties>
