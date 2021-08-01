@@ -9,4 +9,4 @@ This Maven plugin allows the manipulation of Atlassian Jira project fixVersions 
 
 **This Maven plugin makes use of Atlassian's Jira REST client libraries. These libraries only support Java versions greater than Java 8; therefore this plugin also only supports Java 8 and beyond.**
 
-**_Documentation concerning this plugin has now moved to the [project wiki](https://github.com/schrepfler/jira-maven-plugin/wiki)._**
+**_The documentation for the plugin is in the [project wiki](https://github.com/schrepfler/jira-maven-plugin/wiki)._**
