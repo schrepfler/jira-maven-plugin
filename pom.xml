@@ -46,7 +46,7 @@
         <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
         <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-        <maven.javadoc.plugin.version>3.3.0</maven.javadoc.plugin.version>
+        <maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
         <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <mockito.version>3.12.4</mockito.version>
