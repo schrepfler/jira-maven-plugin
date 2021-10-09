@@ -39,7 +39,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     private Settings settings;
 
     /**
-     * @component role-hint="mng-4384"
+     * @component
      * @required
      */
     private SecDispatcher securityDispatcher;

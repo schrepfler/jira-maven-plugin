@@ -1,7 +1,6 @@
 package net.sigmalab.maven.plugin.jira;
 
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.joda.time.DateTime;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -19,7 +18,6 @@ import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
  * @author dgrierso
  */
 public class ReleaseVersionMojo extends AbstractJiraMojo {
-    private final Log log = getLog();
 
     /**
      * Released Version
@@ -42,7 +40,7 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
                                                                  : getVersion(jiraRestClient, getReleaseVersion()) );
 
         if ( thisReleaseVersion != null ) {
-            log.debug("Releasing Version " + thisReleaseVersion.getName());
+            getLog().debug("Releasing Version " + thisReleaseVersion.getName());
 
             markVersionAsReleased(jiraRestClient, thisReleaseVersion);
         }
