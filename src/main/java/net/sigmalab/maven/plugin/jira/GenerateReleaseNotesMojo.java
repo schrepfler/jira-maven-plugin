@@ -11,7 +11,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -29,7 +28,6 @@ import net.sigmalab.maven.plugin.jira.formats.Generator;
  * @author dgrierso
  */
 public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
-    final Log log = getLog();
 
     /**
      * JQL Template to find issues associated with this version.
@@ -89,10 +87,10 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
     @Override
     public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
-        log.info("Generating release note ...");
+        getLog().info("Generating release note ...");
         
         Iterable<Issue> issues = getIssues(jiraRestClient);
-        log.info("Found " + Iterables.size(issues) + " issues.");
+        getLog().info("Found " + Iterables.size(issues) + " issues.");
 
         try {
             output(jiraRestClient, issues);
@@ -110,7 +108,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      */
     private Iterable<Issue> getIssues(JiraRestClient restClient) {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
-        log.info("Searching for issues matching JQL Query: " + jql);
+        getLog().info("Searching for issues matching JQL Query: " + jql);
 
         return restClient.getSearchClient().searchJql(jql, maxIssues, 0, null).claim().getIssues();
     }
@@ -123,10 +121,10 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * @throws IOException
      */
     private void output(JiraRestClient restClient, Iterable<Issue> issues) throws IOException {
-        log.info("Release notes will be found in: " + targetFile);
+        getLog().info("Release notes will be found in: " + targetFile);
 
         if ( issues == null ) {
-            log.warn("No Jira issues found.");
+            getLog().warn("No Jira issues found.");
         }
 
         validateOutputFile(targetFile);
@@ -145,17 +143,17 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
                                                                   String.class, String.class);
                 generator = (Generator) constructor.newInstance(restClient, issues, this.getJiraURL(), beforeText, afterText);
                 
-                log.info("Using " + format + " format for release notes.");
+                getLog().info("Using " + format + " format for release notes.");
             }
             catch ( ClassNotFoundException | NoSuchMethodException e ) {
                 String msg = "Could not find class [" + format + "] to generate the release note.";
-                log.error(msg);
+                getLog().error(msg);
                 throw new IOException(msg, e);
             }
             catch ( InstantiationException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e ) {
                 String msg = "Could not instantiate an instance of [" + format + "].";
-                log.error(msg);
+                getLog().error(msg);
                 throw new IOException(msg, e);
             }
 
@@ -163,23 +161,23 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
             // no further, so double check and throw an exception if necessary.
             if ( generator == null ) {
                 String msg = "No release note generator object created - exiting!";
-                log.error(msg);
+                getLog().error(msg);
                 throw new IOException(msg);
             }
 
             generator.output(ps);
-            log.info("Release notes generated.");
+            getLog().info("Release notes generated.");
         }
     }
 
     private void validateOutputFile(File f) throws IOException {
         // Creates a new file - DOES NOT APPEND - so warn if the file already exists.
         if ( f.exists() && ! f.isDirectory() ) { 
-            log.warn("Target release notes file already exists - this will be overwritten!");
+            getLog().warn("Target release notes file already exists - this will be overwritten!");
         }
         else if ( f.isDirectory() ) {
             String errorString = "Target release note filename already exists and is a directory";
-            log.error(errorString + " - exiting!");
+            getLog().error(errorString + " - exiting!");
             
             throw new IOException(errorString);
         }
