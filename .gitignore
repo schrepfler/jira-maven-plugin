@@ -21,3 +21,4 @@ release.properties
 pom.xml.releaseBackup
 .AppleDouble
 .vscode/
+bin/
