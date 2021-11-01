@@ -1,7 +1,6 @@
 package net.sigmalab.maven.plugin.jira;
 
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
@@ -50,10 +49,8 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
 
     @Override
     public void doExecute(JiraRestClient restClient) throws MojoFailureException {
-        Log log = getLog();
-
         String newVersionName = computeVersionName();
-        log.debug(String.format("Name of version to be created == [%s]", newVersionName));
+        getLog().debug(String.format("Name of version to be created == [%s]", newVersionName));
 
         ProjectRestClient projectRestClient = restClient.getProjectClient();
         VersionRestClient versionRestClient = restClient.getVersionRestClient();
@@ -63,15 +60,15 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
         Iterable<Version> projectVersions = project.getVersions();
 
         if ( versionAlreadyExists(projectVersions, newVersionName) ) {
-            log.warn(String.format("Version %s already exists in %s. Nothing to do.", newVersionName, getSettingsKey()));
+            getLog().warn(String.format("Version %s already exists in %s. Nothing to do.", newVersionName, getSettingsKey()));
             return;
         }
 
         VersionInput newVersion = VersionInput.create(getJiraProjectKey(), newVersionName, versionDescription, null, false, false);
-        log.debug(String.format("New version description: [%s]", newVersion.getDescription()));
+        getLog().debug(String.format("New version description: [%s]", newVersion.getDescription()));
 
         Version created = versionRestClient.createVersion(newVersion).claim();
-        log.info(String.format("Version created in %s for project key [%s] : %s", getSettingsKey(), getJiraProjectKey(), created.getName()));
+        getLog().info(String.format("Version created in %s for project key [%s] : %s", getSettingsKey(), getJiraProjectKey(), created.getName()));
     }
 
     /**

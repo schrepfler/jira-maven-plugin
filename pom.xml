@@ -28,14 +28,15 @@
         <!--  Dependency version properties below here. -->
         <maven.plugin.testing.annotation.version>3.6.1</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
+        <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
-        <maven.cyclonedx.plugin.version>2.4.1</maven.cyclonedx.plugin.version>
+        <maven.cyclonedx.plugin.version>2.5.3</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.0.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.8.1</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.2.2</jira.rest.java.client.version>
         <fugue.version>4.7.2</fugue.version>
-        <maven.version>3.8.1</maven.version>
+        <maven.version>3.8.3</maven.version>
         <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
@@ -46,12 +47,10 @@
         <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
         <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
-        <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
-        <plexus-component-metadata.version>2.1.0</plexus-component-metadata.version>
+        <maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <mockito.version>3.9.0</mockito.version>
+        <mockito.version>4.0.0</mockito.version>
         <junit.version>4.13.2</junit.version>
-        <plexus-sec-dispatcher.version>1.4</plexus-sec-dispatcher.version>
     </properties>
 
     <repositories>
@@ -156,19 +155,14 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -182,6 +176,14 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-compat</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -192,10 +194,18 @@
         </dependency>
 
         <dependency>
-            <groupId>org.sonatype.plexus</groupId>
+            <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-sec-dispatcher</artifactId>
-            <version>${plexus-sec-dispatcher.version}</version>
-            <scope>compile</scope>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -205,14 +215,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-settings</artifactId>
-            <version>${maven.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- test -->
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
@@ -265,26 +267,6 @@
                    <artifactId>nexus-staging-maven-plugin</artifactId>
                    <version>${nexus.staging.maven.plugin.version}</version>
                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.plexus</groupId>
-                    <artifactId>plexus-component-metadata</artifactId>
-                    <version>${plexus-component-metadata.version}</version>
-                    <executions>
-                        <execution>
-                            <id>merge</id>
-                            <configuration>
-                                <descriptors>
-                                    <descriptor>src/main/resources/META-INF/plexus/components.xml</descriptor>
-                                </descriptors>
-                            </configuration>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>merge-metadata</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -340,6 +322,28 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>(3.1.1,)</version>
+                                    <message>Maven 3.x line needed.</message>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
