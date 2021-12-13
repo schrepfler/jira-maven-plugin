@@ -130,7 +130,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
          */
         if ( getJiraProjectKey() == null ) {
             setJiraProjectKey(jiraURL.substring(jiraURL.lastIndexOf(JIRA_ISSUE_URL_PREFIX) + JIRA_ISSUE_URL_PREFIX.length()));
-            setJiraProjectKey(getJiraProjectKey().replaceAll("/", ""));
+            setJiraProjectKey(getJiraProjectKey().replace("/", ""));
         }
 
         if ( (jiraUsername == null || jiraPassword == null) && (settings != null) ) {
