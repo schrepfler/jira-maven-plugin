@@ -26,10 +26,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <!--  Dependency version properties below here. -->
-        <maven.plugin.testing.annotation.version>3.6.2</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.6.4</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version>
-        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.9.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
         <maven.cyclonedx.plugin.version>2.5.3</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.0.0</license.maven.plugin.version>
@@ -42,10 +42,10 @@
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.install.plugin.version>2.5.2</maven.install.plugin.version>
-        <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
-        <maven.plugin.plugin.version>3.6.2</maven.plugin.plugin.version>
+        <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
+        <maven.plugin.plugin.version>3.6.4</maven.plugin.plugin.version>
         <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
-        <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
+        <maven.site.plugin.version>3.10.0</maven.site.plugin.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.3.1</maven.javadoc.plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
