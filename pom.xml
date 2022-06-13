@@ -28,7 +28,7 @@
         <!--  Dependency version properties below here. -->
         <maven.plugin.testing.annotation.version>3.6.4</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
-        <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version>
+        <maven.enforcer.plugin.version>3.1.0</maven.enforcer.plugin.version>
         <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
         <maven.cyclonedx.plugin.version>2.7.0</maven.cyclonedx.plugin.version>
