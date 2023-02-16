@@ -10,7 +10,7 @@
     <groupId>net.sigmalab.maven.plugins</groupId>
     <artifactId>jira-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Maven JIRA Plugin</name>
+    <name>Maven Jira Plugin</name>
     <version>0.9.3-SNAPSHOT</version>
     <description>This maven plugin contains MOJOs to ease integration with Jira</description>
     <url>https://github.com/schrepfler/jira-maven-plugin</url>
