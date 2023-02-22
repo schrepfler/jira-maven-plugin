@@ -259,6 +259,9 @@
                         <pushFeatures>true</pushFeatures>
                         <pushReleases>true</pushReleases>
                         <pushHotfixes>true</pushHotfixes>
+                        <flowInitContext>
+                            <versionTagPrefix>v</versionTagPrefix>
+                        </flowInitContext>
                     </configuration>
                 </plugin>
 
