@@ -9,4 +9,4 @@ updates:
   ignore:
   - dependency-name: org.mockito:mockito-core
     versions:
-    - 3.7.7
+    - 5.x
