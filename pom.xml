@@ -37,7 +37,7 @@
         <jira.rest.java.client.version>5.2.4</jira.rest.java.client.version>
         <fugue.version>5.0.0</fugue.version>
         <maven.version>3.9.0</maven.version>
-        <jgitflow.maven.plugin.version>1.0-m5.1</jgitflow.maven.plugin.version>
+        <gitflow.maven.plugin.version>1.19.0</gitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
         <maven.deploy.plugin.version>3.1.0</maven.deploy.plugin.version>
@@ -293,17 +293,13 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>external.atlassian.jgitflow</groupId>
-                    <artifactId>jgitflow-maven-plugin</artifactId>
-                    <version>${jgitflow.maven.plugin.version}</version>
+                    <groupId>com.amashchenko.maven.plugin</groupId>
+                    <artifactId>gitflow-maven-plugin</artifactId>
+                    <version>${gitflow.maven.plugin.version}</version>
                     <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <pushFeatures>true</pushFeatures>
-                        <pushReleases>true</pushReleases>
-                        <pushHotfixes>true</pushHotfixes>
-                        <flowInitContext>
+                        <gitFlowConfig>
                             <versionTagPrefix>v</versionTagPrefix>
-                        </flowInitContext>
+                        </gitFlowConfig>
                     </configuration>
                 </plugin>
 
@@ -409,8 +405,8 @@
             </plugin>
 
             <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
             </plugin>
 
            <plugin>
