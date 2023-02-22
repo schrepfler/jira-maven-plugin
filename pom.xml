@@ -11,7 +11,7 @@
     <artifactId>jira-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Maven Jira Plugin</name>
-    <version>0.9.5</version>
+    <version>0.9.6</version>
     <description>This maven plugin contains MOJOs to ease integration with Jira</description>
     <url>https://github.com/schrepfler/jira-maven-plugin</url>
 
@@ -269,6 +269,26 @@
     			</plugins>
     		</build>
     	</profile>
+
+        <profile>
+            <id>java8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.plugin.version}</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
     <build>
@@ -355,9 +375,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven.javadoc.plugin.version}</version>
-<!--                    <configuration>-->
-<!--                        <additionalparam>-Xdoclint:none</additionalparam>-->
-<!--                    </configuration>-->
                 </plugin>
             </plugins>
         </pluginManagement>
