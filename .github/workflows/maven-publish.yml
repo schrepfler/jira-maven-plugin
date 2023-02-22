@@ -5,7 +5,7 @@ name: Maven Package
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build:
@@ -33,7 +33,7 @@ jobs:
         gpg --list-secret-keys --keyid-format LONG
 
     - name: Publish package
-      run: mvn --no-transfer-progress --batch-mode clean deploy
+      run: mvn --no-transfer-progress --batch-mode -DperformRelease=true clean deploy
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
