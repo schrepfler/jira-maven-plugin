@@ -51,6 +51,7 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <mockito.version>4.11.0</mockito.version>
         <junit.version>4.13.2</junit.version>
+        <plexus-sec-dispatcher.version>2.0</plexus-sec-dispatcher.version>
     </properties>
 
     <repositories>
@@ -196,8 +197,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-sec-dispatcher</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
+            <version>${plexus-sec-dispatcher.version}</version>
         </dependency>
 
         <!-- test -->
