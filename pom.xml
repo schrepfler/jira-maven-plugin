@@ -26,12 +26,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <!--  Dependency version properties below here. -->
-        <maven.plugin.testing.annotation.version>3.8.1</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.8.2</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.enforcer.plugin.version>3.3.0</maven.enforcer.plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
-        <maven.cyclonedx.plugin.version>2.7.7</maven.cyclonedx.plugin.version>
+        <maven.cyclonedx.plugin.version>2.7.8</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.0.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.15.0</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.2.5</jira.rest.java.client.version>
@@ -43,9 +43,9 @@
         <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
         <maven.install.plugin.version>3.1.1</maven.install.plugin.version>
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-        <maven.plugin.plugin.version>3.8.1</maven.plugin.plugin.version>
+        <maven.plugin.plugin.version>3.8.2</maven.plugin.plugin.version>
         <maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
-        <maven.site.plugin.version>3.12.1</maven.site.plugin.version>
+        <maven.site.plugin.version>4.0.0-M7</maven.site.plugin.version>
         <maven.surefire.plugin.version>3.0.0</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
@@ -393,7 +393,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>(3.1.1,)</version>
+                                    <version>(3.5.4,)</version>
                                     <message>Maven 3.x line needed.</message>
                                 </requireMavenVersion>
                             </rules>
