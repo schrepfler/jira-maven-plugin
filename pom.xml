@@ -48,7 +48,7 @@
         <maven.site.plugin.version>4.0.0-M8</maven.site.plugin.version>
         <maven.surefire.plugin.version>3.1.0</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <mockito.version>4.11.0</mockito.version>
         <junit.version>4.13.2</junit.version>
         <plexus-sec-dispatcher.version>2.0</plexus-sec-dispatcher.version>
