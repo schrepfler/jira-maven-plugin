@@ -32,7 +32,7 @@
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
         <maven.cyclonedx.plugin.version>2.7.9</maven.cyclonedx.plugin.version>
-        <license.maven.plugin.version>2.0.1</license.maven.plugin.version>
+        <license.maven.plugin.version>2.1.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.16.0</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.2.5</jira.rest.java.client.version>
         <fugue.version>5.0.0</fugue.version>
