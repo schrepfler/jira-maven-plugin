@@ -2,6 +2,8 @@ package net.sigmalab.maven.plugin.jira.formats;
 
 import static java.text.MessageFormat.format;
 
+import java.util.List;
+
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
@@ -9,8 +11,8 @@ public class MarkDownGenerator extends Generator {
     static final String ISSUETEMPLATE = "| [{0}]({1}) | {2} |";
     static final String HORIZONTAL_RULE = "---";
     
-    public MarkDownGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
-        super(r, i, u, b, a);
+    public MarkDownGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a, List<String> f) {
+        super(r, i, u, b, a, f);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MarkDownGenerator extends Generator {
                "|-----------|---------|\n";
     }
 
-    @Override
+	@Override
     public String addTableFooter() {
         return "";
     }

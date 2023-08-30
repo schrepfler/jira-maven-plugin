@@ -1,6 +1,7 @@
 package net.sigmalab.maven.plugin.jira.formats;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -13,20 +14,22 @@ public abstract class Generator {
     private String jiraUrl;
     private String beforeText;
     private String afterText;
+	private List<String> customFields;
     
-    public Generator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
+    public Generator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a, List<String> f) {
         this.restClient = r;
         this.issues = i;
         this.issueClient = restClient.getIssueClient();
         this.jiraUrl = u;
         this.beforeText = b;
         this.afterText = a;
+        this.customFields = f;
     }
     
     public abstract String addHeader();
     public abstract String addHorizontalRule();
     public abstract String addTableHeader();
-    public abstract String addRow(Issue i);
+	public abstract String addRow(Issue i);
     public abstract String addTableFooter();
     public abstract String addBeforeText();
     public abstract String addAfterText();
@@ -44,6 +47,7 @@ public abstract class Generator {
         // Deliberately *not* using println() on the table header and footer as
         // this may sometimes be empty.
         ps.print(this.addTableHeader());
+        
         for ( Issue issue : issues ) {
             ps.println(addRow(issue));
         }
@@ -64,6 +68,10 @@ public abstract class Generator {
 
     public String getAfterText() {
         return afterText;
+    }
+    
+    public List<String> getFields() {
+    	return customFields;
     }
     
     protected String computeIssueUrl(Issue i) {

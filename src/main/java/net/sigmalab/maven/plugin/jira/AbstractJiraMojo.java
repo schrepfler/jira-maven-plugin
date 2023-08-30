@@ -8,7 +8,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
@@ -150,11 +149,9 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
-        Log log = getLog();
-
         // Skip property
         if ( isSkip() ) {
-            log.info("Skipping Plugin execution.");
+            getLog().info("Skipping Plugin execution.");
             return;
         }
 
@@ -165,7 +162,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             MavenProject lastProject = projects.get(projects.size() - 1);
 
             if ( lastProject != this.project ) {
-                log.info("Skipping waiting for the last Maven session project.");
+                getLog().info("Skipping waiting for the last Maven session project.");
 
                 return;
             }
@@ -175,26 +172,26 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
             final JiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
 
             loadUserInfoFromSettings();
-            log.debug("JIRA URL    == [" + jiraURL + "]");
+            getLog().debug("JIRA URL    == [" + jiraURL + "]");
             
-            log.debug("JIRA user   == [" + jiraUsername + "]");
-            log.debug("Project key == [" + getJiraProjectKey() + "]");
+            getLog().debug("JIRA user   == [" + jiraUsername + "]");
+            getLog().debug("Project key == [" + getJiraProjectKey() + "]");
 
             if ( jiraRestClient == null ) {
                 jiraRestClient = jiraRestClientFactory.createWithBasicHttpAuthentication(computeRootURI(jiraURL), jiraUsername, jiraPassword);
             }
 
             try {
-                log.debug("Starting execution ...");
+                getLog().debug("Starting execution ...");
 
                 doExecute(jiraRestClient);
             }
             finally {
-                log.debug("All done!");
+                getLog().debug("All done!");
             }
         }
         catch ( Exception e ) {
-            log.error("Error when executing mojo", e);
+            getLog().error("Error when executing mojo", e);
             // Nothing further to do - perhaps print some more useful error message?
         }
     }

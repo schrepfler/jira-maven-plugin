@@ -9,6 +9,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -35,7 +38,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * Parameter 0 = Project Key
      * Parameter 1 = Fix version
      * 
-     * @parameter default-value="project = ''{0}'' AND fixVersion = ''{1}''"
+     * @parameter default-value="project in (''{0}'') AND fixVersion = ''{1}''"
      * @required
      */
     String jqlTemplate;
@@ -84,10 +87,18 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * @parameter default-value="PlainTextGenerator"
      */
     String format;
+    
+    /**
+     * List of fields.
+     * 
+     * @parameter default-value="key,description"
+     */
+    List<String> fields;
 
     @Override
     public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
         getLog().info("Generating release note ...");
+        getLog().info("Got " + fields.size() + " custom fields to be added: " + fields.toString());
         
         Iterable<Issue> issues = getIssues(jiraRestClient);
         getLog().info("Found " + Iterables.size(issues) + " issues.");
@@ -110,14 +121,14 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
         String jql = format(jqlTemplate, getJiraProjectKey(), releaseVersion);
         getLog().info("Searching for issues matching JQL Query: " + jql);
 
-        return restClient.getSearchClient().searchJql(jql, maxIssues, 0, null).claim().getIssues();
+        return restClient.getSearchClient().searchJql(jql, maxIssues, 0, new HashSet<>(fields)).claim().getIssues();
     }
 
     /**
      * Writes issues to output
      * 
      * @param restClient
-     * @param issues
+     * @param issues	
      * @throws IOException
      */
     private void output(JiraRestClient restClient, Iterable<Issue> issues) throws IOException {
@@ -130,7 +141,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
         validateOutputFile(targetFile);
         
         try ( OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile, false), "UTF8");
-                PrintWriter ps = new PrintWriter(writer) ) {
+        		PrintWriter ps = new PrintWriter(writer) ) {
 
             Generator generator = null;
             try {
@@ -140,8 +151,8 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
                 
                 Class<?> clazz = Class.forName(formatPackage + "." + format);
                 Constructor<?> constructor = clazz.getConstructor(JiraRestClient.class, Iterable.class, String.class, 
-                                                                  String.class, String.class);
-                generator = (Generator) constructor.newInstance(restClient, issues, this.getJiraURL(), beforeText, afterText);
+                                                                  String.class, String.class, List.class);
+                generator = (Generator) constructor.newInstance(restClient, issues, this.getJiraURL(), beforeText, afterText, fields);
                 
                 getLog().info("Using " + format + " format for release notes.");
             }
@@ -237,6 +248,13 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
     
     public void setFormat(String format) {
         this.format = format;
-        
     }
+
+	public List<String> getCustomFields() {
+		return fields;
+	}
+
+	public void setCustomFields(List<String> customFields) {
+		this.fields = customFields;
+	}
 }

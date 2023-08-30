@@ -2,6 +2,8 @@ package net.sigmalab.maven.plugin.jira.formats;
 
 import static java.text.MessageFormat.format;
 
+import java.util.List;
+
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
@@ -9,8 +11,8 @@ public class HtmlGenerator extends Generator {
     static final String ISSUETEMPLATE = "<td>[<a href=\"{0}\">{1}</a>]</td><td>{2}</td>";
     static final String HORIZONTAL_RULE = "<hr/>";
     
-    public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a) {
-        super(r, i, u, b, a);
+    public HtmlGenerator(JiraRestClient r, Iterable<Issue> i, String u, String b, String a, List<String> f) {
+        super(r, i, u, b, a, f);
     }
 
     @Override
@@ -53,7 +55,7 @@ public class HtmlGenerator extends Generator {
                "<tbody>\n";
     }
 
-    @Override
+	@Override
     public String addTableFooter() {
         return "</tbody>\n" +
                "</table>\n";

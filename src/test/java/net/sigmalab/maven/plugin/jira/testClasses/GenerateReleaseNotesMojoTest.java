@@ -20,14 +20,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import io.atlassian.util.concurrent.Promise;
-
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 
+import io.atlassian.util.concurrent.Promise;
 import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 
 @RunWith(JUnit4.class)
@@ -114,9 +113,23 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
      * Test that a release note can be generated in PlainText format
      */
     @Test
-    public void testPlainText() throws Exception {        
+    public void testPlainTextNoFields() throws Exception {        
         releaseNoteMojo.setFormat("PlainTextGenerator");
+        
         File expected = new File("src/test/resources/expectedReleaseNotes.txt");
+
+        testGenerate(expected);
+    }
+    
+    /**
+     * Test that a release note can be generated in PlainText format
+     */
+    @Test
+    public void testPlainTextFields() throws Exception {        
+        releaseNoteMojo.setFormat("PlainTextGenerator");
+        releaseNoteMojo.setCustomFields(Arrays.asList("Assignee", "Reporter"));
+
+        File expected = new File("src/test/resources/expectedReleaseNotesFields.txt");
 
         testGenerate(expected);
     }
@@ -133,13 +146,18 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
     }
     
     /**
-     * Test that a release note can be generated in HTML format 
+     * Test that a release note can be generated in HTML format
      */
     @Test
     public void testHTML() throws Exception {
         releaseNoteMojo.setFormat("HtmlGenerator");
+        
         File expected = new File("src/test/resources/expectedReleaseNotes.html");
 
         testGenerate(expected);
     }
+    
+    /**
+     * Test that a release note can be generated in PlainText format _with
+     */
 }
