@@ -393,7 +393,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>(3.9.5,)</version>
+                                    <version>[3.9.5,)</version>
                                     <message>Maven 3.x line needed.</message>
                                 </requireMavenVersion>
                             </rules>
