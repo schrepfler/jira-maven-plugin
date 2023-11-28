@@ -49,6 +49,7 @@
         <maven.surefire.plugin.version>3.2.2</maven.surefire.plugin.version>
         <maven.javadoc.plugin.version>3.6.2</maven.javadoc.plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <!-- don't bump mockito to 5 as it requires java 11 -->
         <mockito.version>4.11.0</mockito.version>
         <junit.version>4.13.2</junit.version>
         <plexus-sec-dispatcher.version>2.0</plexus-sec-dispatcher.version>
