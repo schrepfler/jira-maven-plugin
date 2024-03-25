@@ -29,7 +29,7 @@
         <maven.plugin.testing.annotation.version>3.11.0</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.enforcer.plugin.version>3.4.1</maven.enforcer.plugin.version>
-        <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
         <maven.cyclonedx.plugin.version>2.7.11</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.4.0</license.maven.plugin.version>
