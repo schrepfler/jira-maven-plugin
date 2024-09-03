@@ -33,7 +33,7 @@
         <maven.cyclonedx.plugin.version>2.8.1</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.4.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
-        <jira.rest.java.client.version>5.2.7</jira.rest.java.client.version>
+        <jira.rest.java.client.version>6.0.1</jira.rest.java.client.version>
         <fugue.version>5.0.1</fugue.version>
         <maven.version>3.9.8</maven.version>
         <gitflow.maven.plugin.version>1.21.0</gitflow.maven.plugin.version>
