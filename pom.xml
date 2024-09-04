@@ -35,7 +35,7 @@
         <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
         <jira.rest.java.client.version>5.2.7</jira.rest.java.client.version>
         <fugue.version>5.0.1</fugue.version>
-        <maven.version>3.9.8</maven.version>
+        <maven.version>3.9.9</maven.version>
         <gitflow.maven.plugin.version>1.21.0</gitflow.maven.plugin.version>
         <nexus.staging.maven.plugin.version>1.7.0</nexus.staging.maven.plugin.version>
         <maven.clean.plugin.version>3.3.2</maven.clean.plugin.version>
