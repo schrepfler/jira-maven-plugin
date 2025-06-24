@@ -1,5 +1,6 @@
 package net.sigmalab.maven.plugin.jira;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -12,8 +13,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
+import org.codehaus.plexus.components.secdispatcher.SecDispatcher;
+import org.codehaus.plexus.components.secdispatcher.SecDispatcherException;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
@@ -117,8 +118,9 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
     /**
      * Load username password from settings if user has not set them in JVM
      * properties
+     * @throws IOException 
      */
-    private void loadUserInfoFromSettings() {
+    private void loadUserInfoFromSettings() throws IOException {
         if ( settingsKey == null ) {
             settingsKey = jiraURL;
         }
@@ -219,7 +221,7 @@ public abstract class AbstractJiraMojo extends AbstractMojo {
 
     public abstract void doExecute(JiraRestClient restClient) throws MojoFailureException;
 
-    private String decrypt(String str, String server) {
+    private String decrypt(String str, String server) throws IOException {
         try {
             return securityDispatcher.decrypt(str);
         }

@@ -29,7 +29,10 @@
         <maven.plugin.testing.annotation.version>3.15.1</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <maven.enforcer.plugin.version>3.5.0</maven.enforcer.plugin.version>
+        
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.compiler.release>17</maven.compiler.release>
+        
         <maven.cyclonedx.plugin.version>2.9.1</maven.cyclonedx.plugin.version>
         <license.maven.plugin.version>2.4.0</license.maven.plugin.version>
         <versions.maven.plugin.version>2.18.0</versions.maven.plugin.version>
@@ -51,7 +54,7 @@
         <!-- don't bump mockito to 5 as it requires java 11 -->
         <mockito.version>4.11.0</mockito.version>
         <junit.version>4.13.2</junit.version>
-        <plexus-sec-dispatcher.version>4.0.2</plexus-sec-dispatcher.version>
+        <plexus-sec-dispatcher.version>4.1.0</plexus-sec-dispatcher.version>
     </properties>
 
     <repositories>
@@ -405,10 +408,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
 
             <plugin>
