@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -24,38 +25,48 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
+
         <!--  Dependency version properties below here. -->
-        <maven.plugin.testing.annotation.version>3.10.2</maven.plugin.testing.annotation.version>
+        <maven.plugin.testing.annotation.version>3.15.1</maven.plugin.testing.annotation.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
-        <maven.enforcer.plugin.version>3.4.1</maven.enforcer.plugin.version>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
-        <maven.cyclonedx.plugin.version>2.7.10</maven.cyclonedx.plugin.version>
-        <license.maven.plugin.version>2.3.0</license.maven.plugin.version>
-        <versions.maven.plugin.version>2.16.2</versions.maven.plugin.version>
-        <jira.rest.java.client.version>5.2.7</jira.rest.java.client.version>
-        <fugue.version>5.0.0</fugue.version>
-        <maven.version>3.9.5</maven.version>
-        <gitflow.maven.plugin.version>1.20.0</gitflow.maven.plugin.version>
-        <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
-        <maven.clean.plugin.version>3.3.2</maven.clean.plugin.version>
-        <maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
-        <maven.install.plugin.version>3.1.1</maven.install.plugin.version>
-        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-        <maven.plugin.plugin.version>3.10.2</maven.plugin.plugin.version>
+        <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+        <maven.cyclonedx.plugin.version>2.9.1</maven.cyclonedx.plugin.version>
+        <license.maven.plugin.version>2.7.0</license.maven.plugin.version>
+        <versions.maven.plugin.version>2.19.1</versions.maven.plugin.version>
+        <jira.rest.java.client.version>${jira-rest-java-client-core.version}</jira.rest.java.client.version>
+        <fugue.version>6.1.2</fugue.version>
+        <maven.version>3.9.11</maven.version>
+        <gitflow.maven.plugin.version>1.21.0</gitflow.maven.plugin.version>
+        <nexus.staging.maven.plugin.version>1.7.0</nexus.staging.maven.plugin.version>
+        <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
+        <maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
+        <maven.install.plugin.version>3.1.4</maven.install.plugin.version>
+        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
+        <maven.plugin.plugin.version>3.15.1</maven.plugin.plugin.version>
         <maven.resources.plugin.version>3.3.1</maven.resources.plugin.version>
-        <maven.site.plugin.version>4.0.0-M12</maven.site.plugin.version>
-        <maven.surefire.plugin.version>3.2.2</maven.surefire.plugin.version>
-        <maven.javadoc.plugin.version>3.6.2</maven.javadoc.plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven.site.plugin.version>4.0.0-M16</maven.site.plugin.version>
+        <maven.surefire.plugin.version>3.5.4</maven.surefire.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <!-- don't bump mockito to 5 as it requires java 11 -->
         <mockito.version>4.11.0</mockito.version>
         <junit.version>4.13.2</junit.version>
-        <plexus-sec-dispatcher.version>2.0</plexus-sec-dispatcher.version>
+        <plexus-sec-dispatcher.version>4.1.0</plexus-sec-dispatcher.version>
+        <maven-shade-plugin.version>3.5.2</maven-shade-plugin.version>
+        <maven-dependency-plugin.version>3.6.1</maven-dependency-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+        <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
+        <jira-rest-java-client-core.version>7.0.1</jira-rest-java-client-core.version>
+        <maven.failsafe.plugin.version>3.5.4</maven.failsafe.plugin.version>
     </properties>
 
     <repositories>
+
+        <!-- this library and fugue will be provided as jars exclusively as it is not available in maven central and
+        I want this plugin to be independent on Atlassian's maven repositories. Leaving this comment to preserve this decision
+        and for people to know where they can download and validate fugue -->
         <repository>
             <id>atlassian-public</id>
             <url>https://packages.atlassian.com/maven/repository/public</url>
@@ -139,10 +150,11 @@
 
     <dependencies>
 
+        <!-- https://mvnrepository.com/artifact/com.atlassian.jira/jira-rest-java-client-core -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-core</artifactId>
-            <version>${jira.rest.java.client.version}</version>
+            <version>${jira-rest-java-client-core.version}</version>
         </dependency>
 
         <!-- required https://github.com/schrepfler/jira-maven-plugin/issues/59 -->
@@ -150,9 +162,8 @@
             <groupId>io.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
             <version>${fugue.version}</version>
-            <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
@@ -222,6 +233,14 @@
             <version>${maven.plugin.testing.harness.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Required for plexus-sec-dispatcher 4.x in tests -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings-builder</artifactId>
+            <version>${maven.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <scm>
@@ -235,41 +254,41 @@
         See: https://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/
     -->
     <profiles>
-    	<profile>
-    		<id>release-sign-artifacts</id>
-    		<activation>
-    			<property>
-    				<name>performRelease</name>
-    				<value>true</value>
-    			</property>
-    		</activation>
-    		
-    		<build>
-    			<plugins>
-	    			<plugin>
-		                <groupId>org.apache.maven.plugins</groupId>
-		                <artifactId>maven-gpg-plugin</artifactId>
-		                <version>${maven.gpg.plugin.version}</version>
-		                <executions>
-		                    <execution>
-		                        <id>sign-artifacts</id>
-		                        <phase>verify</phase>
-		                        <goals>
-		                            <goal>sign</goal>
-		                        </goals>
-		                        <configuration>
-		                            <!-- Prevent gpg from using pinentry programs, needed for GitHub Actions -->
-		                            <gpgArguments>
-		                              <arg>--pinentry-mode</arg>
-		                              <arg>loopback</arg>
-		                            </gpgArguments>
-		                          </configuration>
-		                    </execution>
-		                </executions>
-	            	</plugin>
-    			</plugins>
-    		</build>
-    	</profile>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Prevent gpg from using pinentry programs, needed for GitHub Actions -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <profile>
             <id>java8</id>
@@ -284,6 +303,39 @@
                         <version>${maven.javadoc.plugin.version}</version>
                         <configuration>
                             <doclint>none</doclint>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>integration-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>${maven.failsafe.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <jira.url>${jira.url}</jira.url>
+                                <jira.username>${jira.username}</jira.username>
+                                <jira.password>${jira.password}</jira.password>
+                                <jira.pat>${jira.pat}</jira.pat>
+                                <jira.projectKey>${jira.projectKey}</jira.projectKey>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -324,11 +376,11 @@
                     </configuration>
                 </plugin>
 
-               <plugin>
-                   <groupId>org.sonatype.plugins</groupId>
-                   <artifactId>nexus-staging-maven-plugin</artifactId>
-                   <version>${nexus.staging.maven.plugin.version}</version>
-               </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus.staging.maven.plugin.version}</version>
+                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -407,8 +459,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
 
@@ -427,16 +479,16 @@
                 <artifactId>gitflow-maven-plugin</artifactId>
             </plugin>
 
-           <plugin>
-               <groupId>org.sonatype.plugins</groupId>
-               <artifactId>nexus-staging-maven-plugin</artifactId>
-               <extensions>true</extensions>
-               <configuration>
-                   <serverId>ossrh</serverId>
-                   <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                   <autoReleaseAfterClose>true</autoReleaseAfterClose>
-               </configuration>
-           </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -458,6 +510,18 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Exclude integration tests from regular test phase -->
+                    <excludes>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/integration/**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
                 <version>${maven.cyclonedx.plugin.version}</version>
@@ -470,7 +534,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

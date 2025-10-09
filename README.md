@@ -7,6 +7,6 @@ Jira Maven Plugin
 
 This Maven plugin allows the manipulation of Atlassian Jira project fixVersions within the project associated with the built component.
 
-**This Maven plugin tries to keep compatibility with Java 8 and beyond.**
+**This Maven plugin requires Java 21 baseline due to the Atlassian Jira Client minimum requirement.**
 
 **_The documentation for the plugin is in the [project wiki](https://github.com/schrepfler/jira-maven-plugin/wiki)._**

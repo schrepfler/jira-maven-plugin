@@ -33,8 +33,23 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      */
     private boolean autoDiscoverLatestRelease;
 
+    /**
+     * Validates the specific parameters for this mojo
+     * 
+     * @throws MojoFailureException if validation fails
+     */
+    private void validateMojoParameters() throws MojoFailureException {
+        // If not auto-discovering, releaseVersion is required
+        if (!autoDiscoverLatestRelease && (releaseVersion == null || releaseVersion.trim().isEmpty())) {
+            throw new MojoFailureException("Release version is required when autoDiscoverLatestRelease is false. Please set releaseVersion parameter.");
+        }
+    }
+
     @Override
     public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
+        // Validate mojo-specific parameters
+        validateMojoParameters();
+        
         Iterable<Version> versions = getProjectVersions(jiraRestClient);
         Version thisReleaseVersion = ( autoDiscoverLatestRelease ? calculateLatestReleaseVersion(versions)
                                                                  : getVersion(jiraRestClient, getReleaseVersion()) );
@@ -43,6 +58,12 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
             getLog().debug("Releasing Version " + thisReleaseVersion.getName());
 
             markVersionAsReleased(jiraRestClient, thisReleaseVersion);
+        } else {
+            if (autoDiscoverLatestRelease) {
+                throw new MojoFailureException("No unreleased version found to release. Please create a version first.");
+            } else {
+                throw new MojoFailureException("Version '" + releaseVersion + "' not found in JIRA. Please check the version exists.");
+            }
         }
     }
 
@@ -141,5 +162,19 @@ public class ReleaseVersionMojo extends AbstractJiraMojo {
      */
     public void setReleaseVersion(String releaseVersion) {
         this.releaseVersion = releaseVersion;
+    }
+
+    /**
+     * @return the autoDiscoverLatestRelease
+     */
+    public boolean isAutoDiscoverLatestRelease() {
+        return autoDiscoverLatestRelease;
+    }
+
+    /**
+     * @param autoDiscoverLatestRelease the autoDiscoverLatestRelease to set
+     */
+    public void setAutoDiscoverLatestRelease(boolean autoDiscoverLatestRelease) {
+        this.autoDiscoverLatestRelease = autoDiscoverLatestRelease;
     }
 }

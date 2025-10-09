@@ -46,7 +46,7 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * @parameter default-value="500"
      * @required
      */
-    int maxIssues;
+    int maxIssues = 500;  // Default matches @parameter annotation
 
     /**
      * Released Version
@@ -85,8 +85,43 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      */
     String format;
 
+    /**
+     * Validates the specific parameters for this mojo
+     * 
+     * @throws MojoFailureException if validation fails
+     */
+    private void validateMojoParameters() throws MojoFailureException {
+        // Validate releaseVersion
+        if (releaseVersion == null || releaseVersion.trim().isEmpty()) {
+            throw new MojoFailureException("Release version is required. Please set releaseVersion parameter.");
+        }
+        
+        // Validate jqlTemplate
+        if (jqlTemplate == null || jqlTemplate.trim().isEmpty()) {
+            throw new MojoFailureException("JQL template is required. Please set jqlTemplate parameter.");
+        }
+        
+        // Validate maxIssues
+        if (maxIssues <= 0) {
+            throw new MojoFailureException("Maximum number of issues must be greater than zero. Please set a valid maxIssues parameter.");
+        }
+        
+        // Validate targetFile
+        if (targetFile == null) {
+            throw new MojoFailureException("Target file is required. Please set targetFile parameter.");
+        }
+        
+        // Validate format
+        if (format == null || format.trim().isEmpty()) {
+            throw new MojoFailureException("Format is required. Please set format parameter.");
+        }
+    }
+
     @Override
     public void doExecute(JiraRestClient jiraRestClient) throws MojoFailureException {
+        // Validate mojo-specific parameters
+        validateMojoParameters();
+        
         getLog().info("Generating release note ...");
         
         Iterable<Issue> issues = getIssues(jiraRestClient);
