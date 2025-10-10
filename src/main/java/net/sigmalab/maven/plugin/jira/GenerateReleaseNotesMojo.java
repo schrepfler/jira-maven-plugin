@@ -11,6 +11,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -21,12 +24,10 @@ import net.sigmalab.maven.plugin.jira.formats.Generator;
 /**
  * Goal that generates release notes based on a version in a JIRA project.
  * 
- * @goal generate-release-notes
- * @phase deploy
- * 
  * @author George Gastaldi
  * @author dgrierso
  */
+@Mojo(name = "generate-release-notes", defaultPhase = LifecyclePhase.DEPLOY)
 public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
 
     /**
@@ -34,55 +35,46 @@ public class GenerateReleaseNotesMojo extends AbstractJiraMojo {
      * 
      * Parameter 0 = Project Key
      * Parameter 1 = Fix version
-     * 
-     * @parameter default-value="project = ''{0}'' AND fixVersion = ''{1}''"
-     * @required
      */
+    @Parameter(defaultValue = "project = ''{0}'' AND fixVersion = ''{1}''", required = true)
     String jqlTemplate;
 
     /**
      * Max number of issues to return
-     * 
-     * @parameter default-value="500"
-     * @required
      */
+    @Parameter(defaultValue = "500", required = true)
     int maxIssues = 500;  // Default matches @parameter annotation
 
     /**
      * Released Version
-     * 
-     * @parameter default-value="${project.version}"
      */
+    @Parameter(defaultValue = "${project.version}")
     String releaseVersion;
 
     /**
      * Target file
-     * 
-     * @parameter default-value="${project.build.directory}/releaseNotes.txt"
      */
+    @Parameter(defaultValue = "${project.build.directory}/releaseNotes.txt")
     File targetFile;
 
     /**
      * Text to be appended BEFORE all issues details.
-     * 
-     * @parameter
      */
+    @Parameter
     String beforeText;
 
     /**
      * Text to be appended AFTER all issues details.
-     * 
-     * @parameter
      */
+    @Parameter
     String afterText;
 
     /**
      * Format of the generated release note.
      * 
      * Options are: PlainTextGenerator | MarkDownGenerator | HtmlGenerator
-     * 
-     * @parameter default-value="PlainTextGenerator"
      */
+    @Parameter(defaultValue = "PlainTextGenerator")
     String format;
 
     /**

@@ -1,6 +1,9 @@
 package net.sigmalab.maven.plugin.jira;
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
@@ -10,41 +13,38 @@ import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.VersionInput;
 
 /**
- * Goal that creates a version in a JIRA project . NOTE: REST API access must be
+ * Goal that creates a version in a JIRA project. NOTE: REST API access must be
  * enabled in your JIRA installation. Check JIRA docs for more info.
- * 
- * @goal create-new-jira-version
- * @phase deploy
  * 
  * @author George Gastaldi
  * @author Srdan Srepfler
  * @author dgrierso
  */
+@Mojo(name = "create-new-jira-version", defaultPhase = LifecyclePhase.DEPLOY)
 public class CreateNewVersionMojo extends AbstractJiraMojo {
 
     /**
      * Next Development Version
-     * 
-     * @parameter default-value="${project.version}"
-     * @required
      */
+    @Parameter(defaultValue = "${project.version}", required = true)
     private String developmentVersion;
 
     /**
-     * @parameter default-value="${project.build.finalName}"
+     * Final name of the build artifact
      */
+    @Parameter(defaultValue = "${project.build.finalName}")
     private String finalName;
 
     /**
      * Whether the final name is to be used for the version; defaults to false.
-     * 
-     * @parameter
      */
+    @Parameter
     private boolean finalNameUsedForVersion;
 
     /**
-     * @parameter default-value="${project.name}"
+     * Description for the version
      */
+    @Parameter(defaultValue = "${project.name}")
     private String versionDescription;
 
     /**
