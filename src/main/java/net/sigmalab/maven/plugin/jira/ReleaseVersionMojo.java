@@ -1,6 +1,9 @@
 package net.sigmalab.maven.plugin.jira;
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.joda.time.DateTime;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -8,29 +11,25 @@ import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.VersionInputBuilder;
 
 /**
- * Goal that creates a version in a JIRA project . NOTE: API access must be
+ * Goal that releases a version in a JIRA project. NOTE: API access must be
  * enabled in your JIRA installation. Check JIRA docs for more info.
- * 
- * @goal release-jira-version
- * @phase deploy
  * 
  * @author George Gastaldi
  * @author dgrierso
  */
+@Mojo(name = "release-jira-version", defaultPhase = LifecyclePhase.DEPLOY)
 public class ReleaseVersionMojo extends AbstractJiraMojo {
 
     /**
      * Released Version
-     * 
-     * @parameter default-value="${project.version}"
      */
+    @Parameter(defaultValue = "${project.version}")
     private String releaseVersion;
 
     /**
      * Auto Discover latest release and release it.
-     * 
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private boolean autoDiscoverLatestRelease;
 
     /**
