@@ -120,6 +120,17 @@ public class CreateNewVersionMojoTest  {
 		jiraVersionMojo.execute();
 	}
 
+	@Test
+	public void testExecuteWithPersonalAccessToken() throws MojoExecutionException, MojoFailureException  {
+		jiraVersionMojo.setDevelopmentVersion("2.0");
+		jiraVersionMojo.setFinalName("my-component-6.0");
+		// Clear password since we're using PAT authentication
+		jiraVersionMojo.setJiraPassword(null);
+		jiraVersionMojo.setJiraPersonalAccessToken("PATTOKEN");
+
+		jiraVersionMojo.execute();
+	}
+
 	@After
 	public void tearDown() {
 		this.jiraVersionMojo = null;

@@ -47,8 +47,28 @@ public class CreateNewVersionMojo extends AbstractJiraMojo {
      */
     private String versionDescription;
 
+    /**
+     * Validates the specific parameters for this mojo
+     * 
+     * @throws MojoFailureException if validation fails
+     */
+    private void validateMojoParameters() throws MojoFailureException {
+        // Validate developmentVersion
+        if (developmentVersion == null || developmentVersion.trim().isEmpty()) {
+            throw new MojoFailureException("Development version is required. Please set developmentVersion parameter.");
+        }
+        
+        // If finalNameUsedForVersion is true, validate finalName
+        if (finalNameUsedForVersion && (finalName == null || finalName.trim().isEmpty())) {
+            throw new MojoFailureException("Final name is required when finalNameUsedForVersion is true. Please set finalName parameter.");
+        }
+    }
+
     @Override
     public void doExecute(JiraRestClient restClient) throws MojoFailureException {
+        // Validate mojo-specific parameters
+        validateMojoParameters();
+        
         String newVersionName = computeVersionName();
         getLog().debug(String.format("Name of version to be created == [%s]", newVersionName));
 

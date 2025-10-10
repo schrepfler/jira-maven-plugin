@@ -10,10 +10,10 @@ import static org.mockito.ArgumentMatchers.isNull;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,13 +31,13 @@ import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import net.sigmalab.maven.plugin.jira.GenerateReleaseNotesMojo;
 
 @RunWith(JUnit4.class)
-public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
+public class GenerateReleaseNotesMojoTest {
     private static final String RELEASE_VERSION = "3.3.2.SR1";
 
-    private static final Issue[] ISSUE_ARRAY = new Issue[] { new Issue("Dummy Issue", null, "DUMMY-1", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
-                                                             new Issue("Dummy Issue", null, "DUMMY-4", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
-                                                             new Issue("Dummy Issue", null, "DUMMY-3", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
-                                                             new Issue("Dummy Issue", null, "DUMMY-2", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null) };
+    private static final Issue[] ISSUE_ARRAY = new Issue[] { new Issue("Dummy Issue", null, "DUMMY-1", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Collections.emptySet()),
+                                                             new Issue("Dummy Issue", null, "DUMMY-4", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Collections.emptySet()),
+                                                             new Issue("Dummy Issue", null, "DUMMY-3", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Collections.emptySet()),
+                                                             new Issue("Dummy Issue", null, "DUMMY-2", null, null, null, null, "Dummy Issue Description", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, Collections.emptySet()) };
 
     private static final Iterable<Issue> ISSUES = Arrays.asList(ISSUE_ARRAY);
 
@@ -45,15 +45,13 @@ public class GenerateReleaseNotesMojoTest extends AbstractMojoTestCase {
                                                        null, "Dummy Issue Description", null, null, null, null,
                                                        null, null, null, null, null, null, null, null,
                                                        null, null, null, null, null, null, null, null,
-                                                       null, null, null, null);
+                                                       null, null, null, null, Collections.emptySet());
 
     private GenerateReleaseNotesMojo releaseNoteMojo;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        
         releaseNoteMojo = new GenerateReleaseNotesMojo();
         
         releaseNoteMojo.setJiraUser("user");
