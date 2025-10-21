@@ -277,6 +277,8 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
+                                    <!-- Use the expired key explicitly -->
+                                    <keyname>DC8EF9817376B6F9</keyname>
                                     <!-- Prevent gpg from using pinentry programs, needed for GitHub Actions -->
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
