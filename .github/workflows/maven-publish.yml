@@ -26,8 +26,23 @@ jobs:
     
     - name: Import GPG key
       run: |
-        echo "${{ secrets.OSSRH_GPG_SECRET_KEY }}" | gpg --batch --import
+        # Write key to file to handle multiline content properly
+        echo "${{ secrets.OSSRH_GPG_SECRET_KEY }}" > "$RUNNER_TEMP/private-key.asc"
+        
+        # Show what we're trying to import (first/last lines only for security)
+        echo "First line of key file:"
+        head -n 1 "$RUNNER_TEMP/private-key.asc"
+        echo "Last line of key file:"
+        tail -n 1 "$RUNNER_TEMP/private-key.asc"
+        
+        # Import the key
+        gpg --batch --import "$RUNNER_TEMP/private-key.asc"
+        
+        # List imported keys
         gpg --list-secret-keys --keyid-format LONG
+        
+        # Clean up
+        rm "$RUNNER_TEMP/private-key.asc"
 
     - name: Publish package
       run: mvn --no-transfer-progress --batch-mode -DperformRelease=true clean deploy
