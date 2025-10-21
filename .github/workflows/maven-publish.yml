@@ -26,22 +26,18 @@ jobs:
     
     - name: Import GPG key
       run: |
-        # Write key to file to handle multiline content properly
-        cat <<'EOF' > "$RUNNER_TEMP/private-key.asc"
-        ${{ secrets.OSSRH_GPG_SECRET_KEY }}
-        EOF
+        # Write key and convert escaped newlines (\n) to actual newlines
+        echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}" > "$RUNNER_TEMP/private-key.asc"
         
-        # Check file info (size won't be masked)
+        # Check file info
         echo "Key file size: $(wc -c < "$RUNNER_TEMP/private-key.asc") bytes"
         echo "Key file lines: $(wc -l < "$RUNNER_TEMP/private-key.asc") lines"
         
-        # Check if it looks like a PGP key
+        # Verify it looks like a proper PGP key
         if grep -q "BEGIN PGP PRIVATE KEY BLOCK" "$RUNNER_TEMP/private-key.asc"; then
           echo "✓ File contains PGP key header"
         else
           echo "✗ File does NOT contain PGP key header!"
-          echo "Your OSSRH_GPG_SECRET_KEY secret is not in the correct format."
-          echo "It should start with: -----BEGIN PGP PRIVATE KEY BLOCK-----"
           exit 1
         fi
         
