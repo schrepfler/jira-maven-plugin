@@ -14,6 +14,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+    
+    - name: Verify GPG key format
+      run: |
+        echo "Checking if GPG key has proper headers..."
+        if echo "${{ secrets.OSSRH_GPG_SECRET_KEY }}" | grep -q "BEGIN PGP PRIVATE KEY BLOCK"; then
+          echo "✓ GPG key has proper header"
+        else
+          echo "✗ GPG key missing proper header!"
+          echo "Key should start with: -----BEGIN PGP PRIVATE KEY BLOCK-----"
+          exit 1
+        fi
+    
     - name: Set up JDK 21
       uses: actions/setup-java@v5
       with:
